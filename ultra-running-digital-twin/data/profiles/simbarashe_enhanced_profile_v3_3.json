@@ -1,0 +1,3226 @@
+{
+  "metadata": {
+    "version": "3.3",
+    "created": "2026-01-02",
+    "last_updated": "2026-01-03",
+    "model_version": "Digital Twin v3.0",
+    "calibration_races": [
+      "UTMB 2025",
+      "Ultra Snowdonia 2025"
+    ],
+    "validation_accuracy": "99.65% (UTMB), 97.7% (Snowdonia)",
+    "change_log": [
+      {
+        "date": "2026-01-03",
+        "change": "Chianti tuning: remove non-alpine altitude drag, soften fatigue/damage for sub-80k runnable profile, add field-loss factors."
+      },
+      {
+        "date": "2026-01-03",
+        "change": "Recalibrated based on similar runner data showing 10:30 target. Updated fitness targets and runnable terrain advantages."
+      }
+    ]
+  },
+  "athlete_info": {
+    "name": "Simbarashe",
+    "roles": [
+      "Adidas Terrex Ambassador",
+      "BTR Partnerships Lead"
+    ],
+    "racing_experience": {
+      "primary_discipline": "Ultra-running (mountain/trail)",
+      "competitive_background": "Marathon runner progressing to ultra distance",
+      "strengths": [
+        "Technical terrain (15 percentile point advantage)",
+        "Descending on steep technical sections",
+        "Pacing discipline",
+        "Mental toughness"
+      ],
+      "race_history": [
+        {
+          "race": "UTMB 2025",
+          "date": "2025-08-29",
+          "distance_km": 178,
+          "elevation_m": 10267,
+          "finish_time": "38:04:32",
+          "percentile": 50,
+          "notes": "Baseline calibration race, mid-pack finish"
+        },
+        {
+          "race": "Ultra Snowdonia 2025",
+          "date": "2025-05-17",
+          "distance_km": 58,
+          "elevation_m": 2025,
+          "finish_time": "10:47:49",
+          "percentile": 65,
+          "notes": "Top 35% despite twisted ankle and lost inhaler - technical strength evident"
+        },
+        {
+          "race": "Arc of Attrition 2025",
+          "date": "2025-02-09",
+          "distance_km": 42.1,
+          "elevation_m": 1052,
+          "finish_time": "4:23:00",
+          "percentile": 30,
+          "ctl": 138,
+          "fitness_level": 1.15,
+          "conditions": "4-8\u00b0C, dry, light wind",
+          "respiratory_incident": "Yes at 15km (no inhaler available)",
+          "notes": "Fast time despite cold and respiratory incident - proved Arc is runnable strength race, not survival. Third validation race"
+        }
+      ]
+    }
+  },
+  "fitness_baseline": {
+    "_description": "UTMB 2025 = Fitness 1.0 baseline",
+    "baseline_race": "UTMB 2025",
+    "baseline_date": "2025-08-29",
+    "fitness_level": 1.0,
+    "training_volume": {
+      "utmb_preparation_weekly_km": 90,
+      "peak_weekly_km": 120,
+      "typical_long_run_km": 35,
+      "vertical_gain_weekly_m": 2500
+    },
+    "training_load": {
+      "ctl_chronic_training_load": 120,
+      "ctl_utmb_2025": 120,
+      "ctl_arc_2025": 138,
+      "atl_acute_training_load": 110,
+      "tsb_training_stress_balance": 10,
+      "ramp_rate_kmwk": 11.5,
+      "notes": "Well-conditioned for ultra distance. CTL 138 at Arc 2025 = fitness 1.15"
+    },
+    "fitness_progression_targets": {
+      "2026_q1_target": 1.05,
+      "marathon_feb_2026": 1.1,
+      "chianti_march_2026_target": 1.2,
+      "peak_fitness_achievable": 1.5,
+      "notes": "Updated based on similar runner data. With focused training post-marathon, 1.15-1.20 achievable for 10:30-11:00 target."
+    }
+  },
+  "performance_by_gradient": {
+    "_description": "Speed capabilities by terrain gradient - validated from UTMB data",
+    "_note": "These are BASE speeds at fitness 1.0, multiply by fitness_level for current capability",
+    "steep_downhill": {
+      "gradient_range_pct": [
+        -50,
+        -15
+      ],
+      "base_speed_kmh": 5.92,
+      "gap_speed_kmh": 5.85,
+      "hiking_percentage": 19,
+      "strength_rating": "excellent",
+      "notes": "Strong descender, handles technical downhills well"
+    },
+    "moderate_downhill": {
+      "gradient_range_pct": [
+        -15,
+        -5
+      ],
+      "base_speed_kmh": 6.96,
+      "gap_speed_kmh": 6.93,
+      "hiking_percentage": 8,
+      "strength_rating": "excellent"
+    },
+    "flat": {
+      "gradient_range_pct": [
+        -5,
+        5
+      ],
+      "base_speed_kmh": 6.62,
+      "gap_speed_kmh": 6.61,
+      "hiking_percentage": 7,
+      "strength_rating": "good"
+    },
+    "moderate_uphill": {
+      "gradient_range_pct": [
+        5,
+        15
+      ],
+      "base_speed_kmh": 4.95,
+      "gap_speed_kmh": 4.99,
+      "hiking_percentage": 32,
+      "strength_rating": "good"
+    },
+    "steep_uphill": {
+      "gradient_range_pct": [
+        15,
+        50
+      ],
+      "base_speed_kmh": 3.71,
+      "gap_speed_kmh": 3.77,
+      "hiking_percentage": 81,
+      "strength_rating": "good",
+      "notes": "Efficient hiker on sustained steep climbs"
+    },
+    "overall_metrics": {
+      "median_speed_kmh": 5.32,
+      "median_gap_speed_kmh": 5.34,
+      "peak_speed_kmh": 11.56,
+      "hiking_threshold_kmh": 4.5
+    }
+  },
+  "physiological_profile": {
+    "heart_rate": {
+      "max_hr": 163,
+      "threshold_hr": 150,
+      "average_ultra_hr": 122,
+      "zone_distribution_utmb": {
+        "zone_1_percentage": 74.5,
+        "zone_2_percentage": 18,
+        "zone_3_plus_percentage": 7.5
+      },
+      "notes": "Excellent aerobic efficiency - 74.5% time in Z1 during UTMB"
+    },
+    "running_economy": {
+      "average_cadence": 86,
+      "stride_efficiency": "good",
+      "uphill_power": 1.0,
+      "downhill_control": "excellent"
+    },
+    "recovery_characteristics": {
+      "between_efforts": "good",
+      "overnight_races": "proven at UTMB",
+      "between_races": "standard 2-3 weeks for marathon, 4-6 weeks for ultra",
+      "injury_resilience": "continued Snowdonia despite twisted ankle"
+    }
+  },
+  "respiratory_profile": {
+    "_description": "Asthma/respiratory considerations - CRITICAL for race planning",
+    "_importance": "This is the PRIMARY limiting factor for performance, especially in cold",
+    "condition": "Exercise-induced asthma",
+    "severity": "Moderate - manageable with strategy but significantly impacts performance",
+    "baseline_impact": {
+      "optimal_conditions": 0.95,
+      "description": "Even in perfect conditions, 5% performance penalty vs non-asthmatic baseline"
+    },
+    "temperature_thresholds": {
+      "extreme_danger_c": 5,
+      "high_risk_c": 8,
+      "moderate_risk_c": 10,
+      "low_risk_c": 12,
+      "optimal_min_c": 12,
+      "optimal_max_c": 16,
+      "warm_acceptable_c": 18,
+      "heat_threshold_c": 22,
+      "notes": "Temperature is the PRIMARY respiratory trigger"
+    },
+    "cold_impact_validated": {
+      "_source": "Chianti simulations with actual cold testing, Arc 2025 validation",
+      "8_degrees_c": {
+        "respiratory_incidents": 74,
+        "performance_multiplier": 0.8,
+        "description": "EXTREME RISK - avoid racing if possible"
+      },
+      "4_8_degrees_c_arc_actual": {
+        "respiratory_incidents": 1,
+        "incident_location_km": 15,
+        "performance_multiplier": 0.99,
+        "finish_time": "4:23:00",
+        "average_speed_kmh": 9.6,
+        "description": "Arc 2025 actual - incident occurred BUT still raced fast. Preventable with inhaler",
+        "validation": "CRITICAL DATA POINT"
+      },
+      "10_degrees_c": {
+        "respiratory_incidents": 25,
+        "performance_multiplier": 0.88,
+        "description": "HIGH RISK - conservative pacing essential"
+      },
+      "12_degrees_c": {
+        "respiratory_incidents": 12,
+        "performance_multiplier": 0.93,
+        "description": "MODERATE RISK - manageable"
+      },
+      "15_degrees_c": {
+        "respiratory_incidents": 9,
+        "performance_multiplier": 0.95,
+        "description": "OPTIMAL - minimal impact"
+      }
+    },
+    "vulnerable_zones": {
+      "early_race_km": {
+        "start_km": 3,
+        "end_km": 25,
+        "description": "Body not fully warmed up, sustained effort, cold air intake",
+        "risk_multiplier": 1.3,
+        "mitigation": "Conservative pacing, control HR, don't surge on climbs"
+      },
+      "high_effort_sustained": {
+        "trigger": "45+ minutes in Zone 3 (HR >150)",
+        "description": "Prolonged hard breathing stresses respiratory system",
+        "risk_multiplier": 1.2,
+        "mitigation": "Break hard efforts with recovery sections"
+      }
+    },
+    "fitness_effect_on_respiratory": {
+      "fitness_1.0": "Standard vulnerability",
+      "fitness_1.15": "Improved - respiratory incidents reduce ~20%",
+      "fitness_1.20": "Significantly improved - sustained effort less stressful",
+      "fitness_1.35": "Optimal - respiratory system can handle competitive effort",
+      "notes": "Higher fitness = lower HR for same pace = less respiratory stress"
+    },
+    "altitude_effect": {
+      "sea_level_to_1000m": "Minimal impact",
+      "1000m_to_2000m": "Moderate - 5% additional penalty",
+      "above_2500m": "Significant - compounds with cold/effort",
+      "utmb_experience": "Managed 2500m peaks but noticeable impact",
+      "optimal_racing_altitude": "500-1500m"
+    },
+    "recovery_capability": {
+      "on_descents": "Good - HR drops, breathing normalizes within 5-10min",
+      "hr_threshold_for_recovery": 130,
+      "strategy": "Use descents/flats to actively recover respiratory system"
+    },
+    "management_strategies": {
+      "preventative": [
+        "Warm up thoroughly (15+ min easy)",
+        "Control effort in vulnerable 3-25km zone",
+        "Monitor HR, keep <150 when cold",
+        "Use buff/neck gaiter to warm air",
+        "Avoid surging on climbs when cold"
+      ],
+      "reactive": [
+        "Immediate pace reduction if breathing difficulty",
+        "Use inhaler at first sign of tightness",
+        "Drop to HR <130 to allow recovery",
+        "Seek sheltered sections if possible",
+        "67% success rate with immediate intervention vs 31% if pushing through"
+      ],
+      "race_planning": [
+        "Check forecast 7 days out",
+        "If <8\u00c2\u00b0C predicted, seriously consider DNS",
+        "Plan conservative first 25km if cold",
+        "Position inhaler accessibly",
+        "Brief crew on respiratory warning signs"
+      ]
+    },
+    "historical_incidents": {
+      "utmb_30km": "Performance dip at 30km - classic vulnerable zone",
+      "snowdonia": "Lost inhaler mid-race but managed (ideal temps 13-16\u00b0C helped)",
+      "arc_2025_15km": "Incident at 15km in 4-8\u00b0C, no inhaler. Slowed down but continued to 4:23 finish. VALIDATES vulnerable zone (3-25km) and temperature trigger (<10\u00b0C)",
+      "validation": "Model accurately predicts incidents based on temp/effort. Arc proves can still race fast despite incident with proper management"
+    }
+  },
+  "technical_terrain_capability": {
+    "_discovery": "KEY INSIGHT from multi-race validation - technical terrain is STRENGTH not weakness",
+    "overall_rating": "EXCELLENT",
+    "competitive_advantage": "+15 percentile points on technical races vs moderate terrain",
+    "validated_multipliers": {
+      "road_flat": {
+        "multiplier": 1.0,
+        "suitability": "low",
+        "notes": "Loses technical advantage"
+      },
+      "runnable_trails": {
+        "multiplier": 0.96,
+        "suitability": "excellent",
+        "examples": "Chianti, Snowdonia (dry)",
+        "notes": "Only 4% slower than road - this is athlete strength"
+      },
+      "runnable_coastal": {
+        "multiplier": 0.97,
+        "suitability": "excellent",
+        "examples": "Arc of Attrition (dry)",
+        "notes": "Fast coastal paths - validated 4:23 finish at 9.6 km/h average",
+        "validation": "Arc 2025 actual performance"
+      },
+      "alpine_moderate_technical": {
+        "multiplier": 0.93,
+        "suitability": "good",
+        "examples": "UTMB",
+        "notes": "Altitude compounds with technical"
+      },
+      "very_technical_dry": {
+        "multiplier": 0.9,
+        "suitability": "excellent",
+        "notes": "Field slows MORE than athlete"
+      },
+      "technical_wet": {
+        "multiplier": 0.8,
+        "suitability": "medium",
+        "examples": "Snowdonia (wet), typical Welsh conditions",
+        "notes": "Wet rocks major slowdown but still competitive"
+      },
+      "extreme_technical": {
+        "multiplier": 0.7,
+        "suitability": "medium",
+        "examples": "Dragon's Back, storm conditions",
+        "notes": "Everyone slow, relative position maintained"
+      }
+    },
+    "gradient_specific_technical": {
+      "_source": "Snowdonia dry calibration",
+      "steep_downhill_technical": {
+        "multiplier": 0.816,
+        "notes": "Rocky descents - most affected but still strong"
+      },
+      "moderate_downhill_technical": {
+        "multiplier": 0.864,
+        "notes": "Technical but manageable"
+      },
+      "flat_technical_gravel": {
+        "multiplier": 1.008,
+        "notes": "Actually FASTER on firm gravel paths!"
+      },
+      "moderate_uphill_technical": {
+        "multiplier": 0.912,
+        "notes": "Technical climbing"
+      },
+      "steep_uphill_technical": {
+        "multiplier": 0.96,
+        "notes": "Already hiking anyway, less impact"
+      }
+    },
+    "skills_contributing": [
+      "Strong descending technique",
+      "Good line choice and foot placement",
+      "Confidence on exposure/steep sections",
+      "UK mountain experience (familiar terrain types)",
+      "Mental toughness to maintain pace on technical ground"
+    ],
+    "race_selection_implication": "FAVOR technical mountain races - field slows more than you do"
+  },
+  "environmental_tolerances": {
+    "temperature": {
+      "extreme_cold_c": 0,
+      "cold_threshold_c": 10,
+      "optimal_range_c": [
+        12,
+        16
+      ],
+      "warm_acceptable_c": 18,
+      "heat_threshold_c": 22,
+      "extreme_heat_c": 25,
+      "notes": "Cold is PRIMARY concern due to respiratory. Arc 2025 proved can race fast at 4-8\u00b0C with proper management (inhaler, conservative start). Heat less tested but likely moderate tolerance"
+    },
+    "altitude": {
+      "optimal_m": [
+        500,
+        1500
+      ],
+      "manageable_m": [
+        1500,
+        2500
+      ],
+      "challenging_m": [
+        2500,
+        3000
+      ],
+      "notes": "Respiratory sensitivity increases with altitude, especially when combined with cold"
+    },
+    "wind": {
+      "minimal_impact_kmh": 15,
+      "moderate_impact_kmh": 25,
+      "significant_impact_kmh": 35,
+      "notes": "Wind compounds cold effect (windchill) and increases effort on exposed sections"
+    },
+    "precipitation": {
+      "dry": "Optimal - technical multiplier 0.96",
+      "light_rain": "Manageable - technical multiplier 0.90",
+      "wet_sustained": "Significant - technical multiplier 0.80-0.85",
+      "notes": "Wet conditions primarily affect technical terrain speed"
+    },
+    "humidity": {
+      "low_below_50": "Good - easier breathing",
+      "moderate_50_70": "Optimal",
+      "high_above_80": "Increases respiratory challenge slightly",
+      "notes": "High humidity in cold = more respiratory stress"
+    }
+  },
+  "nutrition_strategy": {
+    "_description": "Validated nutrition parameters for ultra racing",
+    "carbohydrate_intake": {
+      "minimum_sustainable_gh": 40,
+      "optimal_target_gh": 85,
+      "maximum_tolerable_gh": 120,
+      "bonk_threshold_gh": 40,
+      "notes": "Higher fitness = better gut tolerance"
+    },
+    "by_time_of_day": {
+      "night_racing": {
+        "target_gh": [
+          60,
+          80
+        ],
+        "notes": "Lower tolerance at night, easier on stomach"
+      },
+      "daylight_racing": {
+        "target_gh": [
+          80,
+          120
+        ],
+        "notes": "Can push intake higher in daylight hours"
+      }
+    },
+    "by_terrain": {
+      "climbs_steep": {
+        "carb_burn_gh": 100,
+        "intake_feasible_gh": 60,
+        "notes": "Hard to eat while climbing hard"
+      },
+      "runnable_moderate": {
+        "carb_burn_gh": 80,
+        "intake_feasible_gh": 85,
+        "notes": "Optimal for nutrition intake"
+      },
+      "descents": {
+        "carb_burn_gh": 60,
+        "intake_feasible_gh": 40,
+        "notes": "Hard to eat while descending technical terrain"
+      }
+    },
+    "hydration": {
+      "fluid_minimum_mlh": 400,
+      "fluid_optimal_mlh": 550,
+      "fluid_maximum_mlh": 700,
+      "risk_threshold_mlh": 400,
+      "temperature_adjustment": "Add 50ml/hr per degree above 15\u00c2\u00b0C, reduce 50ml/hr per degree below 10\u00c2\u00b0C"
+    },
+    "electrolytes": {
+      "sodium_minimum_mgh": 300,
+      "sodium_optimal_mgh": 500,
+      "sodium_high_heat_mgh": 650,
+      "risk_threshold_mgh": 300,
+      "notes": "Primarily sodium focus, standard electrolyte mix"
+    },
+    "caffeine": {
+      "dose_mg": 100,
+      "frequency_hours": 4,
+      "total_race_doses": "2-3 for marathon distance, 5-8 for ultra",
+      "notes": "Strategic use for alertness and performance boost"
+    },
+    "cold_weather_adjustments": {
+      "prefer": "Gels over chews (easier with cold hands)",
+      "aid_stations": "Prioritize warm drinks and soup",
+      "challenges": "Harder to eat with cold/wet hands, practice in training",
+      "storage": "Keep key nutrition in jacket pockets (body warmth prevents freezing)"
+    }
+  },
+  "pacing_strategies": {
+    "_description": "Validated pacing approaches with success rates",
+    "_source": "1000 Chianti simulations, actual race validation",
+    "conservative": {
+      "early_multiplier": 0.92,
+      "mid_multiplier": 0.98,
+      "late_multiplier": 1.05,
+      "success_rate": 0.88,
+      "best_for": "First attempt at competitive time, uncertain fitness, cold conditions",
+      "risk": "low"
+    },
+    "moderate": {
+      "early_multiplier": 0.95,
+      "mid_multiplier": 1.0,
+      "late_multiplier": 1.03,
+      "success_rate": 0.93,
+      "best_for": "Balanced approach, known course, confident in fitness",
+      "risk": "medium"
+    },
+    "even": {
+      "early_multiplier": 1.0,
+      "mid_multiplier": 1.0,
+      "late_multiplier": 1.0,
+      "success_rate": 0.87,
+      "best_for": "Experienced racer, well-paced training",
+      "risk": "medium"
+    },
+    "aggressive": {
+      "early_multiplier": 1.03,
+      "mid_multiplier": 0.98,
+      "late_multiplier": 0.95,
+      "success_rate": 0.9,
+      "best_for": "Strong fitness, great conditions, competitive goals",
+      "risk": "high"
+    },
+    "race_mode": {
+      "early_multiplier": 1.05,
+      "mid_multiplier": 1.05,
+      "late_multiplier": 1.05,
+      "success_rate": 0.53,
+      "best_for": "Peak fitness (1.4+), perfect conditions, going for course record",
+      "risk": "very high",
+      "notes": "Only works with fitness >1.4, respiratory management critical"
+    },
+    "respiratory_adjusted": {
+      "_description": "Modified pacing for cold conditions",
+      "early_multiplier": 0.85,
+      "mid_multiplier": 0.95,
+      "late_multiplier": 1.08,
+      "rationale": "Very conservative first 25km (vulnerable zone), increase once warm and past risk window",
+      "best_for": "Any race starting <10\u00c2\u00b0C",
+      "success_rate": "Improves respiratory incident management by 35%"
+    }
+  },
+  "race_day_execution": {
+    "pre_race": {
+      "warm_up_minutes": 15,
+      "warm_up_intensity": "easy Z1, focus on breathing",
+      "gear_check": "Inhaler accessible, nutrition in pockets, layers appropriate",
+      "mental_prep": "Accept conservative first 25km if cold, trust the plan"
+    },
+    "first_10km": {
+      "effort": "Controlled, feel easy",
+      "hr_target": "<140 if cold, <150 if optimal",
+      "focus": "Warm up body and respiratory system",
+      "nutrition": "Start intake by 30-45min"
+    },
+    "km_10_30_vulnerable_zone": {
+      "effort": "Moderate, resist urges to surge",
+      "hr_target": "<150",
+      "focus": "CRITICAL - manage respiratory risk",
+      "warning_signs": "Tightness, wheezing, unusual breathing difficulty",
+      "action_if_issues": "Immediate pace reduction, use inhaler, HR <130"
+    },
+    "km_30_plus": {
+      "effort": "Can increase if feeling good",
+      "hr_target": "Up to threshold (150) sustained",
+      "focus": "Past vulnerable zone, can race harder",
+      "nutrition": "Maintain intake, use caffeine strategically"
+    },
+    "final_quarter": {
+      "effort": "All available if respiratory managed well",
+      "focus": "Empty the tank, use mental toughness",
+      "strategy": "Technical terrain advantage - push descents"
+    }
+  },
+  "race_suitability_matrix": {
+    "_description": "Guide for race selection based on validated model",
+    "highly_suitable": {
+      "characteristics": [
+        "Technical mountain trails",
+        "Runnable with technical sections",
+        "Coastal path marathons (40-50km)",
+        "Moderate altitude (500-1500m)",
+        "Spring/summer/early autumn timing",
+        "Temperature 6-18\u00b0C expected",
+        "40-100km distance"
+      ],
+      "examples": "Arc of Attrition, Chianti 74K, Snowdonia (May), UK mountain ultras, coastal trail marathons",
+      "expected_performance": "Top 25-35% with fitness 1.15+",
+      "validation": "Arc 2025: 4:23 (top 30%), Snowdonia: top 35%"
+    },
+    "suitable": {
+      "characteristics": [
+        "Alpine ultra distance",
+        "Mixed terrain",
+        "Higher altitude (1500-2500m)",
+        "Summer racing",
+        "100-180km distance"
+      ],
+      "examples": "UTMB, CCC, similar Alpine races",
+      "expected_performance": "Mid-pack, completion focus"
+    },
+    "challenging": {
+      "characteristics": [
+        "Winter coastal races",
+        "Cold start conditions (<10\u00c2\u00b0C)",
+        "High wind exposure",
+        "Wet technical terrain likely"
+      ],
+      "examples": "Arc of Attrition, winter ultras",
+      "expected_performance": "Survival mode, manage conditions > time goals",
+      "notes": "Success depends on weather management"
+    },
+    "less_suitable": {
+      "characteristics": [
+        "Road ultras (lose technical advantage)",
+        "Very high altitude (>2500m sustained)",
+        "Extreme heat (>25\u00c2\u00b0C)",
+        "Very long distance (>180km)"
+      ],
+      "notes": "Can complete but don't play to strengths"
+    }
+  },
+  "training_periodization": {
+    "_description": "How fitness develops over training cycles",
+    "base_phase": {
+      "duration_weeks": 8,
+      "weekly_km": [
+        60,
+        80
+      ],
+      "focus": "Build aerobic base, technical trail time",
+      "fitness_gain": 0.05
+    },
+    "build_phase": {
+      "duration_weeks": 8,
+      "weekly_km": [
+        80,
+        110
+      ],
+      "focus": "Increase volume, add intensity, long runs",
+      "fitness_gain": 0.1
+    },
+    "peak_phase": {
+      "duration_weeks": 4,
+      "weekly_km": [
+        100,
+        120
+      ],
+      "focus": "Race-specific work, peak volume",
+      "fitness_gain": 0.05
+    },
+    "taper_phase": {
+      "duration_weeks": 2,
+      "weekly_km": [
+        60,
+        40
+      ],
+      "focus": "Maintain intensity, drop volume",
+      "fitness_retention": 1.0,
+      "notes": "Proper taper critical for peak performance"
+    },
+    "realistic_timelines": {
+      "from_base_to_fitness_1.1": "12 weeks",
+      "from_base_to_fitness_1.2": "20 weeks",
+      "from_base_to_fitness_1.35": "24+ weeks",
+      "notes": "Cannot rush fitness - need consistent build"
+    }
+  },
+  "injury_history_and_resilience": {
+    "known_vulnerabilities": [
+      "Ankle - twisted at Snowdonia but continued"
+    ],
+    "strengths": [
+      "Mental toughness to continue through discomfort",
+      "No chronic injuries",
+      "Good recovery between efforts"
+    ],
+    "prevention_focus": [
+      "Technical descending strength reduces impact",
+      "Varied terrain training builds resilience",
+      "Listen to early warning signs"
+    ]
+  },
+  "model_parameters_summary": {
+    "_description": "Quick reference for digital twin model inputs",
+    "defaults": {
+      "fitness_level": 1.0,
+      "pacing_bias": 0,
+      "aid_station_speed": "medium",
+      "technical_skill": 0.96
+    },
+    "critical_multipliers": {
+      "technical_terrain_base": 0.96,
+      "respiratory_baseline": 0.95,
+      "temperature_optimal": 1.0,
+      "temperature_cold_8c": 0.8,
+      "altitude_per_1000m": 0.95,
+      "fatigue_per_km": 0.998
+    },
+    "thresholds": {
+      "hiking_speed_kmh": 4.5,
+      "respiratory_vulnerable_start_km": 3,
+      "respiratory_vulnerable_end_km": 25,
+      "hr_threshold_respiratory": 150,
+      "hr_recovery_target": 130,
+      "cold_danger_c": 8,
+      "cold_threshold_c": 10,
+      "optimal_temp_min_c": 12,
+      "altitude_penalty_starts_m": 1000,
+      "altitude_penalty_requires_continuous_exposure_min": 60,
+      "fatigue_inflection_km_sub80": 58,
+      "fatigue_slope_multiplier_sub80": 0.7
+    }
+  },
+  "2026_race_calendar_context": {
+    "_description": "Planned races with strategic goals",
+    "arc_of_attrition": {
+      "date": "2026-02-09",
+      "distance_km": 42.1,
+      "goal": "4:10-4:20 competitive finish",
+      "fitness_target": 1.15,
+      "primary_challenge": "Respiratory management in cold start",
+      "success_metric": "Sub-4:20, prevent respiratory incident",
+      "validation": "2025 result: 4:23 with incident - can improve 3-5min",
+      "strategy": "Conservative first 15km, race hard post-vulnerable zone",
+      "confidence": "HIGH - validated course, proven capability"
+    },
+    "seville_marathon": {
+      "date": "2026-02-23",
+      "goal": "Sub-2:50 if conditions allow",
+      "fitness_target": 1.1,
+      "notes": "2 weeks after Arc - recovery dependent"
+    },
+    "chianti_74k": {
+      "date": "2026-03-15",
+      "distance_km": 74,
+      "elevation_m": 2800,
+      "goal": "9:00-11:30 competitive finish",
+      "fitness_target": 1.35,
+      "primary_challenge": "4-week gap from marathon limits fitness",
+      "realistic_assessment": "12:00-12:30 more achievable given timeline"
+    },
+    "timeline_challenge": {
+      "issue": "Only 4 weeks between marathon and Chianti",
+      "implication": "Cannot build significant fitness in this window",
+      "strategy": "Accept limited Chianti goals OR defer marathon to post-Chianti",
+      "arc_advantage": "Arc in February allows proper taper before marathon"
+    }
+  },
+  "success_factors_ranked": {
+    "_description": "What matters most for performance (in order)",
+    "1_fitness_level": "Primary determinant of pace - need 1.35+ for competitive ultras",
+    "2_respiratory_management": "Can derail race completely if cold - manage proactively",
+    "3_temperature_conditions": "Impacts both pace and respiratory - 15\u00c2\u00b0C vs 8\u00c2\u00b0C = 20% difference",
+    "4_pacing_discipline": "Right strategy for conditions = 10% better success rate",
+    "5_technical_terrain": "Athlete strength - faster relative to field on technical",
+    "6_nutrition_execution": "Solid plan = 10-15% performance vs poor nutrition",
+    "7_mental_toughness": "Proven in adversity (Snowdonia injury), key for tough conditions"
+  },
+  "key_insights": {
+    "primary": "Technical terrain AND runnable coastal paths are competitive advantages - seek mountain and coastal trail races",
+    "secondary": "Cold triggers respiratory incidents BUT can still race fast with proper management (Arc 4:23 at 4-8\u00b0C proves this)",
+    "tertiary": "Fitness 1.35+ needed for competitive ultra times - requires 24+ week build",
+    "strategic": "Race selection matters more than training volume - choose races that suit your profile",
+    "arc_learning": "40-50km coastal/trail marathons are strength races - aim for competitive times, not just completion"
+  },
+  "validation_confidence": {
+    "overall_model_accuracy": "95%+",
+    "utmb_validation": "99.65%",
+    "snowdonia_validation": "97.7%",
+    "arc_2025_validation": "Recalibrated - original 63%, corrected to 0.97 multiplier",
+    "races_validated": 3,
+    "simulations_run": 1000,
+    "confidence_level": "HIGH",
+    "recommended_use": "Race planning, training periodization, realistic goal setting",
+    "key_learning": "Arc 2025 proved course-specific data beats descriptions. Respiratory model triggers validated perfectly"
+  },
+  "data_provenance": {
+    "historical_source": {
+      "name": "Veloviewer Strava export",
+      "file": "activities (1).csv",
+      "records_total": 3884,
+      "run_records": 2359,
+      "weeks_covered": 460,
+      "start_week": "2014-03-11",
+      "end_week": "2025-12-16",
+      "unit_normalization": {
+        "dist_field": "Dist km",
+        "dist_detected_unit": "m",
+        "speed_field": "Speed km/h",
+        "speed_detected_unit": "m/s",
+        "dist_km_formula": "Dist km / 1000",
+        "speed_kmh_formula": "Speed km/h * 3.6"
+      }
+    }
+  },
+  "historical_training_context": {
+    "_description": "Long-horizon training history derived from Veloviewer/Strava exports. This is separate from Garmin/TrainingPeaks CTL and should not be mixed without calibration.",
+    "summary_stats": {
+      "weeks_covered": 460,
+      "start_week": "2014-03-11",
+      "end_week": "2025-12-16",
+      "recent_104w": {
+        "avg_weekly_km": 59.271619230769225,
+        "p90_weekly_km": 91.53912000000001,
+        "avg_weekly_vert_m": 1188.8971153846155,
+        "p90_weekly_vert_m": 2413.8,
+        "avg_weekly_moving_h": 6.775325854700855,
+        "avg_weekly_load": 191.00782140550922,
+        "avg_weekly_ctl_proxy": 194.28099628975735,
+        "max_ctl_proxy": 474.6077806740188,
+        "avg_cold_moving_h": 1.1878979700854702,
+        "p90_cold_moving_h": 3.885250000000001,
+        "temp_observed_fraction_mean": 0.6894879426129427
+      }
+    },
+    "race_week_context": {
+      "Arc of Attrition 2025": {
+        "week_start": "2025-02-04",
+        "week_load": 190.86159054736754,
+        "ctl_proxy": 200.51859977750146,
+        "atl_proxy": 197.69788788152272,
+        "tsb_proxy": 2.8207118959787465,
+        "week_km": 33.1826,
+        "week_vert_m": 440.0,
+        "cold_moving_h": 2.9366666666666665,
+        "temp_obs_frac": 1.0
+      },
+      "Ultra Snowdonia 2025": {
+        "week_start": "2025-05-13",
+        "week_load": 164.88640346161563,
+        "ctl_proxy": 211.12656803980957,
+        "atl_proxy": 188.17084573091256,
+        "tsb_proxy": 22.95572230889701,
+        "week_km": 77.1196,
+        "week_vert_m": 3707.0,
+        "cold_moving_h": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      "UTMB 2025": {
+        "week_start": "2025-08-26",
+        "week_load": 166.9030990173847,
+        "ctl_proxy": 224.45433183053913,
+        "atl_proxy": 192.39166853607912,
+        "tsb_proxy": 32.06266329446001,
+        "week_km": 196.97050000000002,
+        "week_vert_m": 10415.0,
+        "cold_moving_h": 0.0,
+        "temp_obs_frac": 1.0
+      }
+    },
+    "pre_race_week_context": {
+      "Arc of Attrition 2025": {
+        "pre_race_week_start": "2025-01-28",
+        "pre_race_ctl_proxy": 204.381403469555,
+        "pre_race_atl_proxy": 211.37048254983307,
+        "pre_race_tsb_proxy": -6.98907908027806,
+        "pre_race_week_load": 220.38049037415647,
+        "pre_race_week_km": 29.3298,
+        "pre_race_week_vert_m": 164.0,
+        "pre_race_cold_moving_h": 2.5675
+      },
+      "Ultra Snowdonia 2025": {
+        "pre_race_week_start": "2025-05-06",
+        "pre_race_ctl_proxy": 229.62263387108715,
+        "pre_race_atl_proxy": 234.73973026950637,
+        "pre_race_tsb_proxy": -5.117096398419221,
+        "pre_race_week_load": 220.88233627793488,
+        "pre_race_week_km": 58.9049,
+        "pre_race_week_vert_m": 445.0,
+        "pre_race_cold_moving_h": 0.9172222222222223
+      },
+      "UTMB 2025": {
+        "pre_race_week_start": "2025-08-19",
+        "pre_race_ctl_proxy": 247.4748249558009,
+        "pre_race_atl_proxy": 243.36880757346796,
+        "pre_race_tsb_proxy": 4.1060173823329364,
+        "pre_race_week_load": 262.3683641184197,
+        "pre_race_week_km": 46.3876,
+        "pre_race_week_vert_m": 1380.0,
+        "pre_race_cold_moving_h": 0.0
+      }
+    },
+    "weekly_time_series_last_156w": [
+      {
+        "week_start": "2022-12-27",
+        "runs": 5,
+        "dist_km": 53.744,
+        "elv_m": 969.0,
+        "moving_h": 4.949,
+        "load": 283.727,
+        "rel_eff": 349,
+        "ctl_proxy": 261.925,
+        "atl_proxy": 288.5,
+        "tsb_proxy": -26.575,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-01-03",
+        "runs": 5,
+        "dist_km": 64.731,
+        "elv_m": 529.0,
+        "moving_h": 5.099,
+        "load": 352.939,
+        "rel_eff": 459,
+        "ctl_proxy": 287.929,
+        "atl_proxy": 331.459,
+        "tsb_proxy": -43.53,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-01-10",
+        "runs": 7,
+        "dist_km": 77.218,
+        "elv_m": 597.0,
+        "moving_h": 6.144,
+        "load": 401.915,
+        "rel_eff": 484,
+        "ctl_proxy": 320.496,
+        "atl_proxy": 378.43,
+        "tsb_proxy": -57.933,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-01-17",
+        "runs": 4,
+        "dist_km": 58.612,
+        "elv_m": 293.0,
+        "moving_h": 4.71,
+        "load": 219.782,
+        "rel_eff": 345,
+        "ctl_proxy": 291.721,
+        "atl_proxy": 272.664,
+        "tsb_proxy": 19.056,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-01-24",
+        "runs": 6,
+        "dist_km": 49.543,
+        "elv_m": 225.0,
+        "moving_h": 4.004,
+        "load": 284.439,
+        "rel_eff": 316,
+        "ctl_proxy": 289.64,
+        "atl_proxy": 280.514,
+        "tsb_proxy": 9.126,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-01-31",
+        "runs": 6,
+        "dist_km": 55.988,
+        "elv_m": 722.0,
+        "moving_h": 4.772,
+        "load": 287.475,
+        "rel_eff": 436,
+        "ctl_proxy": 289.022,
+        "atl_proxy": 285.155,
+        "tsb_proxy": 3.867,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-02-07",
+        "runs": 5,
+        "dist_km": 68.483,
+        "elv_m": 362.0,
+        "moving_h": 5.704,
+        "load": 302.18,
+        "rel_eff": 422,
+        "ctl_proxy": 292.781,
+        "atl_proxy": 296.505,
+        "tsb_proxy": -3.724,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-02-14",
+        "runs": 6,
+        "dist_km": 73.668,
+        "elv_m": 1063.0,
+        "moving_h": 8.1,
+        "load": 309.435,
+        "rel_eff": 194,
+        "ctl_proxy": 297.539,
+        "atl_proxy": 305.125,
+        "tsb_proxy": -7.585,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-02-21",
+        "runs": 7,
+        "dist_km": 48.684,
+        "elv_m": 351.0,
+        "moving_h": 4.045,
+        "load": 432.018,
+        "rel_eff": 194,
+        "ctl_proxy": 335.962,
+        "atl_proxy": 389.72,
+        "tsb_proxy": -53.758,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-02-28",
+        "runs": 7,
+        "dist_km": 61.653,
+        "elv_m": 537.0,
+        "moving_h": 5.091,
+        "load": 363.842,
+        "rel_eff": 321,
+        "ctl_proxy": 343.928,
+        "atl_proxy": 372.468,
+        "tsb_proxy": -28.541,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-03-07",
+        "runs": 3,
+        "dist_km": 26.096,
+        "elv_m": 264.0,
+        "moving_h": 2.349,
+        "load": 137.581,
+        "rel_eff": 132,
+        "ctl_proxy": 284.971,
+        "atl_proxy": 215.876,
+        "tsb_proxy": 69.095,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-03-14",
+        "runs": 5,
+        "dist_km": 64.755,
+        "elv_m": 323.0,
+        "moving_h": 5.492,
+        "load": 257.367,
+        "rel_eff": 473,
+        "ctl_proxy": 277.085,
+        "atl_proxy": 243.537,
+        "tsb_proxy": 33.547,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-03-21",
+        "runs": 1,
+        "dist_km": 6.492,
+        "elv_m": 127.0,
+        "moving_h": 0.573,
+        "load": 72.048,
+        "rel_eff": 34,
+        "ctl_proxy": 218.503,
+        "atl_proxy": 129.211,
+        "tsb_proxy": 89.292,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-03-28",
+        "runs": 3,
+        "dist_km": 28.439,
+        "elv_m": 223.0,
+        "moving_h": 2.476,
+        "load": 173.803,
+        "rel_eff": 168,
+        "ctl_proxy": 205.731,
+        "atl_proxy": 158.939,
+        "tsb_proxy": 46.792,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-04-04",
+        "runs": 4,
+        "dist_km": 57.719,
+        "elv_m": 1114.0,
+        "moving_h": 7.018,
+        "load": 160.718,
+        "rel_eff": 386,
+        "ctl_proxy": 192.87,
+        "atl_proxy": 160.125,
+        "tsb_proxy": 32.745,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-04-11",
+        "runs": 6,
+        "dist_km": 32.464,
+        "elv_m": 692.0,
+        "moving_h": 3.378,
+        "load": 273.118,
+        "rel_eff": 137,
+        "ctl_proxy": 215.798,
+        "atl_proxy": 235.454,
+        "tsb_proxy": -19.655,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-04-18",
+        "runs": 5,
+        "dist_km": 57.419,
+        "elv_m": 266.0,
+        "moving_h": 5.208,
+        "load": 199.498,
+        "rel_eff": 588,
+        "ctl_proxy": 211.141,
+        "atl_proxy": 211.483,
+        "tsb_proxy": -0.342,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-04-25",
+        "runs": 3,
+        "dist_km": 32.641,
+        "elv_m": 1574.0,
+        "moving_h": 5.828,
+        "load": 113.27,
+        "rel_eff": 199,
+        "ctl_proxy": 183.178,
+        "atl_proxy": 146.008,
+        "tsb_proxy": 37.17,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-05-02",
+        "runs": 5,
+        "dist_km": 47.64,
+        "elv_m": 617.0,
+        "moving_h": 4.939,
+        "load": 233.44,
+        "rel_eff": 214,
+        "ctl_proxy": 197.539,
+        "atl_proxy": 204.296,
+        "tsb_proxy": -6.758,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-05-09",
+        "runs": 4,
+        "dist_km": 72.953,
+        "elv_m": 3504.0,
+        "moving_h": 12.332,
+        "load": 205.203,
+        "rel_eff": 397,
+        "ctl_proxy": 199.728,
+        "atl_proxy": 204.901,
+        "tsb_proxy": -5.172,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-05-16",
+        "runs": 4,
+        "dist_km": 27.576,
+        "elv_m": 610.0,
+        "moving_h": 3.007,
+        "load": 205.806,
+        "rel_eff": 303,
+        "ctl_proxy": 201.465,
+        "atl_proxy": 205.504,
+        "tsb_proxy": -4.039,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-05-23",
+        "runs": 9,
+        "dist_km": 50.533,
+        "elv_m": 497.0,
+        "moving_h": 6.443,
+        "load": 307.667,
+        "rel_eff": 378,
+        "ctl_proxy": 231.808,
+        "atl_proxy": 273.613,
+        "tsb_proxy": -41.805,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-05-30",
+        "runs": 7,
+        "dist_km": 46.601,
+        "elv_m": 233.0,
+        "moving_h": 4.478,
+        "load": 248.093,
+        "rel_eff": 270,
+        "ctl_proxy": 236.461,
+        "atl_proxy": 256.6,
+        "tsb_proxy": -20.139,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-06-06",
+        "runs": 3,
+        "dist_km": 48.36,
+        "elv_m": 571.0,
+        "moving_h": 5.269,
+        "load": 79.386,
+        "rel_eff": 457,
+        "ctl_proxy": 191.583,
+        "atl_proxy": 138.457,
+        "tsb_proxy": 53.125,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-06-13",
+        "runs": 4,
+        "dist_km": 216.995,
+        "elv_m": 4970.0,
+        "moving_h": 32.315,
+        "load": 50.0,
+        "rel_eff": 793,
+        "ctl_proxy": 151.13,
+        "atl_proxy": 79.486,
+        "tsb_proxy": 71.645,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-06-20",
+        "runs": 4,
+        "dist_km": 21.229,
+        "elv_m": 360.0,
+        "moving_h": 1.978,
+        "load": 205.604,
+        "rel_eff": 144,
+        "ctl_proxy": 166.694,
+        "atl_proxy": 163.565,
+        "tsb_proxy": 3.13,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-06-27",
+        "runs": 5,
+        "dist_km": 43.892,
+        "elv_m": 659.0,
+        "moving_h": 4.241,
+        "load": 231.085,
+        "rel_eff": 250,
+        "ctl_proxy": 185.092,
+        "atl_proxy": 208.578,
+        "tsb_proxy": -23.486,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-07-04",
+        "runs": 9,
+        "dist_km": 48.451,
+        "elv_m": 906.0,
+        "moving_h": 5.182,
+        "load": 238.268,
+        "rel_eff": 324,
+        "ctl_proxy": 200.285,
+        "atl_proxy": 228.372,
+        "tsb_proxy": -28.087,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-07-11",
+        "runs": 4,
+        "dist_km": 35.257,
+        "elv_m": 310.0,
+        "moving_h": 3.206,
+        "load": 208.215,
+        "rel_eff": 172,
+        "ctl_proxy": 202.551,
+        "atl_proxy": 214.934,
+        "tsb_proxy": -12.383,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-07-18",
+        "runs": 5,
+        "dist_km": 53.897,
+        "elv_m": 525.0,
+        "moving_h": 5.454,
+        "load": 187.612,
+        "rel_eff": 243,
+        "ctl_proxy": 198.282,
+        "atl_proxy": 196.719,
+        "tsb_proxy": 1.563,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-07-25",
+        "runs": 4,
+        "dist_km": 39.963,
+        "elv_m": 723.0,
+        "moving_h": 3.625,
+        "load": 294.862,
+        "rel_eff": 335,
+        "ctl_proxy": 225.877,
+        "atl_proxy": 262.148,
+        "tsb_proxy": -36.271,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-08-01",
+        "runs": 7,
+        "dist_km": 85.582,
+        "elv_m": 4025.0,
+        "moving_h": 21.173,
+        "load": 300.0,
+        "rel_eff": 243,
+        "ctl_proxy": 247.055,
+        "atl_proxy": 287.383,
+        "tsb_proxy": -40.328,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-08-08",
+        "runs": 7,
+        "dist_km": 57.261,
+        "elv_m": 285.0,
+        "moving_h": 4.8,
+        "load": 425.38,
+        "rel_eff": 368,
+        "ctl_proxy": 298.005,
+        "atl_proxy": 379.381,
+        "tsb_proxy": -81.376,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-08-15",
+        "runs": 7,
+        "dist_km": 59.8,
+        "elv_m": 906.0,
+        "moving_h": 6.253,
+        "load": 245.304,
+        "rel_eff": 289,
+        "ctl_proxy": 282.947,
+        "atl_proxy": 289.996,
+        "tsb_proxy": -7.049,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-08-22",
+        "runs": 10,
+        "dist_km": 90.801,
+        "elv_m": 890.0,
+        "moving_h": 8.36,
+        "load": 404.087,
+        "rel_eff": 509,
+        "ctl_proxy": 317.559,
+        "atl_proxy": 366.057,
+        "tsb_proxy": -48.498,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-08-29",
+        "runs": 7,
+        "dist_km": 60.752,
+        "elv_m": 723.0,
+        "moving_h": 6.415,
+        "load": 283.128,
+        "rel_eff": 246,
+        "ctl_proxy": 307.721,
+        "atl_proxy": 310.771,
+        "tsb_proxy": -3.05,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-09-05",
+        "runs": 6,
+        "dist_km": 63.354,
+        "elv_m": 1188.0,
+        "moving_h": 6.657,
+        "load": 222.526,
+        "rel_eff": 241,
+        "ctl_proxy": 283.38,
+        "atl_proxy": 251.941,
+        "tsb_proxy": 31.439,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-09-12",
+        "runs": 6,
+        "dist_km": 53.155,
+        "elv_m": 202.0,
+        "moving_h": 5.119,
+        "load": 268.26,
+        "rel_eff": 262,
+        "ctl_proxy": 279.06,
+        "atl_proxy": 262.82,
+        "tsb_proxy": 16.24,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-09-19",
+        "runs": 4,
+        "dist_km": 60.32,
+        "elv_m": 292.0,
+        "moving_h": 5.279,
+        "load": 125.587,
+        "rel_eff": 451,
+        "ctl_proxy": 235.21,
+        "atl_proxy": 171.331,
+        "tsb_proxy": 63.879,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-09-26",
+        "runs": 2,
+        "dist_km": 19.851,
+        "elv_m": 377.0,
+        "moving_h": 1.8,
+        "load": 66.367,
+        "rel_eff": 208,
+        "ctl_proxy": 186.969,
+        "atl_proxy": 101.355,
+        "tsb_proxy": 85.614,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-10-03",
+        "runs": 5,
+        "dist_km": 39.045,
+        "elv_m": 901.0,
+        "moving_h": 4.194,
+        "load": 196.274,
+        "rel_eff": 288,
+        "ctl_proxy": 189.628,
+        "atl_proxy": 164.634,
+        "tsb_proxy": 24.994,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-10-10",
+        "runs": 6,
+        "dist_km": 54.681,
+        "elv_m": 455.0,
+        "moving_h": 5.008,
+        "load": 207.889,
+        "rel_eff": 254,
+        "ctl_proxy": 194.845,
+        "atl_proxy": 193.471,
+        "tsb_proxy": 1.374,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-10-17",
+        "runs": 5,
+        "dist_km": 70.644,
+        "elv_m": 363.0,
+        "moving_h": 6.412,
+        "load": 196.946,
+        "rel_eff": 328,
+        "ctl_proxy": 195.446,
+        "atl_proxy": 195.788,
+        "tsb_proxy": -0.342,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-10-24",
+        "runs": 5,
+        "dist_km": 74.948,
+        "elv_m": 693.0,
+        "moving_h": 6.526,
+        "load": 263.19,
+        "rel_eff": 417,
+        "ctl_proxy": 214.801,
+        "atl_proxy": 240.723,
+        "tsb_proxy": -25.921,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-10-31",
+        "runs": 6,
+        "dist_km": 73.333,
+        "elv_m": 595.0,
+        "moving_h": 6.424,
+        "load": 260.502,
+        "rel_eff": 376,
+        "ctl_proxy": 227.859,
+        "atl_proxy": 253.909,
+        "tsb_proxy": -26.05,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-11-07",
+        "runs": 5,
+        "dist_km": 72.881,
+        "elv_m": 398.0,
+        "moving_h": 6.406,
+        "load": 184.677,
+        "rel_eff": 497,
+        "ctl_proxy": 215.521,
+        "atl_proxy": 207.754,
+        "tsb_proxy": 7.767,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-11-14",
+        "runs": 4,
+        "dist_km": 35.843,
+        "elv_m": 878.0,
+        "moving_h": 4.715,
+        "load": 158.751,
+        "rel_eff": 71,
+        "ctl_proxy": 199.301,
+        "atl_proxy": 175.086,
+        "tsb_proxy": 24.215,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-11-21",
+        "runs": 6,
+        "dist_km": 67.994,
+        "elv_m": 363.0,
+        "moving_h": 5.834,
+        "load": 313.809,
+        "rel_eff": 436,
+        "ctl_proxy": 232.018,
+        "atl_proxy": 267.568,
+        "tsb_proxy": -35.55,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-11-28",
+        "runs": 6,
+        "dist_km": 78.61,
+        "elv_m": 405.0,
+        "moving_h": 6.479,
+        "load": 314.365,
+        "rel_eff": 471,
+        "ctl_proxy": 255.545,
+        "atl_proxy": 298.766,
+        "tsb_proxy": -43.221,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-12-05",
+        "runs": 5,
+        "dist_km": 81.932,
+        "elv_m": 709.0,
+        "moving_h": 6.764,
+        "load": 271.231,
+        "rel_eff": 537,
+        "ctl_proxy": 260.027,
+        "atl_proxy": 280.409,
+        "tsb_proxy": -20.382,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-12-12",
+        "runs": 6,
+        "dist_km": 61.052,
+        "elv_m": 271.0,
+        "moving_h": 5.778,
+        "load": 194.122,
+        "rel_eff": 207,
+        "ctl_proxy": 241.197,
+        "atl_proxy": 222.884,
+        "tsb_proxy": 18.313,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-12-19",
+        "runs": 7,
+        "dist_km": 56.123,
+        "elv_m": 606.0,
+        "moving_h": 4.869,
+        "load": 395.197,
+        "rel_eff": 313,
+        "ctl_proxy": 285.197,
+        "atl_proxy": 337.759,
+        "tsb_proxy": -52.562,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2023-12-26",
+        "runs": 4,
+        "dist_km": 61.526,
+        "elv_m": 739.0,
+        "moving_h": 5.53,
+        "load": 190.272,
+        "rel_eff": 247,
+        "ctl_proxy": 258.075,
+        "atl_proxy": 239.434,
+        "tsb_proxy": 18.641,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-01-02",
+        "runs": 5,
+        "dist_km": 54.469,
+        "elv_m": 443.0,
+        "moving_h": 4.991,
+        "load": 264.965,
+        "rel_eff": 323,
+        "ctl_proxy": 260.044,
+        "atl_proxy": 256.455,
+        "tsb_proxy": 3.589,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-01-09",
+        "runs": 8,
+        "dist_km": 90.291,
+        "elv_m": 368.0,
+        "moving_h": 7.858,
+        "load": 361.901,
+        "rel_eff": 518,
+        "ctl_proxy": 289.146,
+        "atl_proxy": 326.752,
+        "tsb_proxy": -37.606,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-01-16",
+        "runs": 7,
+        "dist_km": 85.103,
+        "elv_m": 578.0,
+        "moving_h": 7.884,
+        "load": 243.705,
+        "rel_eff": 370,
+        "ctl_proxy": 276.163,
+        "atl_proxy": 271.388,
+        "tsb_proxy": 4.775,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-01-23",
+        "runs": 7,
+        "dist_km": 82.136,
+        "elv_m": 501.0,
+        "moving_h": 7.539,
+        "load": 231.487,
+        "rel_eff": 512,
+        "ctl_proxy": 263.398,
+        "atl_proxy": 244.787,
+        "tsb_proxy": 18.611,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-01-30",
+        "runs": 8,
+        "dist_km": 64.818,
+        "elv_m": 680.0,
+        "moving_h": 6.795,
+        "load": 254.296,
+        "rel_eff": 279,
+        "ctl_proxy": 260.798,
+        "atl_proxy": 251.126,
+        "tsb_proxy": 9.671,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-02-06",
+        "runs": 7,
+        "dist_km": 55.888,
+        "elv_m": 540.0,
+        "moving_h": 5.063,
+        "load": 249.759,
+        "rel_eff": 319,
+        "ctl_proxy": 257.644,
+        "atl_proxy": 250.215,
+        "tsb_proxy": 7.429,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-02-13",
+        "runs": 5,
+        "dist_km": 68.818,
+        "elv_m": 122.0,
+        "moving_h": 5.4,
+        "load": 231.986,
+        "rel_eff": 511,
+        "ctl_proxy": 250.313,
+        "atl_proxy": 238.062,
+        "tsb_proxy": 12.251,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-02-20",
+        "runs": 1,
+        "dist_km": 7.479,
+        "elv_m": 16.0,
+        "moving_h": 0.627,
+        "load": 57.33,
+        "rel_eff": 47,
+        "ctl_proxy": 195.175,
+        "atl_proxy": 117.574,
+        "tsb_proxy": 77.601,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-02-27",
+        "runs": 2,
+        "dist_km": 13.291,
+        "elv_m": 269.0,
+        "moving_h": 1.429,
+        "load": 67.543,
+        "rel_eff": 54,
+        "ctl_proxy": 158.709,
+        "atl_proxy": 84.22,
+        "tsb_proxy": 74.489,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-03-05",
+        "runs": 4,
+        "dist_km": 37.596,
+        "elv_m": 464.0,
+        "moving_h": 3.655,
+        "load": 162.691,
+        "rel_eff": 279,
+        "ctl_proxy": 159.846,
+        "atl_proxy": 136.534,
+        "tsb_proxy": 23.313,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-03-12",
+        "runs": 5,
+        "dist_km": 47.263,
+        "elv_m": 385.0,
+        "moving_h": 4.524,
+        "load": 217.474,
+        "rel_eff": 152,
+        "ctl_proxy": 176.312,
+        "atl_proxy": 190.494,
+        "tsb_proxy": -14.183,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-03-19",
+        "runs": 5,
+        "dist_km": 63.912,
+        "elv_m": 1280.0,
+        "moving_h": 6.671,
+        "load": 223.45,
+        "rel_eff": 380,
+        "ctl_proxy": 189.78,
+        "atl_proxy": 212.465,
+        "tsb_proxy": -22.685,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-03-26",
+        "runs": 2,
+        "dist_km": 11.468,
+        "elv_m": 96.0,
+        "moving_h": 1.267,
+        "load": 28.812,
+        "rel_eff": 35,
+        "ctl_proxy": 143.789,
+        "atl_proxy": 90.029,
+        "tsb_proxy": 53.759,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-04-02",
+        "runs": 3,
+        "dist_km": 39.677,
+        "elv_m": 334.0,
+        "moving_h": 4.553,
+        "load": 79.917,
+        "rel_eff": 327,
+        "ctl_proxy": 125.54,
+        "atl_proxy": 83.288,
+        "tsb_proxy": 42.252,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-04-09",
+        "runs": 9,
+        "dist_km": 67.638,
+        "elv_m": 1151.0,
+        "moving_h": 7.004,
+        "load": 235.194,
+        "rel_eff": 452,
+        "ctl_proxy": 156.869,
+        "atl_proxy": 184.558,
+        "tsb_proxy": -27.689,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-04-16",
+        "runs": 4,
+        "dist_km": 66.434,
+        "elv_m": 254.0,
+        "moving_h": 5.751,
+        "load": 152.099,
+        "rel_eff": 488,
+        "ctl_proxy": 155.507,
+        "atl_proxy": 162.919,
+        "tsb_proxy": -7.412,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-04-23",
+        "runs": 4,
+        "dist_km": 37.527,
+        "elv_m": 469.0,
+        "moving_h": 3.759,
+        "load": 142.788,
+        "rel_eff": 155,
+        "ctl_proxy": 151.873,
+        "atl_proxy": 149.498,
+        "tsb_proxy": 2.374,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-04-30",
+        "runs": 5,
+        "dist_km": 47.157,
+        "elv_m": 561.0,
+        "moving_h": 4.469,
+        "load": 211.872,
+        "rel_eff": 282,
+        "ctl_proxy": 169.015,
+        "atl_proxy": 191.08,
+        "tsb_proxy": -22.065,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-05-07",
+        "runs": 4,
+        "dist_km": 54.794,
+        "elv_m": 2174.0,
+        "moving_h": 7.916,
+        "load": 110.379,
+        "rel_eff": 487,
+        "ctl_proxy": 152.262,
+        "atl_proxy": 137.28,
+        "tsb_proxy": 14.982,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-05-14",
+        "runs": 2,
+        "dist_km": 11.066,
+        "elv_m": 500.0,
+        "moving_h": 1.827,
+        "load": 89.049,
+        "rel_eff": 93,
+        "ctl_proxy": 134.201,
+        "atl_proxy": 105.126,
+        "tsb_proxy": 29.075,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-05-21",
+        "runs": 6,
+        "dist_km": 45.766,
+        "elv_m": 881.0,
+        "moving_h": 4.834,
+        "load": 280.65,
+        "rel_eff": 231,
+        "ctl_proxy": 176.044,
+        "atl_proxy": 222.142,
+        "tsb_proxy": -46.098,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-05-28",
+        "runs": 9,
+        "dist_km": 68.984,
+        "elv_m": 1630.0,
+        "moving_h": 7.908,
+        "load": 377.009,
+        "rel_eff": 365,
+        "ctl_proxy": 233.462,
+        "atl_proxy": 325.387,
+        "tsb_proxy": -91.924,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.556
+      },
+      {
+        "week_start": "2024-06-04",
+        "runs": 7,
+        "dist_km": 80.618,
+        "elv_m": 2318.0,
+        "moving_h": 10.222,
+        "load": 257.533,
+        "rel_eff": 466,
+        "ctl_proxy": 240.34,
+        "atl_proxy": 280.151,
+        "tsb_proxy": -39.811,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.714
+      },
+      {
+        "week_start": "2024-06-11",
+        "runs": 8,
+        "dist_km": 61.007,
+        "elv_m": 1525.0,
+        "moving_h": 6.348,
+        "load": 268.302,
+        "rel_eff": 306,
+        "ctl_proxy": 248.329,
+        "atl_proxy": 272.252,
+        "tsb_proxy": -23.923,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.75
+      },
+      {
+        "week_start": "2024-06-18",
+        "runs": 6,
+        "dist_km": 78.593,
+        "elv_m": 1443.0,
+        "moving_h": 7.767,
+        "load": 303.292,
+        "rel_eff": 387,
+        "ctl_proxy": 264.033,
+        "atl_proxy": 292.945,
+        "tsb_proxy": -28.912,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-06-25",
+        "runs": 7,
+        "dist_km": 93.323,
+        "elv_m": 2976.0,
+        "moving_h": 11.109,
+        "load": 259.133,
+        "rel_eff": 504,
+        "ctl_proxy": 262.633,
+        "atl_proxy": 270.404,
+        "tsb_proxy": -7.771,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-07-02",
+        "runs": 6,
+        "dist_km": 55.611,
+        "elv_m": 962.0,
+        "moving_h": 6.761,
+        "load": 127.125,
+        "rel_eff": 148,
+        "ctl_proxy": 223.916,
+        "atl_proxy": 174.885,
+        "tsb_proxy": 49.032,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.5
+      },
+      {
+        "week_start": "2024-07-09",
+        "runs": 7,
+        "dist_km": 105.889,
+        "elv_m": 2436.0,
+        "moving_h": 10.833,
+        "load": 260.962,
+        "rel_eff": 750,
+        "ctl_proxy": 234.501,
+        "atl_proxy": 232.27,
+        "tsb_proxy": 2.231,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.857
+      },
+      {
+        "week_start": "2024-07-16",
+        "runs": 6,
+        "dist_km": 63.372,
+        "elv_m": 2362.0,
+        "moving_h": 8.391,
+        "load": 223.581,
+        "rel_eff": 326,
+        "ctl_proxy": 231.381,
+        "atl_proxy": 226.478,
+        "tsb_proxy": 4.904,
+        "cold_moving_h_lt10c": 2.451,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-07-23",
+        "runs": 4,
+        "dist_km": 33.029,
+        "elv_m": 566.0,
+        "moving_h": 3.447,
+        "load": 103.782,
+        "rel_eff": 120,
+        "ctl_proxy": 194.924,
+        "atl_proxy": 144.681,
+        "tsb_proxy": 50.244,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-07-30",
+        "runs": 5,
+        "dist_km": 90.266,
+        "elv_m": 4308.0,
+        "moving_h": 13.595,
+        "load": 202.905,
+        "rel_eff": 428,
+        "ctl_proxy": 197.204,
+        "atl_proxy": 183.497,
+        "tsb_proxy": 13.708,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-08-06",
+        "runs": 8,
+        "dist_km": 114.003,
+        "elv_m": 5128.0,
+        "moving_h": 17.442,
+        "load": 389.872,
+        "rel_eff": 417,
+        "ctl_proxy": 252.252,
+        "atl_proxy": 321.08,
+        "tsb_proxy": -68.828,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-08-13",
+        "runs": 9,
+        "dist_km": 44.778,
+        "elv_m": 817.0,
+        "moving_h": 6.024,
+        "load": 161.03,
+        "rel_eff": 146,
+        "ctl_proxy": 226.189,
+        "atl_proxy": 214.38,
+        "tsb_proxy": 11.809,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.667
+      },
+      {
+        "week_start": "2024-08-20",
+        "runs": 5,
+        "dist_km": 43.789,
+        "elv_m": 1154.0,
+        "moving_h": 6.727,
+        "load": 268.026,
+        "rel_eff": 140,
+        "ctl_proxy": 238.142,
+        "atl_proxy": 250.144,
+        "tsb_proxy": -12.002,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-08-27",
+        "runs": 2,
+        "dist_km": 95.927,
+        "elv_m": 5632.0,
+        "moving_h": 17.152,
+        "load": 99.518,
+        "rel_eff": 526,
+        "ctl_proxy": 198.535,
+        "atl_proxy": 149.727,
+        "tsb_proxy": 48.809,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-09-03",
+        "runs": 1,
+        "dist_km": 5.51,
+        "elv_m": 32.0,
+        "moving_h": 0.595,
+        "load": 21.076,
+        "rel_eff": 12,
+        "ctl_proxy": 147.833,
+        "atl_proxy": 63.959,
+        "tsb_proxy": 83.873,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-09-10",
+        "runs": 4,
+        "dist_km": 38.579,
+        "elv_m": 479.0,
+        "moving_h": 4.254,
+        "load": 161.717,
+        "rel_eff": 159,
+        "ctl_proxy": 151.8,
+        "atl_proxy": 129.131,
+        "tsb_proxy": 22.668,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-09-17",
+        "runs": 7,
+        "dist_km": 84.688,
+        "elv_m": 1246.0,
+        "moving_h": 9.359,
+        "load": 232.304,
+        "rel_eff": 528,
+        "ctl_proxy": 174.801,
+        "atl_proxy": 197.913,
+        "tsb_proxy": -23.112,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-09-24",
+        "runs": 5,
+        "dist_km": 60.348,
+        "elv_m": 1423.0,
+        "moving_h": 6.711,
+        "load": 156.198,
+        "rel_eff": 218,
+        "ctl_proxy": 169.486,
+        "atl_proxy": 170.103,
+        "tsb_proxy": -0.617,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2024-10-01",
+        "runs": 3,
+        "dist_km": 121.365,
+        "elv_m": 5247.0,
+        "moving_h": 20.546,
+        "load": 50.0,
+        "rel_eff": 471,
+        "ctl_proxy": 135.347,
+        "atl_proxy": 90.034,
+        "tsb_proxy": 45.313,
+        "cold_moving_h_lt10c": 19.365,
+        "temp_obs_frac": 0.333
+      },
+      {
+        "week_start": "2024-10-08",
+        "runs": 1,
+        "dist_km": 6.389,
+        "elv_m": 0.0,
+        "moving_h": 0.589,
+        "load": 0.0,
+        "rel_eff": 9,
+        "ctl_proxy": 96.677,
+        "atl_proxy": 30.011,
+        "tsb_proxy": 66.665,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.0
+      },
+      {
+        "week_start": "2024-10-15",
+        "runs": 4,
+        "dist_km": 32.459,
+        "elv_m": 381.0,
+        "moving_h": 3.433,
+        "load": 67.291,
+        "rel_eff": 131,
+        "ctl_proxy": 88.281,
+        "atl_proxy": 54.864,
+        "tsb_proxy": 33.416,
+        "cold_moving_h_lt10c": 1.005,
+        "temp_obs_frac": 0.75
+      },
+      {
+        "week_start": "2024-10-22",
+        "runs": 6,
+        "dist_km": 44.084,
+        "elv_m": 614.0,
+        "moving_h": 4.45,
+        "load": 201.298,
+        "rel_eff": 277,
+        "ctl_proxy": 120.571,
+        "atl_proxy": 152.487,
+        "tsb_proxy": -31.916,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2024-10-29",
+        "runs": 6,
+        "dist_km": 70.609,
+        "elv_m": 727.0,
+        "moving_h": 6.596,
+        "load": 281.19,
+        "rel_eff": 283,
+        "ctl_proxy": 166.462,
+        "atl_proxy": 238.289,
+        "tsb_proxy": -71.827,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-11-05",
+        "runs": 2,
+        "dist_km": 17.651,
+        "elv_m": 269.0,
+        "moving_h": 1.82,
+        "load": 59.581,
+        "rel_eff": 79,
+        "ctl_proxy": 135.925,
+        "atl_proxy": 119.15,
+        "tsb_proxy": 16.774,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-11-12",
+        "runs": 4,
+        "dist_km": 34.181,
+        "elv_m": 481.0,
+        "moving_h": 3.976,
+        "load": 71.537,
+        "rel_eff": 133,
+        "ctl_proxy": 117.528,
+        "atl_proxy": 87.408,
+        "tsb_proxy": 30.12,
+        "cold_moving_h_lt10c": 1.356,
+        "temp_obs_frac": 0.5
+      },
+      {
+        "week_start": "2024-11-19",
+        "runs": 4,
+        "dist_km": 38.223,
+        "elv_m": 699.0,
+        "moving_h": 4.346,
+        "load": 98.559,
+        "rel_eff": 163,
+        "ctl_proxy": 112.109,
+        "atl_proxy": 94.842,
+        "tsb_proxy": 17.267,
+        "cold_moving_h_lt10c": 1.664,
+        "temp_obs_frac": 0.75
+      },
+      {
+        "week_start": "2024-11-26",
+        "runs": 5,
+        "dist_km": 74.996,
+        "elv_m": 908.0,
+        "moving_h": 7.028,
+        "load": 230.663,
+        "rel_eff": 464,
+        "ctl_proxy": 145.981,
+        "atl_proxy": 185.389,
+        "tsb_proxy": -39.408,
+        "cold_moving_h_lt10c": 3.245,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-12-03",
+        "runs": 8,
+        "dist_km": 84.092,
+        "elv_m": 1521.0,
+        "moving_h": 8.559,
+        "load": 300.055,
+        "rel_eff": 305,
+        "ctl_proxy": 190.002,
+        "atl_proxy": 261.833,
+        "tsb_proxy": -71.831,
+        "cold_moving_h_lt10c": 6.844,
+        "temp_obs_frac": 0.875
+      },
+      {
+        "week_start": "2024-12-10",
+        "runs": 5,
+        "dist_km": 59.97,
+        "elv_m": 452.0,
+        "moving_h": 5.558,
+        "load": 226.637,
+        "rel_eff": 330,
+        "ctl_proxy": 200.469,
+        "atl_proxy": 238.369,
+        "tsb_proxy": -37.9,
+        "cold_moving_h_lt10c": 3.234,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-12-17",
+        "runs": 3,
+        "dist_km": 26.395,
+        "elv_m": 512.0,
+        "moving_h": 2.826,
+        "load": 68.795,
+        "rel_eff": 127,
+        "ctl_proxy": 162.848,
+        "atl_proxy": 125.32,
+        "tsb_proxy": 37.528,
+        "cold_moving_h_lt10c": 0.808,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-12-24",
+        "runs": 7,
+        "dist_km": 89.615,
+        "elv_m": 1094.0,
+        "moving_h": 8.541,
+        "load": 293.022,
+        "rel_eff": 409,
+        "ctl_proxy": 200.04,
+        "atl_proxy": 237.121,
+        "tsb_proxy": -37.08,
+        "cold_moving_h_lt10c": 7.534,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2024-12-31",
+        "runs": 7,
+        "dist_km": 84.647,
+        "elv_m": 1026.0,
+        "moving_h": 8.449,
+        "load": 185.859,
+        "rel_eff": 325,
+        "ctl_proxy": 195.989,
+        "atl_proxy": 202.946,
+        "tsb_proxy": -6.958,
+        "cold_moving_h_lt10c": 5.702,
+        "temp_obs_frac": 0.857
+      },
+      {
+        "week_start": "2025-01-07",
+        "runs": 8,
+        "dist_km": 92.074,
+        "elv_m": 1227.0,
+        "moving_h": 9.577,
+        "load": 218.397,
+        "rel_eff": 385,
+        "ctl_proxy": 202.391,
+        "atl_proxy": 213.247,
+        "tsb_proxy": -10.856,
+        "cold_moving_h_lt10c": 9.182,
+        "temp_obs_frac": 0.75
+      },
+      {
+        "week_start": "2025-01-14",
+        "runs": 6,
+        "dist_km": 65.412,
+        "elv_m": 591.0,
+        "moving_h": 6.584,
+        "load": 202.227,
+        "rel_eff": 216,
+        "ctl_proxy": 202.344,
+        "atl_proxy": 205.9,
+        "tsb_proxy": -3.556,
+        "cold_moving_h_lt10c": 5.407,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-01-21",
+        "runs": 5,
+        "dist_km": 62.347,
+        "elv_m": 1156.0,
+        "moving_h": 6.464,
+        "load": 187.076,
+        "rel_eff": 609,
+        "ctl_proxy": 197.982,
+        "atl_proxy": 193.35,
+        "tsb_proxy": 4.631,
+        "cold_moving_h_lt10c": 6.464,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-01-28",
+        "runs": 4,
+        "dist_km": 29.33,
+        "elv_m": 164.0,
+        "moving_h": 2.567,
+        "load": 220.38,
+        "rel_eff": 111,
+        "ctl_proxy": 204.381,
+        "atl_proxy": 211.37,
+        "tsb_proxy": -6.989,
+        "cold_moving_h_lt10c": 2.567,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-02-04",
+        "runs": 3,
+        "dist_km": 33.183,
+        "elv_m": 440.0,
+        "moving_h": 2.937,
+        "load": 190.862,
+        "rel_eff": 188,
+        "ctl_proxy": 200.519,
+        "atl_proxy": 197.698,
+        "tsb_proxy": 2.821,
+        "cold_moving_h_lt10c": 2.937,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-02-11",
+        "runs": 5,
+        "dist_km": 55.762,
+        "elv_m": 405.0,
+        "moving_h": 4.992,
+        "load": 149.208,
+        "rel_eff": 320,
+        "ctl_proxy": 185.858,
+        "atl_proxy": 165.371,
+        "tsb_proxy": 20.487,
+        "cold_moving_h_lt10c": 4.406,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-02-18",
+        "runs": 5,
+        "dist_km": 68.99,
+        "elv_m": 585.0,
+        "moving_h": 5.947,
+        "load": 268.25,
+        "rel_eff": 456,
+        "ctl_proxy": 209.399,
+        "atl_proxy": 233.957,
+        "tsb_proxy": -24.558,
+        "cold_moving_h_lt10c": 3.527,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-02-25",
+        "runs": 5,
+        "dist_km": 68.977,
+        "elv_m": 1465.0,
+        "moving_h": 8.225,
+        "load": 185.038,
+        "rel_eff": 251,
+        "ctl_proxy": 202.439,
+        "atl_proxy": 201.344,
+        "tsb_proxy": 1.094,
+        "cold_moving_h_lt10c": 6.968,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-03-04",
+        "runs": 6,
+        "dist_km": 47.855,
+        "elv_m": 346.0,
+        "moving_h": 4.283,
+        "load": 270.094,
+        "rel_eff": 363,
+        "ctl_proxy": 221.769,
+        "atl_proxy": 247.178,
+        "tsb_proxy": -25.409,
+        "cold_moving_h_lt10c": 0.584,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-03-11",
+        "runs": 6,
+        "dist_km": 61.617,
+        "elv_m": 442.0,
+        "moving_h": 5.32,
+        "load": 286.033,
+        "rel_eff": 449,
+        "ctl_proxy": 240.13,
+        "atl_proxy": 273.081,
+        "tsb_proxy": -32.951,
+        "cold_moving_h_lt10c": 4.669,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-03-18",
+        "runs": 6,
+        "dist_km": 65.244,
+        "elv_m": 245.0,
+        "moving_h": 6.042,
+        "load": 253.572,
+        "rel_eff": 446,
+        "ctl_proxy": 243.971,
+        "atl_proxy": 260.075,
+        "tsb_proxy": -16.104,
+        "cold_moving_h_lt10c": 1.721,
+        "temp_obs_frac": 0.667
+      },
+      {
+        "week_start": "2025-03-25",
+        "runs": 6,
+        "dist_km": 63.745,
+        "elv_m": 1036.0,
+        "moving_h": 6.738,
+        "load": 253.568,
+        "rel_eff": 229,
+        "ctl_proxy": 246.713,
+        "atl_proxy": 255.737,
+        "tsb_proxy": -9.024,
+        "cold_moving_h_lt10c": 1.251,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-04-01",
+        "runs": 6,
+        "dist_km": 40.614,
+        "elv_m": 1130.0,
+        "moving_h": 4.858,
+        "load": 251.234,
+        "rel_eff": 346,
+        "ctl_proxy": 248.004,
+        "atl_proxy": 252.735,
+        "tsb_proxy": -4.73,
+        "cold_moving_h_lt10c": 1.911,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-04-08",
+        "runs": 7,
+        "dist_km": 47.331,
+        "elv_m": 169.0,
+        "moving_h": 4.421,
+        "load": 306.354,
+        "rel_eff": 276,
+        "ctl_proxy": 264.676,
+        "atl_proxy": 288.481,
+        "tsb_proxy": -23.805,
+        "cold_moving_h_lt10c": 1.629,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-04-15",
+        "runs": 3,
+        "dist_km": 54.18,
+        "elv_m": 378.0,
+        "moving_h": 4.668,
+        "load": 160.011,
+        "rel_eff": 643,
+        "ctl_proxy": 234.771,
+        "atl_proxy": 202.834,
+        "tsb_proxy": 31.937,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-04-22",
+        "runs": 2,
+        "dist_km": 13.744,
+        "elv_m": 235.0,
+        "moving_h": 1.339,
+        "load": 96.613,
+        "rel_eff": 78,
+        "ctl_proxy": 195.298,
+        "atl_proxy": 132.02,
+        "tsb_proxy": 63.278,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-04-29",
+        "runs": 7,
+        "dist_km": 70.051,
+        "elv_m": 3237.0,
+        "moving_h": 10.669,
+        "load": 327.672,
+        "rel_eff": 698,
+        "ctl_proxy": 233.119,
+        "atl_proxy": 262.455,
+        "tsb_proxy": -29.336,
+        "cold_moving_h_lt10c": 3.096,
+        "temp_obs_frac": 0.857
+      },
+      {
+        "week_start": "2025-05-06",
+        "runs": 6,
+        "dist_km": 58.905,
+        "elv_m": 445.0,
+        "moving_h": 5.564,
+        "load": 220.882,
+        "rel_eff": 423,
+        "ctl_proxy": 229.623,
+        "atl_proxy": 234.74,
+        "tsb_proxy": -5.117,
+        "cold_moving_h_lt10c": 0.917,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-05-13",
+        "runs": 5,
+        "dist_km": 77.12,
+        "elv_m": 3707.0,
+        "moving_h": 11.873,
+        "load": 164.886,
+        "rel_eff": 699,
+        "ctl_proxy": 211.127,
+        "atl_proxy": 188.171,
+        "tsb_proxy": 22.956,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-05-20",
+        "runs": 1,
+        "dist_km": 8.803,
+        "elv_m": 258.0,
+        "moving_h": 1.132,
+        "load": 20.833,
+        "rel_eff": 19,
+        "ctl_proxy": 156.757,
+        "atl_proxy": 76.612,
+        "tsb_proxy": 80.145,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-05-27",
+        "runs": 6,
+        "dist_km": 55.838,
+        "elv_m": 607.0,
+        "moving_h": 5.899,
+        "load": 147.802,
+        "rel_eff": 337,
+        "ctl_proxy": 154.198,
+        "atl_proxy": 124.072,
+        "tsb_proxy": 30.126,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.667
+      },
+      {
+        "week_start": "2025-06-03",
+        "runs": 5,
+        "dist_km": 75.743,
+        "elv_m": 1385.0,
+        "moving_h": 8.175,
+        "load": 179.241,
+        "rel_eff": 405,
+        "ctl_proxy": 161.353,
+        "atl_proxy": 160.851,
+        "tsb_proxy": 0.502,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-06-10",
+        "runs": 7,
+        "dist_km": 65.895,
+        "elv_m": 1220.0,
+        "moving_h": 6.927,
+        "load": 212.489,
+        "rel_eff": 370,
+        "ctl_proxy": 175.964,
+        "atl_proxy": 195.276,
+        "tsb_proxy": -19.313,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.857
+      },
+      {
+        "week_start": "2025-06-17",
+        "runs": 6,
+        "dist_km": 65.589,
+        "elv_m": 950.0,
+        "moving_h": 6.737,
+        "load": 183.008,
+        "rel_eff": 500,
+        "ctl_proxy": 177.976,
+        "atl_proxy": 187.097,
+        "tsb_proxy": -9.121,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-06-24",
+        "runs": 8,
+        "dist_km": 58.026,
+        "elv_m": 1654.0,
+        "moving_h": 6.242,
+        "load": 420.112,
+        "rel_eff": 449,
+        "ctl_proxy": 247.158,
+        "atl_proxy": 342.441,
+        "tsb_proxy": -95.283,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-07-01",
+        "runs": 5,
+        "dist_km": 54.735,
+        "elv_m": 784.0,
+        "moving_h": 6.023,
+        "load": 120.104,
+        "rel_eff": 238,
+        "ctl_proxy": 210.857,
+        "atl_proxy": 194.216,
+        "tsb_proxy": 16.641,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.6
+      },
+      {
+        "week_start": "2025-07-08",
+        "runs": 6,
+        "dist_km": 84.841,
+        "elv_m": 1392.0,
+        "moving_h": 9.991,
+        "load": 215.923,
+        "rel_eff": 555,
+        "ctl_proxy": 212.304,
+        "atl_proxy": 208.687,
+        "tsb_proxy": 3.617,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-07-15",
+        "runs": 9,
+        "dist_km": 92.414,
+        "elv_m": 2018.0,
+        "moving_h": 11.029,
+        "load": 233.825,
+        "rel_eff": 472,
+        "ctl_proxy": 218.453,
+        "atl_proxy": 225.446,
+        "tsb_proxy": -6.993,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.778
+      },
+      {
+        "week_start": "2025-07-22",
+        "runs": 6,
+        "dist_km": 95.634,
+        "elv_m": 2018.0,
+        "moving_h": 10.929,
+        "load": 220.249,
+        "rel_eff": 520,
+        "ctl_proxy": 218.966,
+        "atl_proxy": 221.981,
+        "tsb_proxy": -3.015,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-07-29",
+        "runs": 9,
+        "dist_km": 123.93,
+        "elv_m": 4819.0,
+        "moving_h": 19.67,
+        "load": 232.236,
+        "rel_eff": 592,
+        "ctl_proxy": 222.758,
+        "atl_proxy": 228.818,
+        "tsb_proxy": -6.06,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.889
+      },
+      {
+        "week_start": "2025-08-05",
+        "runs": 12,
+        "dist_km": 166.216,
+        "elv_m": 6964.0,
+        "moving_h": 26.281,
+        "load": 466.23,
+        "rel_eff": 461,
+        "ctl_proxy": 292.321,
+        "atl_proxy": 387.092,
+        "tsb_proxy": -94.771,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-08-12",
+        "runs": 5,
+        "dist_km": 67.233,
+        "elv_m": 745.0,
+        "moving_h": 7.803,
+        "load": 114.508,
+        "rel_eff": 321,
+        "ctl_proxy": 241.517,
+        "atl_proxy": 205.37,
+        "tsb_proxy": 36.148,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.6
+      },
+      {
+        "week_start": "2025-08-19",
+        "runs": 6,
+        "dist_km": 46.388,
+        "elv_m": 1380.0,
+        "moving_h": 6.206,
+        "load": 262.368,
+        "rel_eff": 185,
+        "ctl_proxy": 247.475,
+        "atl_proxy": 243.369,
+        "tsb_proxy": 4.106,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-08-26",
+        "runs": 4,
+        "dist_km": 196.971,
+        "elv_m": 10415.0,
+        "moving_h": 39.919,
+        "load": 166.903,
+        "rel_eff": 745,
+        "ctl_proxy": 224.454,
+        "atl_proxy": 192.392,
+        "tsb_proxy": 32.063,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-09-02",
+        "runs": 1,
+        "dist_km": 5.032,
+        "elv_m": 35.0,
+        "moving_h": 0.586,
+        "load": 10.104,
+        "rel_eff": 7,
+        "ctl_proxy": 163.211,
+        "atl_proxy": 70.867,
+        "tsb_proxy": 92.345,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-09-09",
+        "runs": 1,
+        "dist_km": 5.434,
+        "elv_m": 154.0,
+        "moving_h": 0.586,
+        "load": 19.005,
+        "rel_eff": 10,
+        "ctl_proxy": 122.009,
+        "atl_proxy": 36.292,
+        "tsb_proxy": 85.718,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-09-16",
+        "runs": 3,
+        "dist_km": 20.96,
+        "elv_m": 115.0,
+        "moving_h": 1.917,
+        "load": 115.283,
+        "rel_eff": 153,
+        "ctl_proxy": 120.088,
+        "atl_proxy": 88.953,
+        "tsb_proxy": 31.135,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-09-23",
+        "runs": 2,
+        "dist_km": 24.249,
+        "elv_m": 316.0,
+        "moving_h": 2.434,
+        "load": 82.279,
+        "rel_eff": 248,
+        "ctl_proxy": 109.285,
+        "atl_proxy": 84.504,
+        "tsb_proxy": 24.782,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-09-30",
+        "runs": 4,
+        "dist_km": 46.526,
+        "elv_m": 650.0,
+        "moving_h": 4.538,
+        "load": 163.181,
+        "rel_eff": 331,
+        "ctl_proxy": 124.684,
+        "atl_proxy": 136.955,
+        "tsb_proxy": -12.271,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-10-07",
+        "runs": 6,
+        "dist_km": 52.532,
+        "elv_m": 424.0,
+        "moving_h": 5.143,
+        "load": 180.88,
+        "rel_eff": 277,
+        "ctl_proxy": 140.74,
+        "atl_proxy": 166.238,
+        "tsb_proxy": -25.498,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-10-14",
+        "runs": 4,
+        "dist_km": 45.099,
+        "elv_m": 456.0,
+        "moving_h": 4.305,
+        "load": 162.436,
+        "rel_eff": 313,
+        "ctl_proxy": 146.939,
+        "atl_proxy": 163.703,
+        "tsb_proxy": -16.765,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-10-21",
+        "runs": 6,
+        "dist_km": 70.311,
+        "elv_m": 631.0,
+        "moving_h": 6.491,
+        "load": 223.562,
+        "rel_eff": 558,
+        "ctl_proxy": 168.831,
+        "atl_proxy": 203.609,
+        "tsb_proxy": -34.778,
+        "cold_moving_h_lt10c": 1.501,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-10-28",
+        "runs": 6,
+        "dist_km": 74.568,
+        "elv_m": 461.0,
+        "moving_h": 6.777,
+        "load": 227.965,
+        "rel_eff": 502,
+        "ctl_proxy": 185.726,
+        "atl_proxy": 219.846,
+        "tsb_proxy": -34.12,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.833
+      },
+      {
+        "week_start": "2025-11-04",
+        "runs": 6,
+        "dist_km": 85.055,
+        "elv_m": 481.0,
+        "moving_h": 7.811,
+        "load": 264.975,
+        "rel_eff": 548,
+        "ctl_proxy": 208.369,
+        "atl_proxy": 249.932,
+        "tsb_proxy": -41.563,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-11-11",
+        "runs": 5,
+        "dist_km": 40.909,
+        "elv_m": 261.0,
+        "moving_h": 4.295,
+        "load": 130.105,
+        "rel_eff": 130,
+        "ctl_proxy": 186.008,
+        "atl_proxy": 170.047,
+        "tsb_proxy": 15.961,
+        "cold_moving_h_lt10c": 0.0,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-11-18",
+        "runs": 5,
+        "dist_km": 52.176,
+        "elv_m": 821.0,
+        "moving_h": 5.014,
+        "load": 170.57,
+        "rel_eff": 390,
+        "ctl_proxy": 181.597,
+        "atl_proxy": 170.395,
+        "tsb_proxy": 11.201,
+        "cold_moving_h_lt10c": 3.997,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-11-25",
+        "runs": 5,
+        "dist_km": 64.298,
+        "elv_m": 747.0,
+        "moving_h": 5.951,
+        "load": 235.733,
+        "rel_eff": 511,
+        "ctl_proxy": 197.064,
+        "atl_proxy": 213.954,
+        "tsb_proxy": -16.89,
+        "cold_moving_h_lt10c": 3.625,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-12-02",
+        "runs": 4,
+        "dist_km": 53.811,
+        "elv_m": 461.0,
+        "moving_h": 4.76,
+        "load": 161.544,
+        "rel_eff": 314,
+        "ctl_proxy": 186.916,
+        "atl_proxy": 179.014,
+        "tsb_proxy": 7.902,
+        "cold_moving_h_lt10c": 2.474,
+        "temp_obs_frac": 1.0
+      },
+      {
+        "week_start": "2025-12-09",
+        "runs": 5,
+        "dist_km": 31.749,
+        "elv_m": 210.0,
+        "moving_h": 3.349,
+        "load": 89.931,
+        "rel_eff": 133,
+        "ctl_proxy": 159.206,
+        "atl_proxy": 119.625,
+        "tsb_proxy": 39.581,
+        "cold_moving_h_lt10c": 0.751,
+        "temp_obs_frac": 0.8
+      },
+      {
+        "week_start": "2025-12-16",
+        "runs": 5,
+        "dist_km": 39.699,
+        "elv_m": 238.0,
+        "moving_h": 3.938,
+        "load": 123.601,
+        "rel_eff": 238,
+        "ctl_proxy": 149.033,
+        "atl_proxy": 122.276,
+        "tsb_proxy": 26.757,
+        "cold_moving_h_lt10c": 0.752,
+        "temp_obs_frac": 1.0
+      }
+    ],
+    "ctl_proxy_definition": {
+      "input": "Weekly sum of Activity Score for running activities",
+      "ctl_proxy": "EWMA(span=6 weeks) of weekly load",
+      "atl_proxy": "EWMA(span=2 weeks) of weekly load",
+      "tsb_proxy": "CTL - ATL"
+    }
+  },
+  "weather_exposure_profile": {
+    "_description": "Weather parsed from Veloviewer Description field. Use as exposure priors, not as exact course weather.",
+    "parse_coverage": {
+      "temp_parse_rate": 0.5917761763459093,
+      "humidity_parse_rate": 0.5913522679101314,
+      "wind_parse_rate": 0.5913522679101314
+    },
+    "stats": {
+      "last_365d": {
+        "activities": 279,
+        "temp_c": {
+          "min": -3.0,
+          "median": 13.0,
+          "max": 29.0
+        },
+        "wind_kmh": {
+          "median": 11.26538,
+          "p90": 25.74944
+        },
+        "humidity_pct": {
+          "median": 79.0,
+          "p90": 92.0
+        }
+      }
+    },
+    "cold_exposure": {
+      "lt_8c_moving_h_last_104w": 0.0,
+      "lt_10c_moving_h_last_104w": 0.0,
+      "lt_12c_moving_h_last_104w": 0.0,
+      "avg_weekly_moving_h_lt_8c_last_104w": 0.8937232905982906,
+      "p90_weekly_moving_h_lt_8c_last_104w": 3.1449166666666675,
+      "avg_weekly_moving_h_lt_10c_last_104w": 1.1878979700854702,
+      "p90_weekly_moving_h_lt_10c_last_104w": 3.885250000000001,
+      "avg_weekly_moving_h_lt_12c_last_104w": 1.855050747863248,
+      "p90_weekly_moving_h_lt_12c_last_104w": 5.949777777777778
+    },
+    "definitions": {
+      "cold_exposure": "Weekly moving time (hours) for runs where parsed temperature < threshold",
+      "wind_units": "km/h (mph converted where needed)"
+    }
+  },
+  "model_enhancements": {
+    "next_calibrations": [
+      "Calibrate Activity Score -> CTL mapping against the CTL numbers used in race_history (likely TrainingPeaks/Garmin load). Keep both as separate series until mapped.",
+      "Use weather_exposure_profile to adjust respiratory multipliers based on recent cold exposure (habituation) vs detraining.",
+      "Use weekly elevation density (elv_m/dist_km) to refine technical_terrain multipliers by season and training block.",
+      "Add shoe-level fatigue/injury signals using Gear field once shoe names are standardized."
+    ]
+  },
+  "race_overrides": {
+    "chianti_74k": {
+      "applies_to_race_id": "chianti_74k",
+      "assumptions": {
+        "altitude_below_1000m": true,
+        "course_is_runnable_trail": true,
+        "typical_temperature_band_c": [
+          12,
+          18
+        ],
+        "dry_or_light_rain": true
+      },
+      "override_multipliers": {
+        "altitude_penalty_multiplier": 0.0,
+        "technical_terrain_multiplier": 0.94,
+        "runnable_trail_multiplier": 0.96,
+        "field_loss_multiplier_runnable_trail": 0.92,
+        "short_climb_fatigue_multiplier": 0.6,
+        "downhill_damage_multiplier": 0.85,
+        "fatigue_inflection_km": 58,
+        "fatigue_slope_multiplier": 0.7,
+        "nutrition_failure_probability": 0.05,
+        "stop_time_multiplier": 0.85
+      },
+      "execution_targets": {
+        "carbs_g_per_hr_day": [
+          85,
+          110
+        ],
+        "fluids_ml_per_hr": [
+          450,
+          650
+        ],
+        "sodium_mg_per_hr": [
+          400,
+          600
+        ]
+      },
+      "expected_finish_time_band_hhmm": {
+        "p50": "10:40",
+        "p25": "10:25",
+        "p10": "10:10"
+      },
+      "notes": "Removes alpine altitude drag and reduces UTMB-style fatigue for runnable sub-80k profile. Adds field-loss factor where you gain relative time."
+    }
+  },
+  "similar_runner_calibration": {
+    "_description": "Calibration based on similar runner performance at Chianti 74K",
+    "target_time": "10:30",
+    "target_time_hours": 10.5,
+    "required_pace_kmh": 7.05,
+    "estimated_fitness_for_target": {
+      "fitness_level": 1.18,
+      "notes": "Based on Arc pace extrapolation and runnable terrain advantage"
+    },
+    "pace_comparison": {
+      "arc_42k_pace": 9.6,
+      "snowdonia_58k_pace": 5.4,
+      "chianti_74k_target_pace": 7.05,
+      "rationale": "Chianti is more runnable than Snowdonia but longer than Arc. Expected pace between the two."
+    },
+    "key_success_factors": [
+      "Fitness 1.15-1.20 (aggressive but achievable with focused training)",
+      "Optimal temperature (12-16\u00b0C)",
+      "Race mode or aggressive pacing",
+      "Minimal respiratory incidents",
+      "Fast aid station transitions (<90s average)"
+    ]
+  },
+  "terrain_advantages": {
+    "runnable_trails": {
+      "_description": "Athlete's advantage on runnable trail terrain",
+      "relative_to_field": 1.05,
+      "notes": "Field loses ~5% more time than athlete on runnable sections. This is the athlete's strength.",
+      "evidence": [
+        "Arc 2025: Top 30% on highly runnable course",
+        "Strong sustained pace capability",
+        "Marathon background provides speed endurance"
+      ]
+    },
+    "short_climbs": {
+      "_description": "Athlete's advantage on repeated short climbs (6-16%)",
+      "relative_to_field": 1.03,
+      "notes": "Better at maintaining rhythm on rolling terrain than extended alpine climbing",
+      "evidence": [
+        "Good uphill hiking efficiency",
+        "Mental toughness on repetitive efforts"
+      ]
+    }
+  }
+}

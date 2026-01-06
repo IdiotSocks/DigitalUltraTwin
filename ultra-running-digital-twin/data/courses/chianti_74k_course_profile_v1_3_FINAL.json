@@ -1,0 +1,137 @@
+{
+  "course_metadata": {
+    "race_id": "chianti_74k",
+    "race_name": "Chianti Ultra Trail 74K",
+    "distance_km": 74.0,
+    "elevation_gain_m": 2800,
+    "region": "Tuscany, Italy",
+    "course_type": "runnable_trail_hilly",
+    "notes": "FINAL CALIBRATION: Tuned to produce 10:30 at fitness 1.15-1.18 with optimal conditions.",
+    "version": "1.3",
+    "calibration_source": "Similar runner performance data (10:30 target)"
+  },
+  "environment_profile": {
+    "altitude_band_m": [
+      150,
+      700
+    ],
+    "altitude_penalty": {
+      "apply": false,
+      "starts_m": 1000,
+      "requires_continuous_exposure_min": 60,
+      "multiplier_per_1000m": 0.95,
+      "expected_effect_multiplier": 1.0,
+      "notes": "No penalty - Chianti stays below 700m"
+    },
+    "temperature_band_c": [
+      12,
+      18
+    ],
+    "wind_band_kmh": [
+      0,
+      20
+    ],
+    "precipitation_scenarios": [
+      "dry",
+      "light_rain"
+    ]
+  },
+  "terrain_profile": {
+    "surface_mix": {
+      "gravel_farm_track_pct": 35,
+      "singletrack_pct": 45,
+      "paved_or_town_pct": 20
+    },
+    "technicality": {
+      "dry_multiplier": 0.99,
+      "light_rain_multiplier": 0.96,
+      "wet_multiplier": 0.92,
+      "notes": "FINAL: Runnable Tuscan trails, only 1% slower than road in dry conditions."
+    },
+    "runnability": {
+      "runnable_fraction_estimate": 0.75,
+      "short_climb_pattern": true,
+      "notes": "Highly runnable compared to alpine ultras"
+    }
+  },
+  "climb_descent_structure": {
+    "climb_blocks": {
+      "typical_duration_min": [
+        6,
+        18
+      ],
+      "typical_grade_pct": [
+        6,
+        16
+      ],
+      "apply_short_climb_fatigue_multiplier": 0.85,
+      "notes": "Short punchy climbs are less fatiguing than sustained alpine ascents"
+    },
+    "descent_blocks": {
+      "typical_duration_min": [
+        4,
+        15
+      ],
+      "typical_grade_pct": [
+        -16,
+        -6
+      ],
+      "downhill_damage_multiplier": 0.92,
+      "notes": "Less technical descents = less quad damage than alpine"
+    }
+  },
+  "aid_station_model": {
+    "expected_stops_count": [
+      6,
+      10
+    ],
+    "median_stop_seconds": 75,
+    "p90_stop_seconds": 150,
+    "stop_time_multiplier": 1.0,
+    "notes": "FINAL: Very fast stops (75s median) for competitive experienced runners targeting 10:30"
+  },
+  "simulation_defaults": {
+    "fatigue_model": {
+      "fatigue_inflection_km": 60,
+      "fatigue_slope_multiplier": 0.75,
+      "fatigue_per_km_base": 0.9995,
+      "notes": "FINAL: Minimal fatigue for highly runnable course under 80km"
+    },
+    "field_effects": {
+      "field_loss_multiplier_runnable_trail": 1.06,
+      "field_loss_multiplier_short_climbs": 1.04,
+      "notes": "INVERTED: These represent YOUR advantage on runnable terrain. Field loses more time than you on technical sections, you GAIN on runnable sections."
+    }
+  },
+  "validation_targets": {
+    "expected_finish_time_band_hhmm": {
+      "p50_competitive": "10:30",
+      "p25_strong": "09:45",
+      "p75_solid": "11:15",
+      "notes": "Based on similar runner performance data",
+      "p10_elite": "09:30",
+      "p90_recreational": "12:30"
+    },
+    "sanity_checks": [
+      "Should produce ~10:30 for fitness 1.15-1.20 with optimal conditions",
+      "Should produce ~11:00-12:00 for fitness 1.05-1.10 with typical conditions",
+      "Arc pace (9.6 km/h) should extrapolate reasonably to Chianti",
+      "Faster than Snowdonia pace (5.4 km/h) due to more runnable terrain"
+    ]
+  },
+  "calibration_notes": {
+    "version_1_1_issues": [
+      "Field loss multipliers were penalties (0.92, 0.90) instead of advantages",
+      "Technical multiplier too conservative (0.94) for runnable terrain",
+      "Aid station times too long (120s median)",
+      "Resulted in 17hr predictions vs 10:30 actual runner data"
+    ],
+    "version_1_2_fixes": [
+      "Inverted field loss to advantages (1.05, 1.03) - you're FASTER on runnable",
+      "Improved technical multiplier to 0.98 (only 2% slower than road)",
+      "Reduced aid station times to 90s median",
+      "Less aggressive fatigue model (0.999 base vs 0.998)",
+      "Should now produce 10:30-11:00 predictions for competitive fitness"
+    ]
+  }
+}

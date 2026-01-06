@@ -1,0 +1,383 @@
+{
+  "race": "Chianti Ultra Trail 74K",
+  "total_distance_km": 73.45804612222157,
+  "total_elevation_gain_m": 4098.208593750091,
+  "total_elevation_loss_m": 4098.208593750045,
+  "profile": [
+    {
+      "distance_km": 0.0,
+      "elevation_m": 532.38671875,
+      "gradient_pct": 0
+    },
+    {
+      "distance_km": 0.9973083299573342,
+      "elevation_m": 436.83203125,
+      "gradient_pct": -9.581258336034146
+    },
+    {
+      "distance_km": 1.9865891726346605,
+      "elevation_m": 400.33203125,
+      "gradient_pct": -3.6895488546223882
+    },
+    {
+      "distance_km": 2.9854480736387057,
+      "elevation_m": 380.00390625,
+      "gradient_pct": -2.035134790265805
+    },
+    {
+      "distance_km": 4.0031569188080205,
+      "elevation_m": 364.5546875,
+      "gradient_pct": -1.518039154649357
+    },
+    {
+      "distance_km": 4.999814592167037,
+      "elevation_m": 452.52734375,
+      "gradient_pct": 8.826767565387565
+    },
+    {
+      "distance_km": 6.001256445825693,
+      "elevation_m": 441.5546875,
+      "gradient_pct": -1.095685806411288
+    },
+    {
+      "distance_km": 7.00044130210676,
+      "elevation_m": 373.4296875,
+      "gradient_pct": -6.818057696906957
+    },
+    {
+      "distance_km": 7.99972913326222,
+      "elevation_m": 356.54296875,
+      "gradient_pct": -1.6898753515765492
+    },
+    {
+      "distance_km": 9.003431380489701,
+      "elevation_m": 441.70703125,
+      "gradient_pct": 8.48499270926692
+    },
+    {
+      "distance_km": 10.00011663690833,
+      "elevation_m": 449.9375,
+      "gradient_pct": 0.8257841376699389
+    },
+    {
+      "distance_km": 11.002958470094846,
+      "elevation_m": 383.3515625,
+      "gradient_pct": -6.639724759828192
+    },
+    {
+      "distance_km": 11.997724711705976,
+      "elevation_m": 415.1640625,
+      "gradient_pct": 3.1979874938735637
+    },
+    {
+      "distance_km": 12.999570447263515,
+      "elevation_m": 356.109375,
+      "gradient_pct": -5.894588897674483
+    },
+    {
+      "distance_km": 13.999062444270232,
+      "elevation_m": 360.73046875,
+      "gradient_pct": 0.4623442472615364
+    },
+    {
+      "distance_km": 15.002521581340039,
+      "elevation_m": 418.38671875,
+      "gradient_pct": 5.74574966434224
+    },
+    {
+      "distance_km": 16.003781426155708,
+      "elevation_m": 344.35546875,
+      "gradient_pct": -7.393809946870393
+    },
+    {
+      "distance_km": 17.002159466417453,
+      "elevation_m": 338.15625,
+      "gradient_pct": -0.6209289968331786
+    },
+    {
+      "distance_km": 18.01416477986786,
+      "elevation_m": 403.86328125,
+      "gradient_pct": 6.492755559353104
+    },
+    {
+      "distance_km": 19.00022571622197,
+      "elevation_m": 340.39453125,
+      "gradient_pct": -6.436595108885575
+    },
+    {
+      "distance_km": 20.0007463711583,
+      "elevation_m": 314.3671875,
+      "gradient_pct": -2.601379953685841
+    },
+    {
+      "distance_km": 20.999522219306357,
+      "elevation_m": 395.796875,
+      "gradient_pct": 8.152949197859357
+    },
+    {
+      "distance_km": 21.991765164585654,
+      "elevation_m": 464.34765625,
+      "gradient_pct": 6.908669048859224
+    },
+    {
+      "distance_km": 22.99443642049327,
+      "elevation_m": 470.640625,
+      "gradient_pct": 0.6276203404578131
+    },
+    {
+      "distance_km": 23.986101832816754,
+      "elevation_m": 476.109375,
+      "gradient_pct": 0.5514712857824342
+    },
+    {
+      "distance_km": 24.996593066686607,
+      "elevation_m": 512.62109375,
+      "gradient_pct": 3.6132642744630226
+    },
+    {
+      "distance_km": 26.011908065150262,
+      "elevation_m": 506.58984375,
+      "gradient_pct": -0.5940274702064199
+    },
+    {
+      "distance_km": 27.009800176920084,
+      "elevation_m": 494.37109375,
+      "gradient_pct": -1.2244560164253935
+    },
+    {
+      "distance_km": 28.00371469066362,
+      "elevation_m": 392.59375,
+      "gradient_pct": -10.240050058898925
+    },
+    {
+      "distance_km": 29.00054274444015,
+      "elevation_m": 437.8,
+      "gradient_pct": 4.535009807231454
+    },
+    {
+      "distance_km": 30.000439428386578,
+      "elevation_m": 468.4,
+      "gradient_pct": 3.060316179790375
+    },
+    {
+      "distance_km": 31.000404146259925,
+      "elevation_m": 498.6,
+      "gradient_pct": 3.0201065557820117
+    },
+    {
+      "distance_km": 32.000118486040364,
+      "elevation_m": 536.8,
+      "gradient_pct": 3.821091533846513
+    },
+    {
+      "distance_km": 33.000174597221076,
+      "elevation_m": 526.2,
+      "gradient_pct": -1.0599405254856218
+    },
+    {
+      "distance_km": 34.000005954475526,
+      "elevation_m": 375.2,
+      "gradient_pct": -15.102546934979912
+    },
+    {
+      "distance_km": 35.00000307902728,
+      "elevation_m": 372.2,
+      "gradient_pct": -0.3000008626369542
+    },
+    {
+      "distance_km": 35.99955942513759,
+      "elevation_m": 406.4,
+      "gradient_pct": 3.4215179697559246
+    },
+    {
+      "distance_km": 36.99982835328246,
+      "elevation_m": 444.8,
+      "gradient_pct": 3.8389675935668515
+    },
+    {
+      "distance_km": 38.00026270222091,
+      "elevation_m": 425.2,
+      "gradient_pct": -1.9591490456917442
+    },
+    {
+      "distance_km": 38.99991613250463,
+      "elevation_m": 506.8,
+      "gradient_pct": 8.16282898932686
+    },
+    {
+      "distance_km": 39.99927705648594,
+      "elevation_m": 511.8,
+      "gradient_pct": 0.5003197423490141
+    },
+    {
+      "distance_km": 41.01708184583558,
+      "elevation_m": 550.19140625,
+      "gradient_pct": 3.771981292653521
+    },
+    {
+      "distance_km": 42.0002010727055,
+      "elevation_m": 527.47265625,
+      "gradient_pct": -2.3108845172657686
+    },
+    {
+      "distance_km": 42.996074223972705,
+      "elevation_m": 572.171875,
+      "gradient_pct": 4.488445008595946
+    },
+    {
+      "distance_km": 43.98889837689971,
+      "elevation_m": 655.2265625,
+      "gradient_pct": 8.36549828639254
+    },
+    {
+      "distance_km": 44.984033302537846,
+      "elevation_m": 649.84765625,
+      "gradient_pct": -0.5405202964362605
+    },
+    {
+      "distance_km": 45.99502133548464,
+      "elevation_m": 686.00390625,
+      "gradient_pct": 3.5763281880412645
+    },
+    {
+      "distance_km": 47.00565655553356,
+      "elevation_m": 622.765625,
+      "gradient_pct": -6.257280569238286
+    },
+    {
+      "distance_km": 48.00981199500626,
+      "elevation_m": 491.984375,
+      "gradient_pct": -13.024004537452482
+    },
+    {
+      "distance_km": 49.00915212106236,
+      "elevation_m": 0,
+      "gradient_pct": -49.230923703786395
+    },
+    {
+      "distance_km": 49.999111519307256,
+      "elevation_m": 615.296875,
+      "gradient_pct": 62.153748536643114
+    },
+    {
+      "distance_km": 50.99445440118147,
+      "elevation_m": 551.21875,
+      "gradient_pct": -6.43779406744155
+    },
+    {
+      "distance_km": 52.00607248711148,
+      "elevation_m": 538.61328125,
+      "gradient_pct": -1.2460699275074174
+    },
+    {
+      "distance_km": 53.00395498975691,
+      "elevation_m": 627.37890625,
+      "gradient_pct": 8.895398482755065
+    },
+    {
+      "distance_km": 53.99927263698674,
+      "elevation_m": 716.62890625,
+      "gradient_pct": 8.966986594520975
+    },
+    {
+      "distance_km": 54.99631601685133,
+      "elevation_m": 808.18359375,
+      "gradient_pct": 9.182618264055263
+    },
+    {
+      "distance_km": 56.003060394420295,
+      "elevation_m": 772.9296875,
+      "gradient_pct": -3.5017733434111022
+    },
+    {
+      "distance_km": 57.00366242503127,
+      "elevation_m": 790.33203125,
+      "gradient_pct": 1.7391873309885206
+    },
+    {
+      "distance_km": 57.98194080991064,
+      "elevation_m": 891.08984375,
+      "gradient_pct": 10.299503092100375
+    },
+    {
+      "distance_km": 59.00239181281448,
+      "elevation_m": 845.9375,
+      "gradient_pct": -4.424743924158289
+    },
+    {
+      "distance_km": 59.99661904902967,
+      "elevation_m": 836.48046875,
+      "gradient_pct": -0.9511941441074284
+    },
+    {
+      "distance_km": 60.99535191223775,
+      "elevation_m": 816.59765625,
+      "gradient_pct": -1.9908038708302194
+    },
+    {
+      "distance_km": 62.007784694899904,
+      "elevation_m": 778.4453125,
+      "gradient_pct": -3.768382889546494
+    },
+    {
+      "distance_km": 63.00222868838078,
+      "elevation_m": 665.73046875,
+      "gradient_pct": -11.334458701435892
+    },
+    {
+      "distance_km": 64.00088161174311,
+      "elevation_m": 591.4921875,
+      "gradient_pct": -7.433842079994098
+    },
+    {
+      "distance_km": 65.00683308282612,
+      "elevation_m": 528.10546875,
+      "gradient_pct": -6.301170640146067
+    },
+    {
+      "distance_km": 66.00486337903801,
+      "elevation_m": 425.29296875,
+      "gradient_pct": -10.301540984300104
+    },
+    {
+      "distance_km": 67.00161246875066,
+      "elevation_m": 377.859375,
+      "gradient_pct": -4.758829904090954
+    },
+    {
+      "distance_km": 68.00873575355122,
+      "elevation_m": 382.625,
+      "gradient_pct": 0.4731918199015477
+    },
+    {
+      "distance_km": 69.00372980778602,
+      "elevation_m": 389.46484375,
+      "gradient_pct": 0.687425590222267
+    },
+    {
+      "distance_km": 70.01004149957748,
+      "elevation_m": 462.34765625,
+      "gradient_pct": 7.2425683905402884
+    },
+    {
+      "distance_km": 71.00973062437114,
+      "elevation_m": 432.9609375,
+      "gradient_pct": -2.9395857193170416
+    },
+    {
+      "distance_km": 71.99134251882319,
+      "elevation_m": 420.66796875,
+      "gradient_pct": -1.252324754771048
+    },
+    {
+      "distance_km": 72.99061927851494,
+      "elevation_m": 484.37109375,
+      "gradient_pct": 6.37492310134887
+    },
+    {
+      "distance_km": 73.45804612222157,
+      "elevation_m": 532.38671875,
+      "gradient_pct": 10.27232938083796
+    }
+  ]
+}
