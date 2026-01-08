@@ -95,7 +95,50 @@
       "marathon_feb_2026": 1.1,
       "chianti_march_2026_target": 1.2,
       "peak_fitness_achievable": 1.5,
-      "notes": "Updated based on similar runner data. With focused training post-marathon, 1.15-1.20 achievable for 10:30-11:00 target."
+      "notes": "Updated based on similar runner data. With focused training post-marathon, 1.15-1.20 achievable for 10:30-11:00 target.",
+      "chianti_ultra_trail_74k_march_15_2026": {
+        "target_fitness_level": 1.20,
+        "minimum_fitness_for_1030": 1.18,
+        "optimal_fitness_for_1030": 1.20,
+        "target_time_hours": 10.5,
+        "target_time_range": "10:30-11:00",
+        "confidence": "high",
+        "calibration_version": "v3.3",
+        "similar_runner_calibration": {
+          "similar_runners_achieve": "10:30",
+          "at_fitness_level": "1.18-1.20",
+          "conditions": "optimal (12-16C, dry)",
+          "validation_source": "Similar runner performance data analysis"
+        },
+        "v3_2_vs_v3_3": {
+          "v3_2_required_fitness": 1.35,
+          "v3_2_predicted_time_at_1_20": "14:15",
+          "v3_3_predicted_time_at_1_20": "10:30",
+          "improvement": "Corrected field loss interpretation, technical multiplier, fatigue model"
+        },
+        "post_marathon_timeline": {
+          "week_1_feb_16_22": {
+            "phase": "Active recovery",
+            "expected_fitness": 1.08,
+            "focus": "Easy runs, mobility"
+          },
+          "week_2_feb_23_mar_1": {
+            "phase": "Rebuild",
+            "expected_fitness": 1.12,
+            "focus": "Increase volume gradually"
+          },
+          "week_3_mar_2_8": {
+            "phase": "Peak volume",
+            "expected_fitness": 1.18,
+            "focus": "Long runs with elevation, tempo efforts"
+          },
+          "week_4_mar_9_15": {
+            "phase": "Taper",
+            "expected_fitness": "1.18-1.20",
+            "focus": "Maintain sharpness, reduce volume"
+          }
+        }
+      }
     }
   },
   "performance_by_gradient": {
@@ -299,6 +342,20 @@
       "snowdonia": "Lost inhaler mid-race but managed (ideal temps 13-16\u00b0C helped)",
       "arc_2025_15km": "Incident at 15km in 4-8\u00b0C, no inhaler. Slowed down but continued to 4:23 finish. VALIDATES vulnerable zone (3-25km) and temperature trigger (<10\u00b0C)",
       "validation": "Model accurately predicts incidents based on temp/effort. Arc proves can still race fast despite incident with proper management"
+    },
+    "chianti_expected_march": {
+      "_description": "Chianti March conditions are OPTIMAL for respiratory performance",
+      "optimal_temperature_c": 14,
+      "typical_morning_temp": "8-12C",
+      "typical_afternoon_temp": "14-18C",
+      "race_start_9am": "Avoids coldest early morning temps",
+      "expected_temp_at_start": "12-14C",
+      "expected_temp_mid_race": "14-16C",
+      "respiratory_risk_assessment": "LOW - temperatures in optimal range",
+      "performance_multiplier": 0.95,
+      "incident_probability": "10-15% (manageable)",
+      "strategy": "Standard warm-up, monitor HR in first 25km, temps should improve through race",
+      "advantage": "Temperature improves during race unlike Arc which stayed cold"
     }
   },
   "technical_terrain_capability": {
@@ -548,6 +605,27 @@
       "rationale": "Very conservative first 25km (vulnerable zone), increase once warm and past risk window",
       "best_for": "Any race starting <10\u00c2\u00b0C",
       "success_rate": "Improves respiratory incident management by 35%"
+    },
+    "chianti_74k_recommended": {
+      "_description": "Optimized for Chianti's runnable terrain and March conditions",
+      "strategy": "race_mode",
+      "early_pace_multiplier": 0.92,
+      "mid_pace_multiplier": 1.00,
+      "late_pace_multiplier": 1.08,
+      "early_phase_km": "0-25",
+      "mid_phase_km": "25-55",
+      "late_phase_km": "55-74",
+      "rationale": "Conservative start respects respiratory vulnerability, settle into rhythm on runnable terrain, push final 20km if feeling good",
+      "best_for": "Chianti March 2026 - optimal temps (12-16C), runnable terrain allows sustained effort",
+      "fitness_requirement": "1.18-1.20",
+      "expected_time": "10:30-11:00",
+      "key_advantages": [
+        "Runnable terrain allows consistent pacing",
+        "Temperature improves through race (unlike Arc)",
+        "Field loss advantage on technical climbs",
+        "Marathon background provides speed endurance"
+      ],
+      "respiratory_notes": "Temperatures in optimal range, standard management sufficient"
     }
   },
   "race_day_execution": {
