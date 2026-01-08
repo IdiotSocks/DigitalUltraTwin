@@ -22,9 +22,9 @@ def main():
     with open('../data/elevation/chianti_elevation_profile.json', 'r') as f:
         profile_data = json.load(f)
         elevation_profile = profile_data['profile']
-    
-    print(f"   ✓ Loaded: {profile_data['metadata']['total_distance_km']:.1f} km, "
-          f"{profile_data['metadata']['total_elevation_gain_m']:.0f}m gain")
+
+    print(f"   ✓ Loaded: {profile_data['total_distance_km']:.1f} km, "
+          f"{profile_data['total_elevation_gain_m']:.0f}m gain")
     
     # Initialize simulator
     print("\n2. Initializing Digital Twin simulator...")
