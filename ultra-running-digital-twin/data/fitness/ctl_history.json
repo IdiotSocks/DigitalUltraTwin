@@ -1,0 +1,23 @@
+{
+  "ctl_history": [
+    {
+      "date": "2025-08-29",
+      "ctl": 187,
+      "event_name": "UTMB 2025",
+      "notes": "Peak fitness - race day"
+    },
+    {
+      "date": "2025-02-09",
+      "ctl": 138,
+      "event_name": "Arc of Attrition 2025",
+      "notes": "Strong fitness level, 4:23 finish"
+    },
+    {
+      "date": "2026-01-08",
+      "ctl": 106,
+      "event_name": null,
+      "notes": "Current CTL"
+    }
+  ],
+  "last_updated": "2026-01-08 00:00:00"
+}
