@@ -6,6 +6,8 @@
   <title>Digital Twin Ultra - Race Predictor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * {
       margin: 0;
@@ -264,218 +266,256 @@
       letter-spacing: 0.5px;
       cursor: pointer;
     }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      border-radius: 16px;
+      z-index: 1;
+    }
+
+    .compact-input-group {
+      margin-bottom: 12px;
+    }
+
+    .compact-input-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-compact {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div style="max-width: 1400px; margin: 0 auto;">
+  <div style="max-width: 1600px; margin: 0 auto;">
 
     <!-- Header -->
-    <div style="text-align: center; margin-bottom: 28px;">
-      <h1 style="color: white; font-size: 36px; font-weight: 900; margin-bottom: 6px; text-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 style="color: white; font-size: 32px; font-weight: 900; margin-bottom: 4px; text-shadow: 0 4px 12px rgba(0,0,0,0.25);">
         🏃 Digital Twin Ultra
       </h1>
-      <p style="color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 600; letter-spacing: 0.5px;">
+      <p style="color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">
         AI-Powered Ultra Race Predictor
       </p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px;">
+    <!-- Input Cards Row -->
+    <div class="grid-4" style="margin-bottom: 20px;">
 
-      <!-- Left Sidebar -->
-      <div>
+      <!-- Fitness Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Fitness</div>
 
-        <!-- CTL Fitness Tracker -->
-        <div class="glass-card">
-          <div class="section-title">📊 Fitness Tracker</div>
-
-          <div class="grid-2" style="margin-bottom: 16px;">
-            <div>
-              <label class="input-label">Current CTL</label>
-              <input type="number" id="ctlCurrent" value="106" class="glass-input" placeholder="106">
-            </div>
-            <div>
-              <label class="input-label">Training Plan</label>
-              <select id="trainingPlan" class="glass-input glass-select">
-                <option value="2.5">Conservative</option>
-                <option value="3.5" selected>Moderate</option>
-                <option value="5.0">Aggressive</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 16px;">
-            <label class="input-label">Race Date</label>
-            <input type="date" id="raceDate" class="glass-input">
-          </div>
-
-          <div class="checkbox-group" style="margin-bottom: 12px;">
-            <input type="checkbox" id="taperEnabled" checked class="checkbox-input">
-            <label for="taperEnabled" class="checkbox-label">Taper</label>
-          </div>
-
-          <div id="taperSettings" class="grid-2" style="margin-bottom: 16px;">
-            <div>
-              <label class="input-label">Weeks</label>
-              <select id="taperWeeks" class="glass-input glass-select">
-                <option value="0.5">0.5</option>
-                <option value="1">1</option>
-                <option value="2" selected>2</option>
-                <option value="3">3</option>
-              </select>
-            </div>
-            <div>
-              <label class="input-label">Intensity</label>
-              <select id="taperIntensity" class="glass-input glass-select">
-                <option value="0.8">80%</option>
-                <option value="0.6" selected>60%</option>
-                <option value="0.5">50%</option>
-                <option value="0.4">40%</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid-2" style="gap: 12px;">
-            <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px; text-align: center;">
-              <div class="input-label" style="margin-bottom: 4px;">Race CTL</div>
-              <div id="ctlRaceDay" style="color: white; font-size: 24px; font-weight: 900;">--</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px; text-align: center;">
-              <div class="input-label" style="margin-bottom: 4px;">Fitness</div>
-              <div id="ctlFitness" style="color: #4ade80; font-size: 24px; font-weight: 900;">--</div>
-            </div>
-          </div>
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Current CTL</label>
+          <input type="number" id="ctlCurrent" value="106" class="glass-input input-compact" placeholder="106">
         </div>
 
-        <!-- Load GPX -->
-        <div class="glass-card">
-          <div class="section-title">📁 Course GPX</div>
-
-          <label for="gpxInput" class="file-input-wrapper">
-            <div style="color: white; font-size: 32px; margin-bottom: 6px;">📍</div>
-            <div style="color: white; font-weight: 700; font-size: 13px;">Upload GPX File</div>
-            <div class="file-status" id="gpxStatus">No file selected</div>
-            <input type="file" id="gpxInput" accept=".gpx,.xml">
-          </label>
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Race Date</label>
+          <input type="date" id="raceDate" class="glass-input input-compact">
         </div>
 
-        <!-- Race Conditions -->
-        <div class="glass-card">
-          <div class="section-title">⚙️ Race Conditions</div>
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Training Plan</label>
+          <select id="trainingPlan" class="glass-input glass-select input-compact">
+            <option value="2.5">Conservative</option>
+            <option value="3.5" selected>Moderate</option>
+            <option value="5.0">Aggressive</option>
+          </select>
+        </div>
 
-          <div style="margin-bottom: 16px;">
-            <label class="input-label">Weather</label>
-            <select id="weatherScenario" class="glass-input glass-select">
-              <option value="optimal">☀️ Optimal</option>
-              <option value="typical" selected>🌤️ Typical</option>
-              <option value="cold">❄️ Cold</option>
-              <option value="warm">🌡️ Warm</option>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <div style="flex: 1; background: rgba(255,255,255,0.2); border-radius: 10px; padding: 8px; text-align: center;">
+            <div class="input-label" style="font-size: 9px; margin-bottom: 2px;">CTL</div>
+            <div id="ctlRaceDay" style="color: white; font-size: 18px; font-weight: 900;">--</div>
+          </div>
+          <div style="flex: 1; background: rgba(255,255,255,0.2); border-radius: 10px; padding: 8px; text-align: center;">
+            <div class="input-label" style="font-size: 9px; margin-bottom: 2px;">Fit</div>
+            <div id="ctlFitness" style="color: #4ade80; font-size: 18px; font-weight: 900;">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taper Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">⏱️ Taper</div>
+
+        <div class="checkbox-group" style="margin-bottom: 10px;">
+          <input type="checkbox" id="taperEnabled" checked class="checkbox-input" style="width: 18px; height: 18px;">
+          <label for="taperEnabled" class="checkbox-label" style="font-size: 11px;">Enable Taper</label>
+        </div>
+
+        <div id="taperSettings">
+          <div class="compact-input-group">
+            <label class="input-label" style="font-size: 10px;">Taper Weeks</label>
+            <select id="taperWeeks" class="glass-input glass-select input-compact">
+              <option value="0.5">0.5 weeks</option>
+              <option value="1">1 week</option>
+              <option value="2" selected>2 weeks</option>
+              <option value="3">3 weeks</option>
             </select>
           </div>
 
-          <div class="grid-2" style="margin-bottom: 16px;">
-            <div>
-              <label class="input-label">Start °C</label>
-              <input type="number" id="startTemp" value="5" class="glass-input">
-            </div>
-            <div>
-              <label class="input-label">Peak °C</label>
-              <input type="number" id="finishTemp" value="14" class="glass-input">
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <label class="input-label">Carbs g/h</label>
-              <input type="number" id="carbInput" value="60" class="glass-input">
-            </div>
-            <div>
-              <label class="input-label">Fluids ml/h</label>
-              <input type="number" id="hydroInput" value="500" class="glass-input">
-            </div>
+          <div class="compact-input-group">
+            <label class="input-label" style="font-size: 10px;">Intensity</label>
+            <select id="taperIntensity" class="glass-input glass-select input-compact">
+              <option value="0.8">80%</option>
+              <option value="0.6" selected>60%</option>
+              <option value="0.5">50%</option>
+              <option value="0.4">40%</option>
+            </select>
           </div>
         </div>
-
-        <!-- Calculate Button -->
-        <button id="calcBtn" onclick="runAnalysis()" class="btn-primary">
-          RUN PREDICTION
-        </button>
-
       </div>
 
-      <!-- Main Content -->
-      <div>
+      <!-- Course Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📁 Course</div>
 
-        <!-- Results KPIs -->
-        <div class="glass-card-white" id="resultsCard" style="display: none;">
-          <h2 style="font-size: 16px; font-weight: 800; color: #1f2937; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">📊 Predicted Results</h2>
+        <label for="gpxInput" class="file-input-wrapper" style="padding: 16px; margin-bottom: 12px;">
+          <div style="color: white; font-size: 24px; margin-bottom: 4px;">📍</div>
+          <div style="color: white; font-weight: 700; font-size: 11px;">Upload GPX</div>
+          <div class="file-status" id="gpxStatus" style="font-size: 10px; margin-top: 6px;">No file</div>
+          <input type="file" id="gpxInput" accept=".gpx,.xml">
+        </label>
+      </div>
 
-          <div class="grid-3" style="margin-bottom: 24px;">
-            <div class="stat-box">
-              <div class="stat-label">Finish Time</div>
-              <div id="kpi-time" class="stat-value gradient-green">--:--</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Avg Pace</div>
-              <div id="kpi-pace" class="stat-value gradient-blue">--:--</div>
-              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">min/km</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Avg Speed</div>
-              <div id="kpi-speed" class="stat-value gradient-purple">--</div>
-              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">km/h</div>
-            </div>
+      <!-- Conditions Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">⚙️ Conditions</div>
+
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Weather</label>
+          <select id="weatherScenario" class="glass-input glass-select input-compact">
+            <option value="optimal">☀️ Optimal</option>
+            <option value="typical" selected>🌤️ Typical</option>
+            <option value="cold">❄️ Cold</option>
+            <option value="warm">🌡️ Warm</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+          <div>
+            <label class="input-label" style="font-size: 10px;">Start °C</label>
+            <input type="number" id="startTemp" value="5" class="glass-input input-compact">
           </div>
-
-          <div class="grid-2">
-            <div class="stat-box">
-              <div class="stat-label">Total Distance</div>
-              <div id="kpi-distance" class="stat-value">--</div>
-              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">km</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Elevation Gain</div>
-              <div id="kpi-elevation" class="stat-value">--</div>
-              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">meters</div>
-            </div>
+          <div>
+            <label class="input-label" style="font-size: 10px;">Peak °C</label>
+            <input type="number" id="finishTemp" value="14" class="glass-input input-compact">
           </div>
         </div>
 
-        <!-- Race Profile Chart -->
-        <div class="glass-card-white" id="chartCard" style="display: none;">
-          <h2 style="font-size: 16px; font-weight: 800; color: #1f2937; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
-          <div style="height: 380px; position: relative;">
-            <canvas id="mainChart"></canvas>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label class="input-label" style="font-size: 10px;">Carbs g/h</label>
+            <input type="number" id="carbInput" value="60" class="glass-input input-compact">
+          </div>
+          <div>
+            <label class="input-label" style="font-size: 10px;">Fluids ml/h</label>
+            <input type="number" id="hydroInput" value="500" class="glass-input input-compact">
+          </div>
+        </div>
+
+        <button id="calcBtn" onclick="runAnalysis()" class="btn-primary" style="margin-top: 12px; padding: 10px 16px; font-size: 11px;">
+          RUN PREDICTION
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Map and Results Row -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+
+      <!-- Map -->
+      <div class="glass-card-white" style="padding: 20px; min-height: 450px;">
+        <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">🗺️ Route Map</h2>
+        <div id="mapContainer" style="height: 380px; border-radius: 12px; overflow: hidden; background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #6b7280;">
+          <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
+            <div style="font-size: 14px; font-weight: 600;">Upload GPX to see route map</div>
+          </div>
+          <div id="map" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Results KPIs -->
+      <div class="glass-card-white" id="resultsCard" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📊 Predicted Results</h2>
+
+        <div class="grid-3" style="margin-bottom: 16px; gap: 12px;">
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Finish Time</div>
+            <div id="kpi-time" class="stat-value gradient-green" style="font-size: 26px;">--:--</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Avg Pace</div>
+            <div id="kpi-pace" class="stat-value gradient-blue" style="font-size: 26px;">--:--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">min/km</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Avg Speed</div>
+            <div id="kpi-speed" class="stat-value gradient-purple" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">km/h</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap: 12px;">
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Total Distance</div>
+            <div id="kpi-distance" class="stat-value" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">km</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Elevation Gain</div>
+            <div id="kpi-elevation" class="stat-value" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">meters</div>
           </div>
         </div>
 
         <!-- Getting Started -->
-        <div class="glass-card-white" id="gettingStarted">
-          <div style="text-align: center; padding: 48px 32px;">
-            <div style="font-size: 56px; margin-bottom: 16px;">🏃</div>
-            <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 8px;">
-              Digital Twin Ultra
-            </h2>
-            <p style="font-size: 14px; color: #6b7280; max-width: 450px; margin: 0 auto 24px;">
-              AI-powered race predictions using Training Peaks CTL and GPX course files.
-            </p>
-
-            <div style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 16px; padding: 20px; max-width: 500px; margin: 0 auto; text-align: left;">
-              <h3 style="font-size: 12px; font-weight: 800; color: #1f2937; margin-bottom: 12px; text-transform: uppercase;">
-                Quick Start:
-              </h3>
-              <ol style="list-style: decimal; padding-left: 20px; color: #374151; font-size: 13px; line-height: 1.7;">
-                <li>Enter current CTL and race date</li>
-                <li>Upload race GPX file</li>
-                <li>Adjust conditions if needed</li>
-                <li>Click "Run Prediction"</li>
-              </ol>
-            </div>
-          </div>
+        <div id="gettingStarted" style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🏃</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 8px;">
+            Ready to Predict
+          </h3>
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">
+            Enter your details and upload a GPX file, then click Run Prediction
+          </p>
         </div>
+      </div>
 
+    </div>
+
+    <!-- Race Profile Chart -->
+    <div class="glass-card-white" id="chartCard" style="display: none;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
+      <div style="height: 350px; position: relative;">
+        <canvas id="mainChart"></canvas>
       </div>
     </div>
+
   </div>
 
   <script>
@@ -524,6 +564,9 @@
 
     // ========== GPX PARSING ==========
     let currentCourse = [];
+    let currentGpxCoords = [];
+    let map = null;
+    let routeLine = null;
 
     function haversine(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -543,6 +586,7 @@
       if(points.length === 0) points = xmlDoc.getElementsByTagName('rtept');
 
       const track = [];
+      const coords = [];
       let cumDist = 0;
       let prevLat = null, prevLon = null, prevEle = null;
 
@@ -552,6 +596,8 @@
         const lon = parseFloat(pt.getAttribute('lon'));
         const eleNode = pt.getElementsByTagName('ele')[0];
         const ele = eleNode ? parseFloat(eleNode.textContent) : 0;
+
+        coords.push([lat, lon]);
 
         if(prevLat !== null) {
           const segDist = haversine(prevLat, prevLon, lat, lon);
@@ -574,7 +620,53 @@
           lastDist = track[j].distKm;
         }
       }
-      return simplified;
+      return { track: simplified, coords: coords };
+    }
+
+    function renderMap(coords) {
+      // Show map, hide placeholder
+      document.getElementById('mapContainer').querySelector('div').style.display = 'none';
+      document.getElementById('map').style.display = 'block';
+
+      // Initialize map if needed
+      if (!map) {
+        map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 18
+        }).addTo(map);
+      }
+
+      // Remove old route
+      if (routeLine) {
+        map.removeLayer(routeLine);
+      }
+
+      // Add new route
+      routeLine = L.polyline(coords, {
+        color: '#3b82f6',
+        weight: 4,
+        opacity: 0.8
+      }).addTo(map);
+
+      // Add start and finish markers
+      const startIcon = L.divIcon({
+        html: '<div style="background: #10b981; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">S</div>',
+        iconSize: [30, 30],
+        className: ''
+      });
+
+      const finishIcon = L.divIcon({
+        html: '<div style="background: #ef4444; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">F</div>',
+        iconSize: [30, 30],
+        className: ''
+      });
+
+      L.marker(coords[0], { icon: startIcon }).addTo(map).bindPopup('Start');
+      L.marker(coords[coords.length - 1], { icon: finishIcon }).addTo(map).bindPopup('Finish');
+
+      // Fit bounds
+      map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
     }
 
     document.getElementById('gpxInput').addEventListener('change', function(e) {
@@ -584,17 +676,24 @@
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
-          currentCourse = parseGPX(evt.target.result);
+          const result = parseGPX(evt.target.result);
+          currentCourse = result.track;
+          currentGpxCoords = result.coords;
+
           const dist = currentCourse[currentCourse.length - 1].distKm;
           let totalGain = 0;
           for(let i = 1; i < currentCourse.length; i++) {
             const diff = currentCourse[i].ele - currentCourse[i-1].ele;
             if(diff > 0) totalGain += diff;
           }
-          document.getElementById('gpxStatus').innerText = `✓ ${dist.toFixed(1)}km | ${Math.round(totalGain)}m gain`;
+
+          document.getElementById('gpxStatus').innerText = `✓ ${dist.toFixed(1)}km`;
           document.getElementById('gpxStatus').style.color = '#4ade80';
+
+          // Render map
+          renderMap(currentGpxCoords);
         } catch(err) {
-          document.getElementById('gpxStatus').innerText = `✗ Error: ${err.message}`;
+          document.getElementById('gpxStatus').innerText = `✗ Error`;
           document.getElementById('gpxStatus').style.color = '#f87171';
         }
       };
