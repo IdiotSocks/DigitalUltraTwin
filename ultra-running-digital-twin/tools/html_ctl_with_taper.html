@@ -1,0 +1,309 @@
+<!-- UPDATED CTL Fitness Tracker Section with Customizable Taper -->
+<!-- Replace your existing CTL card with this version -->
+
+<div class="card border-l-4 border-emerald-500 space-y-3">
+  <h2 class="font-bold text-sm text-slate-900 uppercase">📊 CTL Fitness Tracker</h2>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Current CTL</label>
+    <input type="number" id="ctlCurrent" value="106" class="w-full p-1 border rounded text-sm font-bold text-emerald-700">
+  </div>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Race Date</label>
+    <input type="date" id="raceDate" class="w-full p-1 border rounded text-sm">
+  </div>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Training Plan</label>
+    <select id="trainingPlan" onchange="updateCTLProjection()" class="w-full p-1 border rounded text-xs font-bold text-slate-700">
+      <option value="2.5">Conservative (2.5 CTL/week)</option>
+      <option value="3.5" selected>Moderate (3.5 CTL/week)</option>
+      <option value="5.0">Aggressive (5.0 CTL/week)</option>
+      <option value="0">Maintenance (0 CTL/week)</option>
+    </select>
+  </div>
+
+  <!-- NEW: Taper Settings -->
+  <div class="pt-2 border-t space-y-2">
+    <div class="flex items-center gap-2">
+      <input type="checkbox" id="taperEnabled" checked onchange="toggleTaperSettings(); updateCTLProjection();" class="w-4 h-4">
+      <label class="text-[10px] font-bold text-slate-500 uppercase">Enable Taper</label>
+    </div>
+
+    <div id="taperSettings" style="display: block;">
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Taper Weeks</label>
+          <select id="taperWeeks" onchange="updateCTLProjection()" class="w-full p-1 border rounded text-xs">
+            <option value="0.5">0.5 weeks</option>
+            <option value="1">1 week</option>
+            <option value="1.5">1.5 weeks</option>
+            <option value="2" selected>2 weeks</option>
+            <option value="3">3 weeks</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Taper Intensity</label>
+          <select id="taperIntensity" onchange="updateCTLProjection()" class="w-full p-1 border rounded text-xs">
+            <option value="0.8">Light (80%)</option>
+            <option value="0.7">Moderate (70%)</option>
+            <option value="0.6">Standard (60%)</option>
+            <option value="0.5">Heavy (50%)</option>
+            <option value="0.4">Very Heavy (40%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="text-[9px] text-slate-400 mt-1">
+        <span id="taperDescription">Reducing to 60% of training load</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-[10px] text-slate-400 pt-2 border-t space-y-1">
+    <div class="flex justify-between">
+      <span>Weeks to Race:</span>
+      <span id="ctlWeeksToRace" class="font-bold text-slate-600">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Build Weeks:</span>
+      <span id="ctlBuildWeeks" class="font-bold text-slate-600">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Peak CTL:</span>
+      <span id="ctlPeak" class="font-bold text-emerald-600">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Race Day CTL:</span>
+      <span id="ctlRaceDay" class="font-bold text-emerald-700">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Race Day Fitness:</span>
+      <span id="ctlFitness" class="font-bold text-green-600">--</span>
+    </div>
+  </div>
+
+  <button onclick="showCTLScenarios()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded">
+    📈 Compare Scenarios
+  </button>
+</div>
+
+<script>
+// ========== UPDATED CTL FUNCTIONS WITH TAPER CONTROL ==========
+
+// CTL to Fitness conversion (calibrated: CTL 120 = Fitness 1.0)
+const CTL_BASELINE = 120;
+const CTL_TO_FITNESS_RATE = 0.00833;
+
+function ctlToFitness(ctl) {
+  const fitness = 1.0 + ((ctl - CTL_BASELINE) * CTL_TO_FITNESS_RATE);
+  return Math.max(0.5, fitness);
+}
+
+function fitnessToCtl(fitness) {
+  return CTL_BASELINE + ((fitness - 1.0) / CTL_TO_FITNESS_RATE);
+}
+
+function calculateWeeksToRace() {
+  const raceDateInput = document.getElementById('raceDate');
+  if (!raceDateInput.value) return 0;
+
+  const today = new Date();
+  const raceDate = new Date(raceDateInput.value);
+  const diffTime = raceDate - today;
+  const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  return diffDays / 7;
+}
+
+function toggleTaperSettings() {
+  const enabled = document.getElementById('taperEnabled').checked;
+  const settings = document.getElementById('taperSettings');
+  if (settings) {
+    settings.style.display = enabled ? 'block' : 'none';
+  }
+}
+
+function updateCTLProjection() {
+  const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+  const weeksToRace = calculateWeeksToRace();
+  const weeklyGain = parseFloat(document.getElementById('trainingPlan').value) || 3.5;
+
+  document.getElementById('ctlWeeksToRace').innerText = weeksToRace.toFixed(1);
+
+  if (weeksToRace === 0) {
+    document.getElementById('ctlBuildWeeks').innerText = '0.0';
+    document.getElementById('ctlPeak').innerText = currentCtl.toFixed(0);
+    document.getElementById('ctlRaceDay').innerText = currentCtl.toFixed(0);
+    document.getElementById('ctlFitness').innerText = ctlToFitness(currentCtl).toFixed(3);
+    return;
+  }
+
+  // Get taper settings
+  const taperEnabled = document.getElementById('taperEnabled').checked;
+  const taperWeeksInput = parseFloat(document.getElementById('taperWeeks').value) || 2;
+  const taperIntensity = parseFloat(document.getElementById('taperIntensity').value) || 0.6;
+
+  let taperWeeks = taperEnabled ? Math.min(taperWeeksInput, weeksToRace) : 0;
+  let buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+
+  // Calculate peak CTL (end of build phase)
+  const peakCtl = currentCtl + (buildWeeks * weeklyGain);
+
+  // Calculate taper CTL loss
+  // During taper, training volume drops to taperIntensity (e.g., 60%)
+  // CTL drops by approximately (1 - taperIntensity) * weeklyGain per week
+  const taperLossPerWeek = weeklyGain * (1 - taperIntensity);
+  const raceDayCtl = peakCtl - (taperWeeks * taperLossPerWeek);
+
+  const raceDayFitness = ctlToFitness(raceDayCtl);
+
+  document.getElementById('ctlBuildWeeks').innerText = buildWeeks.toFixed(1);
+  document.getElementById('ctlPeak').innerText = peakCtl.toFixed(0);
+  document.getElementById('ctlRaceDay').innerText = raceDayCtl.toFixed(0);
+  document.getElementById('ctlFitness').innerText = raceDayFitness.toFixed(3);
+
+  // Update taper description
+  const taperDesc = document.getElementById('taperDescription');
+  if (taperDesc) {
+    if (!taperEnabled) {
+      taperDesc.innerText = 'No taper - racing at peak CTL';
+    } else {
+      const intensityPct = Math.round(taperIntensity * 100);
+      const lossPerWeek = taperLossPerWeek.toFixed(1);
+      taperDesc.innerText = `Reducing to ${intensityPct}% load (-${lossPerWeek} CTL/week)`;
+    }
+  }
+
+  // Update the old fitness level display to match CTL
+  const fitEl = document.getElementById('fitnessLevel');
+  if (fitEl) fitEl.innerText = raceDayFitness.toFixed(2);
+}
+
+function showCTLScenarios() {
+  const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+  const weeksToRace = calculateWeeksToRace();
+
+  if (weeksToRace === 0) {
+    alert('Please set a race date first!');
+    return;
+  }
+
+  // Get taper settings
+  const taperEnabled = document.getElementById('taperEnabled').checked;
+  const taperWeeksInput = parseFloat(document.getElementById('taperWeeks').value) || 2;
+  const taperIntensity = parseFloat(document.getElementById('taperIntensity').value) || 0.6;
+
+  const taperWeeks = taperEnabled ? Math.min(taperWeeksInput, weeksToRace) : 0;
+  const buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+
+  // Helper function to calculate race day CTL for a given training plan
+  function calculateRaceDayCtl(weeklyGain) {
+    const peakCtl = currentCtl + (buildWeeks * weeklyGain);
+    const taperLossPerWeek = weeklyGain * (1 - taperIntensity);
+    return peakCtl - (taperWeeks * taperLossPerWeek);
+  }
+
+  const scenarios = [
+    { name: 'Current Fitness (No Training)', ctl: currentCtl, plan: 0 },
+    { name: 'Conservative Training', ctl: calculateRaceDayCtl(2.5), plan: 2.5 },
+    { name: 'Moderate Training', ctl: calculateRaceDayCtl(3.5), plan: 3.5 },
+    { name: 'Aggressive Training', ctl: calculateRaceDayCtl(5.0), plan: 5.0 }
+  ];
+
+  const intensityPct = Math.round(taperIntensity * 100);
+  const taperInfo = taperEnabled
+    ? `${taperWeeks} week(s) @ ${intensityPct}% intensity`
+    : 'No taper';
+
+  let html = `
+    <div class="mb-4 p-4 bg-slate-50 rounded">
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div><strong>Current CTL:</strong> ${currentCtl.toFixed(0)}</div>
+        <div><strong>Weeks to Race:</strong> ${weeksToRace.toFixed(1)}</div>
+        <div><strong>Build Weeks:</strong> ${buildWeeks.toFixed(1)}</div>
+        <div><strong>Taper:</strong> ${taperInfo}</div>
+      </div>
+    </div>
+
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="bg-slate-100">
+          <th class="p-2 text-left border-b-2">Scenario</th>
+          <th class="p-2 text-center border-b-2">Peak CTL</th>
+          <th class="p-2 text-center border-b-2">Race CTL</th>
+          <th class="p-2 text-center border-b-2">Fitness</th>
+          <th class="p-2 text-center border-b-2">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  scenarios.forEach((s, idx) => {
+    const peakCtl = currentCtl + (buildWeeks * s.plan);
+    const fitness = ctlToFitness(s.ctl);
+    const gain = s.ctl - currentCtl;
+    const gainClass = gain > 0 ? 'text-green-600' : 'text-slate-500';
+
+    html += `
+      <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}">
+        <td class="p-2 border-b font-medium">${s.name}</td>
+        <td class="p-2 border-b text-center text-slate-600">${peakCtl.toFixed(0)}</td>
+        <td class="p-2 border-b text-center font-bold text-emerald-600">${s.ctl.toFixed(0)}</td>
+        <td class="p-2 border-b text-center font-bold text-green-600">${fitness.toFixed(3)}</td>
+        <td class="p-2 border-b text-center">
+          <button onclick="applyCTLScenario(${s.ctl.toFixed(1)}, ${s.plan})"
+            class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded">
+            Use This
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+
+    <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-600 text-xs text-slate-700">
+      <strong>📝 Note:</strong> ${taperEnabled
+        ? `Using ${taperWeeks}-week taper reducing to ${intensityPct}% training load.`
+        : 'No taper applied - racing at peak CTL.'}
+      Click "Use This" to apply that fitness level to your current race prediction.
+    </div>
+  `;
+
+  document.getElementById('ctlScenariosContent').innerHTML = html;
+  document.getElementById('ctlModal').style.display = 'block';
+}
+
+function applyCTLScenario(ctl, plan) {
+  document.getElementById('ctlCurrent').value = ctl;
+  document.getElementById('trainingPlan').value = plan;
+  updateCTLProjection();
+  document.getElementById('ctlModal').style.display = 'none';
+
+  log('Applied CTL scenario: ' + ctl.toFixed(0) + ' (Fitness: ' + ctlToFitness(ctl).toFixed(3) + ')', 'success');
+
+  // Automatically re-run analysis with new fitness
+  if (currentCourse && currentCourse.length > 0) {
+    runAnalysis();
+  }
+}
+
+// Set default race date to 8 weeks from now
+(function setDefaultRaceDate() {
+  const today = new Date();
+  const futureDate = new Date(today.getTime() + (8 * 7 * 24 * 60 * 60 * 1000));
+  const dateStr = futureDate.toISOString().split('T')[0];
+  const raceDateEl = document.getElementById('raceDate');
+  if (raceDateEl) {
+    raceDateEl.value = dateStr;
+    updateCTLProjection();
+  }
+})();
+
+// Event listeners
+document.getElementById('ctlCurrent').addEventListener('input', updateCTLProjection);
+document.getElementById('raceDate').addEventListener('change', updateCTLProjection);
+document.getElementById('trainingPlan').addEventListener('change', updateCTLProjection);
+</script>
