@@ -102,6 +102,13 @@
       color: white;
     }
 
+    select.glass-input:focus option:checked,
+    select.glass-input option:checked {
+      background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+      color: white;
+      font-weight: 700;
+    }
+
     .btn-primary {
       width: 100%;
       padding: 14px 24px;
@@ -618,6 +625,50 @@
 
     </div>
 
+    <!-- Course Interaction Pane -->
+    <div class="glass-card-white" id="courseCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">⛰️ Course Interaction - Where The Race Bites</h2>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+
+        <!-- Cumulative Elevation Chart -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Cumulative Elevation Profile</h3>
+          <div style="height: 280px; position: relative;">
+            <canvas id="elevationChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Grade Distribution -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Grade Distribution</h3>
+          <div style="height: 280px; position: relative;">
+            <canvas id="gradeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Critical Segments -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">🔥 Critical Segments (Ranked by Difficulty)</h3>
+        <div id="criticalSegments" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Time Loss Risk -->
+      <div>
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">⚠️ Time Loss Risk Analysis</h3>
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+          <div style="font-size: 11px; color: #92400e; font-weight: 600; margin-bottom: 8px;">Expected Slowdown After Key Climbs</div>
+          <div id="slowdownAnalysis" style="font-size: 12px; color: #78350f; line-height: 1.6;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- Race Profile Chart -->
     <div class="glass-card-white" id="chartCard" style="display: none;">
       <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
@@ -922,12 +973,16 @@
           document.getElementById('resultsCard').style.display = 'block';
           document.getElementById('chartCard').style.display = 'block';
           document.getElementById('outcomeCard').style.display = 'block';
+          document.getElementById('courseCard').style.display = 'block';
 
           // Render chart
           renderChart(res);
 
           // Run Monte Carlo analysis
           runMonteCarloAnalysis();
+
+          // Run Course Interaction Analysis
+          runCourseInteractionAnalysis();
 
           btn.innerHTML = 'RUN PREDICTION';
           btn.disabled = false;
@@ -1381,6 +1436,433 @@
           }
         }
       });
+    }
+
+    // ========== COURSE INTERACTION ANALYSIS ==========
+    let elevationChart = null;
+    let gradeChart = null;
+
+    function runCourseInteractionAnalysis() {
+      if(!currentCourse || currentCourse.length === 0) return;
+
+      const track = currentCourse;
+
+      // Calculate segment difficulty indices
+      const segments = [];
+      for(let i = 1; i < track.length; i++) {
+        const start = track[i-1];
+        const end = track[i];
+        const distance = end.distKm - start.distKm;
+        const elevChange = end.ele - start.ele;
+        const avgEle = (start.ele + end.ele) / 2;
+        const gradient = end.grad;
+
+        // Difficulty index: combines gradient steepness, altitude, and distance
+        // Higher gradient = harder, higher altitude = harder (above 2000m), longer distance = harder
+        let difficultyIndex = 0;
+
+        // Gradient component (most important)
+        if(gradient > 15) difficultyIndex += Math.abs(gradient) * 3.0; // Steep uphill
+        else if(gradient > 5) difficultyIndex += Math.abs(gradient) * 2.0; // Moderate uphill
+        else if(gradient < -15) difficultyIndex += Math.abs(gradient) * 1.5; // Steep downhill (technical)
+        else if(gradient < -5) difficultyIndex += Math.abs(gradient) * 0.5; // Moderate downhill
+        else difficultyIndex += 5; // Flat (baseline)
+
+        // Altitude component (hypoxia effect above 2000m)
+        if(avgEle > 2000) {
+          difficultyIndex += (avgEle - 2000) / 200; // +1 per 200m above 2000m
+        }
+
+        // Distance component
+        difficultyIndex += distance * 2; // Longer segments are harder
+
+        // Technical factor for steep descents
+        if(gradient < -15) {
+          difficultyIndex *= 1.3; // 30% harder for technical descents
+        }
+
+        segments.push({
+          startKm: start.distKm,
+          endKm: end.distKm,
+          distance: distance,
+          startEle: start.ele,
+          endEle: end.ele,
+          elevChange: elevChange,
+          gradient: gradient,
+          avgEle: avgEle,
+          difficultyIndex: difficultyIndex
+        });
+      }
+
+      // Identify critical segments (top difficulty)
+      const sortedSegments = [...segments].sort((a, b) => b.difficultyIndex - a.difficultyIndex);
+      renderCriticalSegments(sortedSegments.slice(0, 8));
+
+      // Render cumulative elevation chart
+      renderCumulativeElevation(track);
+
+      // Render grade distribution
+      renderGradeDistribution(segments);
+
+      // Calculate time loss risk and slowdown
+      calculateSlowdownRisk(segments, track);
+    }
+
+    function renderCriticalSegments(segments) {
+      const container = document.getElementById('criticalSegments');
+      container.innerHTML = '';
+
+      segments.forEach((seg, idx) => {
+        const div = document.createElement('div');
+
+        // Determine segment type and color
+        let type = '', color = '', icon = '';
+        if(seg.gradient > 15) {
+          type = 'Steep Climb';
+          color = '#dc2626';
+          icon = '🧗';
+        } else if(seg.gradient > 5) {
+          type = 'Moderate Climb';
+          color = '#ea580c';
+          icon = '⛰️';
+        } else if(seg.gradient < -15) {
+          type = 'Technical Descent';
+          color = '#7c3aed';
+          icon = '⬇️';
+        } else if(seg.gradient < -5) {
+          type = 'Fast Descent';
+          color = '#2563eb';
+          icon = '📉';
+        } else {
+          type = 'Flat/Rolling';
+          color = '#059669';
+          icon = '➡️';
+        }
+
+        const isHighAlt = seg.avgEle > 2000;
+
+        div.style.cssText = `
+          background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.95) 100%);
+          border-left: 4px solid ${color};
+          border-radius: 10px;
+          padding: 12px;
+          position: relative;
+        `;
+
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">${icon}</span>
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: ${color};">${type}</div>
+                <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">km ${seg.startKm.toFixed(1)} - ${seg.endKm.toFixed(1)}</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 16px; font-weight: 900; color: ${color};">${seg.difficultyIndex.toFixed(0)}</div>
+              <div style="font-size: 9px; color: #9ca3af;">difficulty</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 10px;">
+            <div>
+              <span style="color: #6b7280;">Grade:</span>
+              <span style="font-weight: 700; color: #1f2937;">${seg.gradient.toFixed(1)}%</span>
+            </div>
+            <div>
+              <span style="color: #6b7280;">+/- Ele:</span>
+              <span style="font-weight: 700; color: #1f2937;">${seg.elevChange > 0 ? '+' : ''}${seg.elevChange.toFixed(0)}m</span>
+            </div>
+            <div>
+              <span style="color: #6b7280;">Alt:</span>
+              <span style="font-weight: 700; color: ${isHighAlt ? '#dc2626' : '#1f2937'};">${seg.avgEle.toFixed(0)}m${isHighAlt ? ' ⚠️' : ''}</span>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function renderCumulativeElevation(track) {
+      const ctx = document.getElementById('elevationChart').getContext('2d');
+      if(elevationChart) elevationChart.destroy();
+
+      const distances = track.map(pt => pt.distKm);
+      const elevations = track.map(pt => pt.ele);
+
+      // Calculate cumulative gain/loss
+      let cumGain = 0, cumLoss = 0;
+      const cumGainData = [0];
+      const cumLossData = [0];
+
+      for(let i = 1; i < track.length; i++) {
+        const diff = track[i].ele - track[i-1].ele;
+        if(diff > 0) {
+          cumGain += diff;
+        } else {
+          cumLoss += Math.abs(diff);
+        }
+        cumGainData.push(cumGain);
+        cumLossData.push(-cumLoss);
+      }
+
+      elevationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: distances,
+          datasets: [
+            {
+              label: 'Elevation (m)',
+              data: elevations,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              fill: true,
+              yAxisID: 'y',
+              pointRadius: 0,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'Cumulative Gain',
+              data: cumGainData,
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220, 38, 38, 0.05)',
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.3
+            },
+            {
+              label: 'Cumulative Loss',
+              data: cumLossData,
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.05)',
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { size: 10, weight: '600' }, padding: 8, usePointStyle: true }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 10,
+              titleFont: { size: 11 },
+              bodyFont: { size: 10 }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Distance (km)', font: { size: 11, weight: '600' } },
+              ticks: { font: { size: 9 } },
+              grid: { color: '#e5e7eb' }
+            },
+            y: {
+              position: 'left',
+              title: { display: true, text: 'Elevation (m)', font: { size: 11, weight: '600' }, color: '#10b981' },
+              ticks: { font: { size: 9 } },
+              grid: { color: '#f3f4f6' }
+            },
+            y1: {
+              position: 'right',
+              title: { display: true, text: 'Cumulative (m)', font: { size: 11, weight: '600' }, color: '#6b7280' },
+              grid: { drawOnChartArea: false },
+              ticks: { font: { size: 9 } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderGradeDistribution(segments) {
+      const ctx = document.getElementById('gradeChart').getContext('2d');
+      if(gradeChart) gradeChart.destroy();
+
+      // Categorize gradients
+      const categories = {
+        'Steep Down\n(<-15%)': 0,
+        'Mod Down\n(-15 to -5%)': 0,
+        'Flat\n(-5 to 5%)': 0,
+        'Mod Up\n(5 to 15%)': 0,
+        'Steep Up\n(>15%)': 0
+      };
+
+      segments.forEach(seg => {
+        const grad = seg.gradient;
+        const dist = seg.distance;
+        if(grad < -15) categories['Steep Down\n(<-15%)'] += dist;
+        else if(grad < -5) categories['Mod Down\n(-15 to -5%)'] += dist;
+        else if(grad < 5) categories['Flat\n(-5 to 5%)'] += dist;
+        else if(grad < 15) categories['Mod Up\n(5 to 15%)'] += dist;
+        else categories['Steep Up\n(>15%)'] += dist;
+      });
+
+      const labels = Object.keys(categories);
+      const data = Object.values(categories);
+
+      gradeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              'rgba(37, 99, 235, 0.7)',
+              'rgba(59, 130, 246, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(249, 115, 22, 0.7)',
+              'rgba(220, 38, 38, 0.7)'
+            ],
+            borderColor: [
+              '#2563eb',
+              '#3b82f6',
+              '#10b981',
+              '#f97316',
+              '#dc2626'
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                font: { size: 9, weight: '600' },
+                padding: 8,
+                generateLabels: function(chart) {
+                  const data = chart.data;
+                  return data.labels.map((label, i) => ({
+                    text: label + ': ' + data.datasets[0].data[i].toFixed(1) + 'km',
+                    fillStyle: data.datasets[0].backgroundColor[i],
+                    strokeStyle: data.datasets[0].borderColor[i],
+                    lineWidth: 2,
+                    hidden: false,
+                    index: i
+                  }));
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.parsed.toFixed(1) + ' km';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function calculateSlowdownRisk(segments, track) {
+      const container = document.getElementById('slowdownAnalysis');
+
+      // Find significant climbs (>300m elevation gain in single push)
+      const climbs = [];
+      let climbStart = null;
+      let climbGain = 0;
+
+      for(let i = 1; i < track.length; i++) {
+        const elevDiff = track[i].ele - track[i-1].ele;
+
+        if(elevDiff > 0) {
+          if(climbStart === null) {
+            climbStart = i - 1;
+            climbGain = 0;
+          }
+          climbGain += elevDiff;
+        } else {
+          // End of climb
+          if(climbStart !== null && climbGain > 300) {
+            climbs.push({
+              startKm: track[climbStart].distKm,
+              endKm: track[i-1].distKm,
+              gain: climbGain,
+              peakEle: track[i-1].ele
+            });
+          }
+          climbStart = null;
+          climbGain = 0;
+        }
+      }
+
+      // Check final climb
+      if(climbStart !== null && climbGain > 300) {
+        climbs.push({
+          startKm: track[climbStart].distKm,
+          endKm: track[track.length-1].distKm,
+          gain: climbGain,
+          peakEle: track[track.length-1].ele
+        });
+      }
+
+      if(climbs.length === 0) {
+        container.innerHTML = '✓ No major climbs detected. Course is relatively flat or rolling.';
+        return;
+      }
+
+      // Calculate expected slowdown
+      let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+
+      climbs.forEach((climb, idx) => {
+        // Slowdown calculation: bigger climbs = bigger slowdown
+        // Rule of thumb: 5-15% slowdown for 10km after major climbs
+        const slowdownFactor = Math.min(0.20, 0.05 + (climb.gain / 1000) * 0.05);
+        const slowdownPct = (slowdownFactor * 100).toFixed(0);
+
+        // Time loss estimate (rough): if you're running 7min/km, after a 500m climb you might slow to 8min/km for next 10km
+        const timeLossMinutes = slowdownFactor * 10 * 7; // Assuming 7min/km base pace
+
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(180, 83, 9, 0.2);">
+            <div>
+              <span style="font-weight: 700;">Climb ${idx + 1}</span>
+              <span style="color: #78350f; margin-left: 8px;">km ${climb.startKm.toFixed(1)} → ${climb.endKm.toFixed(1)}</span>
+              <span style="color: #dc2626; margin-left: 8px; font-weight: 600;">+${climb.gain.toFixed(0)}m</span>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 700; color: #dc2626;">${slowdownPct}% slower</div>
+              <div style="font-size: 10px; color: #92400e;">~${timeLossMinutes.toFixed(0)}min loss over next 10km</div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      // Summary
+      const totalSlowdownMinutes = climbs.reduce((sum, climb) => {
+        const slowdownFactor = Math.min(0.20, 0.05 + (climb.gain / 1000) * 0.05);
+        return sum + (slowdownFactor * 10 * 7);
+      }, 0);
+
+      html += `
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 2px solid #f59e0b; font-weight: 700;">
+          <span style="color: #92400e;">Total Expected Post-Climb Time Loss:</span>
+          <span style="color: #dc2626; margin-left: 8px; font-size: 16px;">${totalSlowdownMinutes.toFixed(0)} minutes</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 10px; color: #78350f; font-style: italic;">
+          * Based on historical slowdown patterns after sustained climbs. Actual impact varies by fitness and pacing strategy.
+        </div>
+      `;
+
+      container.innerHTML = html;
     }
 
     // ========== INITIALIZATION ==========
