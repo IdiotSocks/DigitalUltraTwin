@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Twin Ultra - Race Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Glass morphism cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .glass-card-white {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .glass-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .glass-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select.glass-input option {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(74, 222, 128, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(74, 222, 128, 0.5);
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid rgba(102, 126, 234, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      color: #1f2937;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-value.gradient-green {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-value.gradient-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-value.gradient-purple {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px dashed rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-input-wrapper:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-status {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #4ade80;
+    }
+
+    .checkbox-label {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="max-width: 1400px; margin: 0 auto;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h1 style="color: white; font-size: 42px; font-weight: 900; margin-bottom: 8px; text-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        🏃 Digital Twin Ultra
+      </h1>
+      <p style="color: rgba(255,255,255,0.9); font-size: 16px; font-weight: 600;">
+        AI-Powered Ultra Race Predictor
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 400px 1fr; gap: 24px;">
+
+      <!-- Left Sidebar -->
+      <div>
+
+        <!-- CTL Fitness Tracker -->
+        <div class="glass-card">
+          <div class="section-title">📊 CTL Fitness Tracker</div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Current CTL</label>
+            <input type="number" id="ctlCurrent" value="106" class="glass-input" placeholder="Enter CTL">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Race Date</label>
+            <input type="date" id="raceDate" class="glass-input">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Training Plan</label>
+            <select id="trainingPlan" class="glass-input glass-select">
+              <option value="2.5">Conservative (2.5 CTL/week)</option>
+              <option value="3.5" selected>Moderate (3.5 CTL/week)</option>
+              <option value="5.0">Aggressive (5.0 CTL/week)</option>
+              <option value="0">Maintenance (0 CTL/week)</option>
+            </select>
+          </div>
+
+          <div style="padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
+            <div class="checkbox-group">
+              <input type="checkbox" id="taperEnabled" checked class="checkbox-input">
+              <label for="taperEnabled" class="checkbox-label">Enable Taper</label>
+            </div>
+
+            <div id="taperSettings">
+              <div class="grid-2" style="margin-bottom: 12px;">
+                <div>
+                  <label class="input-label">Weeks</label>
+                  <select id="taperWeeks" class="glass-input glass-select">
+                    <option value="0.5">0.5</option>
+                    <option value="1">1</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="input-label">Intensity</label>
+                  <select id="taperIntensity" class="glass-input glass-select">
+                    <option value="0.8">80%</option>
+                    <option value="0.7">70%</option>
+                    <option value="0.6" selected>60%</option>
+                    <option value="0.5">50%</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 16px; gap: 12px;">
+            <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px; text-align: center;">
+              <div class="input-label" style="margin-bottom: 4px;">Race CTL</div>
+              <div id="ctlRaceDay" style="color: white; font-size: 24px; font-weight: 900;">--</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px; text-align: center;">
+              <div class="input-label" style="margin-bottom: 4px;">Fitness</div>
+              <div id="ctlFitness" style="color: #4ade80; font-size: 24px; font-weight: 900;">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Load GPX -->
+        <div class="glass-card">
+          <div class="section-title">📁 Load Race Course</div>
+
+          <label for="gpxInput" class="file-input-wrapper">
+            <div style="color: white; font-size: 40px; margin-bottom: 8px;">📍</div>
+            <div style="color: white; font-weight: 700; font-size: 14px;">Click to Upload GPX</div>
+            <div class="file-status" id="gpxStatus">No file loaded</div>
+            <input type="file" id="gpxInput" accept=".gpx,.xml">
+          </label>
+        </div>
+
+        <!-- Weather -->
+        <div class="glass-card">
+          <div class="section-title">🌤️ Weather</div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Scenario</label>
+            <select id="weatherScenario" class="glass-input glass-select">
+              <option value="optimal">☀️ Optimal (8-15°C)</option>
+              <option value="typical" selected>🌤️ Typical (5-14°C)</option>
+              <option value="cold">❄️ Cold (0-8°C)</option>
+              <option value="warm">🌡️ Warm (10-20°C)</option>
+            </select>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label class="input-label">Start °C</label>
+              <input type="number" id="startTemp" value="5" class="glass-input">
+            </div>
+            <div>
+              <label class="input-label">Peak °C</label>
+              <input type="number" id="finishTemp" value="14" class="glass-input">
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition -->
+        <div class="glass-card">
+          <div class="section-title">🍽️ Nutrition</div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Carbs (g/hr)</label>
+            <input type="number" id="carbInput" value="60" class="glass-input">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="input-label">Fluids (ml/hr)</label>
+            <input type="number" id="hydroInput" value="500" class="glass-input">
+          </div>
+
+          <div>
+            <label class="input-label">Sodium (mg/hr)</label>
+            <input type="number" id="saltInput" value="500" class="glass-input">
+          </div>
+        </div>
+
+        <!-- Calculate Button -->
+        <button id="calcBtn" onclick="runAnalysis()" class="btn-primary">
+          ⚡ CALCULATE PREDICTION
+        </button>
+
+      </div>
+
+      <!-- Main Content -->
+      <div>
+
+        <!-- Results KPIs -->
+        <div class="glass-card-white" id="resultsCard" style="display: none;">
+          <h2 style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 20px;">📊 Predicted Results</h2>
+
+          <div class="grid-3" style="margin-bottom: 24px;">
+            <div class="stat-box">
+              <div class="stat-label">Finish Time</div>
+              <div id="kpi-time" class="stat-value gradient-green">--:--</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Avg Pace</div>
+              <div id="kpi-pace" class="stat-value gradient-blue">--:--</div>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">min/km</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Avg Speed</div>
+              <div id="kpi-speed" class="stat-value gradient-purple">--</div>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">km/h</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="stat-box">
+              <div class="stat-label">Total Distance</div>
+              <div id="kpi-distance" class="stat-value">--</div>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">km</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Elevation Gain</div>
+              <div id="kpi-elevation" class="stat-value">--</div>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">meters</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Race Profile Chart -->
+        <div class="glass-card-white" id="chartCard" style="display: none;">
+          <h2 style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 20px;">📈 Race Profile</h2>
+          <div style="height: 400px; position: relative;">
+            <canvas id="mainChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="glass-card-white" id="gettingStarted">
+          <div style="text-align: center; padding: 60px 40px;">
+            <div style="font-size: 64px; margin-bottom: 20px;">🏃</div>
+            <h2 style="font-size: 28px; font-weight: 800; color: #1f2937; margin-bottom: 12px;">
+              Welcome to Digital Twin Ultra
+            </h2>
+            <p style="font-size: 16px; color: #6b7280; max-width: 500px; margin: 0 auto 32px;">
+              Get AI-powered race predictions using your Training Peaks CTL and race course GPX files.
+            </p>
+
+            <div style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border-radius: 16px; padding: 24px; max-width: 600px; margin: 0 auto; text-align: left;">
+              <h3 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase;">
+                Quick Start Guide:
+              </h3>
+              <ol style="list-style: decimal; padding-left: 20px; color: #374151; font-size: 14px; line-height: 1.8;">
+                <li><strong>Enter your current CTL</strong> from Training Peaks (left sidebar)</li>
+                <li><strong>Set your race date</strong> to calculate fitness progression</li>
+                <li><strong>Upload a GPX file</strong> of your race course</li>
+                <li><strong>Adjust weather and nutrition</strong> settings as needed</li>
+                <li><strong>Click "Calculate Prediction"</strong> to see your results!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== CTL CALCULATIONS ==========
+    const CTL_BASELINE = 120;
+    const CTL_TO_FITNESS_RATE = 0.00833;
+
+    function ctlToFitness(ctl) {
+      return Math.max(0.5, 1.0 + ((ctl - CTL_BASELINE) * CTL_TO_FITNESS_RATE));
+    }
+
+    function calculateWeeksToRace() {
+      const raceDateInput = document.getElementById('raceDate');
+      if (!raceDateInput.value) return 0;
+      const today = new Date();
+      const raceDate = new Date(raceDateInput.value);
+      const diffTime = raceDate - today;
+      const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      return diffDays / 7;
+    }
+
+    function updateCTLProjection() {
+      const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+      const weeksToRace = calculateWeeksToRace();
+      const weeklyGain = parseFloat(document.getElementById('trainingPlan').value) || 3.5;
+      const taperEnabled = document.getElementById('taperEnabled').checked;
+      const taperWeeksInput = parseFloat(document.getElementById('taperWeeks').value) || 2;
+      const taperIntensity = parseFloat(document.getElementById('taperIntensity').value) || 0.6;
+
+      if (weeksToRace === 0) {
+        document.getElementById('ctlRaceDay').innerText = currentCtl.toFixed(0);
+        document.getElementById('ctlFitness').innerText = ctlToFitness(currentCtl).toFixed(3);
+        return;
+      }
+
+      const taperWeeks = taperEnabled ? Math.min(taperWeeksInput, weeksToRace) : 0;
+      const buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+      const peakCtl = currentCtl + (buildWeeks * weeklyGain);
+      const taperLossPerWeek = weeklyGain * (1 - taperIntensity);
+      const raceDayCtl = peakCtl - (taperWeeks * taperLossPerWeek);
+      const raceDayFitness = ctlToFitness(raceDayCtl);
+
+      document.getElementById('ctlRaceDay').innerText = raceDayCtl.toFixed(0);
+      document.getElementById('ctlFitness').innerText = raceDayFitness.toFixed(3);
+    }
+
+    // ========== GPX PARSING ==========
+    let currentCourse = [];
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function parseGPX(xmlText) {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      let points = xmlDoc.getElementsByTagName('trkpt');
+      if(points.length === 0) points = xmlDoc.getElementsByTagName('rtept');
+
+      const track = [];
+      let cumDist = 0;
+      let prevLat = null, prevLon = null, prevEle = null;
+
+      for(let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        const lat = parseFloat(pt.getAttribute('lat'));
+        const lon = parseFloat(pt.getAttribute('lon'));
+        const eleNode = pt.getElementsByTagName('ele')[0];
+        const ele = eleNode ? parseFloat(eleNode.textContent) : 0;
+
+        if(prevLat !== null) {
+          const segDist = haversine(prevLat, prevLon, lat, lon);
+          cumDist += segDist;
+          const eleDiff = ele - prevEle;
+          const grad = (segDist > 0.001) ? (eleDiff / (segDist * 1000)) * 100 : 0;
+          track.push({ distKm: cumDist, ele: ele, grad: grad });
+        } else {
+          track.push({ distKm: 0, ele: ele, grad: 0 });
+        }
+        prevLat = lat; prevLon = lon; prevEle = ele;
+      }
+
+      // Simplify
+      const simplified = [];
+      let lastDist = -0.1;
+      for(let j = 0; j < track.length; j++) {
+        if(track[j].distKm - lastDist >= 0.1) {
+          simplified.push(track[j]);
+          lastDist = track[j].distKm;
+        }
+      }
+      return simplified;
+    }
+
+    document.getElementById('gpxInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          currentCourse = parseGPX(evt.target.result);
+          const dist = currentCourse[currentCourse.length - 1].distKm;
+          let totalGain = 0;
+          for(let i = 1; i < currentCourse.length; i++) {
+            const diff = currentCourse[i].ele - currentCourse[i-1].ele;
+            if(diff > 0) totalGain += diff;
+          }
+          document.getElementById('gpxStatus').innerText = `✓ ${dist.toFixed(1)}km | ${Math.round(totalGain)}m gain`;
+          document.getElementById('gpxStatus').style.color = '#4ade80';
+        } catch(err) {
+          document.getElementById('gpxStatus').innerText = `✗ Error: ${err.message}`;
+          document.getElementById('gpxStatus').style.color = '#f87171';
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // ========== RACE SIMULATION ==========
+    const ATHLETE = {
+      speeds: { steep_d: 5.92, mod_d: 6.96, flat: 6.62, mod_u: 4.95, steep_u: 3.71 },
+      tech_skill: 0.96
+    };
+
+    let mainChart = null;
+
+    function getTempAtTime(elapsedHours, startTemp, peakTemp) {
+      const hourOfDay = 6 + elapsedHours;
+      const distFromPeak = Math.abs(14 - hourOfDay);
+      const factor = Math.max(0, 1 - (distFromPeak / 8));
+      return startTemp + ((peakTemp - startTemp) * factor);
+    }
+
+    function runAnalysis() {
+      if(!currentCourse || currentCourse.length === 0) {
+        alert('Please upload a GPX file first!');
+        return;
+      }
+
+      const btn = document.getElementById('calcBtn');
+      btn.innerHTML = '⏳ CALCULATING...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        try {
+          const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+          const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+          const finishTemp = parseFloat(document.getElementById('finishTemp').value) || 14;
+          const carbIn = parseFloat(document.getElementById('carbInput').value) || 60;
+          const hydroIn = parseFloat(document.getElementById('hydroInput').value) || 500;
+
+          const track = currentCourse;
+          const totalDistKm = track[track.length-1].distKm;
+
+          let totalTime = 0;
+          const res = { dists:[], speeds:[], elevs:[], temps:[] };
+          let prevDist = 0;
+          let totalGain = 0;
+
+          for(let i = 0; i < track.length; i++) {
+            const seg = track[i];
+            const len = seg.distKm - prevDist;
+            if(len <= 0) continue;
+            prevDist = seg.distKm;
+
+            // Calculate elevation gain
+            if(i > 0) {
+              const eleDiff = seg.ele - track[i-1].ele;
+              if(eleDiff > 0) totalGain += eleDiff;
+            }
+
+            let baseSpeed = 0;
+            if(seg.grad < -15) baseSpeed = ATHLETE.speeds.steep_d;
+            else if(seg.grad < -5) baseSpeed = ATHLETE.speeds.mod_d;
+            else if(seg.grad < 5) baseSpeed = ATHLETE.speeds.flat;
+            else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
+            else baseSpeed = ATHLETE.speeds.steep_u;
+
+            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * 1.18;
+
+            const temp = getTempAtTime(totalTime, startTemp, finishTemp);
+            if(temp > 18) currentSpeed *= Math.pow(0.98, temp - 18);
+            if(temp < 10) currentSpeed *= Math.pow(0.99, 10 - temp);
+
+            // Nutrition penalty
+            if(totalTime > 3.0) {
+              if(carbIn < 40) currentSpeed *= 0.85;
+              else if(carbIn < 85) currentSpeed *= 0.96;
+            }
+            if(hydroIn < 500) currentSpeed *= 0.95;
+
+            // Fatigue
+            if(seg.distKm > 30) {
+              const fatigueFactor = Math.max(0.7, 1 - ((seg.distKm - 30) * 0.002));
+              currentSpeed *= fatigueFactor;
+            }
+
+            const t = len / currentSpeed;
+            totalTime += t;
+
+            res.dists.push(seg.distKm);
+            res.speeds.push(parseFloat(currentSpeed.toFixed(1)));
+            res.elevs.push(parseFloat(seg.ele.toFixed(0)));
+            res.temps.push(parseFloat(temp.toFixed(1)));
+          }
+
+          // Update UI
+          const h = Math.floor(totalTime);
+          const m = Math.floor((totalTime - h) * 60);
+          document.getElementById('kpi-time').innerText = h + "h " + m + "m";
+
+          const pace = (totalTime * 60) / totalDistKm;
+          const pM = Math.floor(pace);
+          const pS = Math.round((pace - pM) * 60);
+          document.getElementById('kpi-pace').innerText = pM + ":" + (pS < 10 ? "0" : "") + pS;
+
+          const avgSpeed = totalDistKm / totalTime;
+          document.getElementById('kpi-speed').innerText = avgSpeed.toFixed(2);
+          document.getElementById('kpi-distance').innerText = totalDistKm.toFixed(1);
+          document.getElementById('kpi-elevation').innerText = Math.round(totalGain);
+
+          // Show results
+          document.getElementById('gettingStarted').style.display = 'none';
+          document.getElementById('resultsCard').style.display = 'block';
+          document.getElementById('chartCard').style.display = 'block';
+
+          // Render chart
+          renderChart(res);
+
+          btn.innerHTML = '⚡ CALCULATE PREDICTION';
+          btn.disabled = false;
+        } catch(err) {
+          alert('Error: ' + err.message);
+          btn.innerHTML = '⚡ CALCULATE PREDICTION';
+          btn.disabled = false;
+        }
+      }, 100);
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      if(mainChart) mainChart.destroy();
+
+      mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.dists,
+          datasets: [
+            {
+              label: 'Speed (km/h)',
+              data: data.speeds,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              yAxisID: 'y',
+              pointRadius: 0,
+              tension: 0.2,
+              borderWidth: 3
+            },
+            {
+              label: 'Elevation (m)',
+              data: data.elevs,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.2)',
+              fill: true,
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { size: 12, weight: 'bold' },
+                padding: 15
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Distance (km)', font: { size: 14, weight: 'bold' } },
+              ticks: { font: { size: 11 } },
+              grid: { color: '#e5e7eb' }
+            },
+            y: {
+              position: 'left',
+              title: { display: true, text: 'Speed (km/h)', font: { size: 14, weight: 'bold' } },
+              ticks: { font: { size: 11 } },
+              grid: { color: '#e5e7eb' }
+            },
+            y1: {
+              position: 'right',
+              title: { display: true, text: 'Elevation (m)', font: { size: 14, weight: 'bold' } },
+              grid: { drawOnChartArea: false },
+              ticks: { font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // ========== INITIALIZATION ==========
+    (function init() {
+      // Set default race date to 8 weeks from now
+      const today = new Date();
+      const futureDate = new Date(today.getTime() + (8 * 7 * 24 * 60 * 60 * 1000));
+      document.getElementById('raceDate').value = futureDate.toISOString().split('T')[0];
+      updateCTLProjection();
+
+      // Event listeners
+      document.getElementById('ctlCurrent').addEventListener('input', updateCTLProjection);
+      document.getElementById('raceDate').addEventListener('change', updateCTLProjection);
+      document.getElementById('trainingPlan').addEventListener('change', updateCTLProjection);
+      document.getElementById('taperEnabled').addEventListener('change', function() {
+        document.getElementById('taperSettings').style.display = this.checked ? 'block' : 'none';
+        updateCTLProjection();
+      });
+      document.getElementById('taperWeeks').addEventListener('change', updateCTLProjection);
+      document.getElementById('taperIntensity').addEventListener('change', updateCTLProjection);
+    })();
+  </script>
+</body>
+</html>
