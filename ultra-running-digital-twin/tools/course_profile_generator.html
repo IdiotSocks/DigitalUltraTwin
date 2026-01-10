@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Profile Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .help-text {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        #jsonOutput {
+            margin-top: 30px;
+            padding: 20px;
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 8px 16px;
+            background: #e9ecef;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏃 Course Profile Generator</h1>
+        <p class="subtitle">Create custom course profiles for race predictions</p>
+
+        <!-- Presets -->
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="loadPreset('technical')">🏔️ Technical Mountain</button>
+            <button class="preset-btn" onclick="loadPreset('runnable')">🏃 Runnable Trail</button>
+            <button class="preset-btn" onclick="loadPreset('road')">🛣️ Road Ultra</button>
+            <button class="preset-btn" onclick="loadPreset('extreme')">⚡ Extreme Mountain</button>
+        </div>
+
+        <form id="courseForm">
+            <!-- Basic Info -->
+            <div class="section">
+                <h2>📋 Basic Information</h2>
+                <div class="form-group">
+                    <label>
+                        Race Name
+                        <span class="help-text">e.g., "UTMB 2026" or "Western States 100"</span>
+                    </label>
+                    <input type="text" id="raceName" required>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>
+                            Distance (km)
+                            <span class="help-text">Total race distance</span>
+                        </label>
+                        <input type="number" id="distance" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Elevation Gain (m)
+                            <span class="help-text">Total climbing</span>
+                        </label>
+                        <input type="number" id="elevation" step="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terrain -->
+            <div class="section">
+                <h2>🏔️ Terrain Characteristics</h2>
+
+                <div class="form-group">
+                    <label>
+                        Surface Type
+                        <span class="help-text">Primary trail surface</span>
+                    </label>
+                    <select id="surfaceType">
+                        <option value="road">Road</option>
+                        <option value="smooth_trail">Smooth Trail</option>
+                        <option value="mixed_trail" selected>Mixed Trail</option>
+                        <option value="technical_trail">Technical Trail</option>
+                        <option value="mountain">Mountain/Alpine</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>
+                            Dry Conditions Multiplier
+                            <span class="help-text">0.95 = 5% slower, 1.0 = no impact (typical: 0.97-1.0)</span>
+                        </label>
+                        <input type="number" id="dryMultiplier" step="0.01" min="0.8" max="1.0" value="0.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Wet Conditions Multiplier
+                            <span class="help-text">How much slower when wet (typical: 0.85-0.95)</span>
+                        </label>
+                        <input type="number" id="wetMultiplier" step="0.01" min="0.7" max="1.0" value="0.93">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fatigue Model -->
+            <div class="section">
+                <h2>💪 Fatigue Model</h2>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>
+                            Base Fatigue Rate
+                            <span class="help-text">0.999 = slow, 0.995 = fast (typical: 0.9975)</span>
+                        </label>
+                        <input type="number" id="fatigueBase" step="0.0001" min="0.99" max="1.0" value="0.9975">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Fatigue Inflection Point (km)
+                            <span class="help-text">Where fatigue accelerates (typical: 50-80km)</span>
+                        </label>
+                        <input type="number" id="fatigueInflection" step="1" min="20" max="150" value="50">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Fatigue Slope Multiplier
+                        <span class="help-text">How much faster fatigue builds after inflection (typical: 1.0-1.2)</span>
+                    </label>
+                    <input type="number" id="fatigueSlopeMultiplier" step="0.1" min="1.0" max="2.0" value="1.1">
+                </div>
+            </div>
+
+            <!-- Competition -->
+            <div class="section">
+                <h2>🏆 Competition & Field Effects</h2>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>
+                            Runnable Trail Advantage
+                            <span class="help-text">Speed bonus on runnable sections (1.0-1.05)</span>
+                        </label>
+                        <input type="number" id="runnableAdvantage" step="0.01" min="1.0" max="1.1" value="1.02">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Short Climb Advantage
+                            <span class="help-text">Speed bonus on 6-16% climbs (1.0-1.05)</span>
+                        </label>
+                        <input type="number" id="climbAdvantage" step="0.01" min="1.0" max="1.1" value="1.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Altitude -->
+            <div class="section">
+                <h2>⛰️ Altitude Settings</h2>
+
+                <div class="form-group">
+                    <label>
+                        Apply Altitude Penalty?
+                        <span class="help-text">Enable for high-altitude races (>2000m)</span>
+                    </label>
+                    <select id="applyAltitude">
+                        <option value="false" selected>No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>
+                            Altitude Threshold (m)
+                            <span class="help-text">Penalty starts above this altitude</span>
+                        </label>
+                        <input type="number" id="altitudeThreshold" step="100" value="2000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Penalty per 1000m
+                            <span class="help-text">Speed reduction (typical: 0.95)</span>
+                        </label>
+                        <input type="number" id="altitudePenalty" step="0.01" min="0.8" max="1.0" value="0.95">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate -->
+            <div style="text-align: center; margin-top: 40px;">
+                <button type="button" class="btn" onclick="generateJSON()">🎯 Generate Course Profile</button>
+                <button type="button" class="btn btn-secondary" onclick="downloadJSON()">💾 Download JSON</button>
+            </div>
+        </form>
+
+        <!-- Output -->
+        <pre id="jsonOutput"></pre>
+    </div>
+
+    <script>
+        let generatedJSON = null;
+
+        function loadPreset(type) {
+            const presets = {
+                technical: {
+                    raceName: 'Technical Mountain Ultra',
+                    distance: 100,
+                    elevation: 8000,
+                    surfaceType: 'technical_trail',
+                    dryMultiplier: 0.95,
+                    wetMultiplier: 0.85,
+                    fatigueBase: 0.997,
+                    fatigueInflection: 40,
+                    fatigueSlopeMultiplier: 1.3,
+                    runnableAdvantage: 1.0,
+                    climbAdvantage: 1.0,
+                    applyAltitude: true,
+                    altitudeThreshold: 2000,
+                    altitudePenalty: 0.95
+                },
+                runnable: {
+                    raceName: 'Runnable Trail Ultra',
+                    distance: 75,
+                    elevation: 3000,
+                    surfaceType: 'mixed_trail',
+                    dryMultiplier: 0.99,
+                    wetMultiplier: 0.93,
+                    fatigueBase: 0.9975,
+                    fatigueInflection: 50,
+                    fatigueSlopeMultiplier: 1.1,
+                    runnableAdvantage: 1.03,
+                    climbAdvantage: 1.02,
+                    applyAltitude: false,
+                    altitudeThreshold: 3000,
+                    altitudePenalty: 0.98
+                },
+                road: {
+                    raceName: 'Road Ultra',
+                    distance: 100,
+                    elevation: 500,
+                    surfaceType: 'road',
+                    dryMultiplier: 1.0,
+                    wetMultiplier: 0.98,
+                    fatigueBase: 0.998,
+                    fatigueInflection: 60,
+                    fatigueSlopeMultiplier: 1.05,
+                    runnableAdvantage: 1.0,
+                    climbAdvantage: 1.0,
+                    applyAltitude: false,
+                    altitudeThreshold: 5000,
+                    altitudePenalty: 1.0
+                },
+                extreme: {
+                    raceName: 'Extreme Mountain Challenge',
+                    distance: 170,
+                    elevation: 10000,
+                    surfaceType: 'mountain',
+                    dryMultiplier: 0.92,
+                    wetMultiplier: 0.80,
+                    fatigueBase: 0.996,
+                    fatigueInflection: 30,
+                    fatigueSlopeMultiplier: 1.5,
+                    runnableAdvantage: 1.0,
+                    climbAdvantage: 1.0,
+                    applyAltitude: true,
+                    altitudeThreshold: 1500,
+                    altitudePenalty: 0.93
+                }
+            };
+
+            const preset = presets[type];
+            Object.keys(preset).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = preset[key];
+                }
+            });
+        }
+
+        function generateJSON() {
+            const formData = {
+                raceName: document.getElementById('raceName').value,
+                distance: parseFloat(document.getElementById('distance').value),
+                elevation: parseFloat(document.getElementById('elevation').value),
+                surfaceType: document.getElementById('surfaceType').value,
+                dryMultiplier: parseFloat(document.getElementById('dryMultiplier').value),
+                wetMultiplier: parseFloat(document.getElementById('wetMultiplier').value),
+                fatigueBase: parseFloat(document.getElementById('fatigueBase').value),
+                fatigueInflection: parseFloat(document.getElementById('fatigueInflection').value),
+                fatigueSlopeMultiplier: parseFloat(document.getElementById('fatigueSlopeMultiplier').value),
+                runnableAdvantage: parseFloat(document.getElementById('runnableAdvantage').value),
+                climbAdvantage: parseFloat(document.getElementById('climbAdvantage').value),
+                applyAltitude: document.getElementById('applyAltitude').value === 'true',
+                altitudeThreshold: parseFloat(document.getElementById('altitudeThreshold').value),
+                altitudePenalty: parseFloat(document.getElementById('altitudePenalty').value)
+            };
+
+            const courseProfile = {
+                "metadata": {
+                    "race_name": formData.raceName,
+                    "distance_km": formData.distance,
+                    "elevation_gain_m": formData.elevation,
+                    "version": "1.0",
+                    "created": new Date().toISOString().split('T')[0],
+                    "source": "Course Profile Generator"
+                },
+                "terrain_profile": {
+                    "surface_type": formData.surfaceType,
+                    "technicality": {
+                        "dry_multiplier": formData.dryMultiplier,
+                        "light_rain_multiplier": (formData.dryMultiplier + formData.wetMultiplier) / 2,
+                        "wet_multiplier": formData.wetMultiplier,
+                        "description": `${formData.surfaceType.replace('_', ' ')} terrain`
+                    }
+                },
+                "simulation_defaults": {
+                    "fatigue_model": {
+                        "fatigue_per_km_base": formData.fatigueBase,
+                        "fatigue_inflection_km": formData.fatigueInflection,
+                        "fatigue_slope_multiplier": formData.fatigueSlopeMultiplier,
+                        "description": "Course-specific fatigue accumulation"
+                    },
+                    "field_effects": {
+                        "field_loss_multiplier_runnable_trail": formData.runnableAdvantage,
+                        "field_loss_multiplier_short_climbs": formData.climbAdvantage,
+                        "description": "Athlete's competitive advantages on this terrain"
+                    }
+                },
+                "environment_profile": {
+                    "altitude_penalty": {
+                        "apply": formData.applyAltitude,
+                        "starts_m": formData.altitudeThreshold,
+                        "multiplier_per_1000m": formData.altitudePenalty,
+                        "description": formData.applyAltitude ? "Altitude effects applied" : "Low altitude race"
+                    }
+                }
+            };
+
+            generatedJSON = JSON.stringify(courseProfile, null, 2);
+            document.getElementById('jsonOutput').textContent = generatedJSON;
+            document.getElementById('jsonOutput').style.display = 'block';
+
+            // Scroll to output
+            document.getElementById('jsonOutput').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadJSON() {
+            if (!generatedJSON) {
+                alert('Please generate the course profile first!');
+                return;
+            }
+
+            const raceName = document.getElementById('raceName').value.toLowerCase().replace(/\s+/g, '_');
+            const filename = `${raceName}_course_profile.json`;
+
+            const blob = new Blob([generatedJSON], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
