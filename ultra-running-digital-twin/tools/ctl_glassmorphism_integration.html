@@ -1,0 +1,324 @@
+<!--
+  GLASSMORPHISM CTL TRACKER - INTEGRATION SNIPPET
+  Replace your existing CTL card with this version
+-->
+
+<style>
+/* Add these styles to your existing <style> section */
+
+.glass-ctl-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+  border-left: 4px solid #667eea;
+}
+
+.ctl-input-group {
+  margin-bottom: 20px;
+}
+
+.ctl-label {
+  display: block;
+  color: #667eea;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.ctl-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.ctl-input:focus {
+  outline: none;
+  background: white;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.ctl-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.ctl-taper-section {
+  padding-top: 20px;
+  border-top: 2px solid rgba(102, 126, 234, 0.2);
+  margin-top: 20px;
+}
+
+.ctl-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ctl-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.ctl-checkbox-label {
+  color: #667eea;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.ctl-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ctl-taper-desc {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 12px;
+  color: #4338ca;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ctl-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.ctl-stat-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  border: 2px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+}
+
+.ctl-stat-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.ctl-stat-label {
+  color: #6b7280;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.ctl-stat-value {
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ctl-stat-value.accent-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ctl-stat-value.accent-green {
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ctl-stat-value.accent-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ctl-big-fitness {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+  border-radius: 14px;
+  margin-top: 20px;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.ctl-big-label {
+  color: #059669;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.ctl-big-value {
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ctl-btn-compare {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.ctl-btn-compare:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+.ctl-btn-compare:active {
+  transform: translateY(0);
+}
+</style>
+
+<!-- Replace your existing CTL Fitness Tracker card with this: -->
+
+<div class="glass-ctl-card">
+  <h2 class="font-bold text-sm uppercase mb-4" style="color: #667eea; letter-spacing: 1px;">📊 CTL Fitness Tracker</h2>
+
+  <!-- Current CTL -->
+  <div class="ctl-input-group">
+    <label class="ctl-label">Current CTL</label>
+    <input type="number" id="ctlCurrent" value="106" class="ctl-input">
+  </div>
+
+  <!-- Race Date -->
+  <div class="ctl-input-group">
+    <label class="ctl-label">Race Date</label>
+    <input type="date" id="raceDate" class="ctl-input">
+  </div>
+
+  <!-- Training Plan -->
+  <div class="ctl-input-group">
+    <label class="ctl-label">Training Plan</label>
+    <select id="trainingPlan" onchange="updateCTLProjection()" class="ctl-input ctl-select">
+      <option value="2.5">Conservative (2.5 CTL/week)</option>
+      <option value="3.5" selected>Moderate (3.5 CTL/week)</option>
+      <option value="5.0">Aggressive (5.0 CTL/week)</option>
+      <option value="0">Maintenance (0 CTL/week)</option>
+    </select>
+  </div>
+
+  <!-- Taper Section -->
+  <div class="ctl-taper-section">
+    <div class="ctl-checkbox-group">
+      <input type="checkbox" id="taperEnabled" checked onchange="toggleTaperSettings(); updateCTLProjection();" class="ctl-checkbox">
+      <label for="taperEnabled" class="ctl-checkbox-label">Enable Taper</label>
+    </div>
+
+    <div id="taperSettings">
+      <div class="ctl-grid-2">
+        <div class="ctl-input-group">
+          <label class="ctl-label">Taper Weeks</label>
+          <select id="taperWeeks" onchange="updateCTLProjection()" class="ctl-input ctl-select">
+            <option value="0.5">0.5 weeks</option>
+            <option value="1">1 week</option>
+            <option value="1.5">1.5 weeks</option>
+            <option value="2" selected>2 weeks</option>
+            <option value="3">3 weeks</option>
+          </select>
+        </div>
+
+        <div class="ctl-input-group">
+          <label class="ctl-label">Intensity</label>
+          <select id="taperIntensity" onchange="updateCTLProjection()" class="ctl-input ctl-select">
+            <option value="0.8">Light (80%)</option>
+            <option value="0.7">Moderate (70%)</option>
+            <option value="0.6">Standard (60%)</option>
+            <option value="0.5">Heavy (50%)</option>
+            <option value="0.4">Very Heavy (40%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ctl-taper-desc" id="taperDescription">
+        Reducing to 60% of training load
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="ctl-stats-grid">
+    <div class="ctl-stat-box">
+      <div class="ctl-stat-label">Weeks to Race</div>
+      <div class="ctl-stat-value accent-blue" id="ctlWeeksToRace">--</div>
+    </div>
+
+    <div class="ctl-stat-box">
+      <div class="ctl-stat-label">Build Weeks</div>
+      <div class="ctl-stat-value accent-purple" id="ctlBuildWeeks">--</div>
+    </div>
+
+    <div class="ctl-stat-box">
+      <div class="ctl-stat-label">Peak CTL</div>
+      <div class="ctl-stat-value" id="ctlPeak">--</div>
+    </div>
+
+    <div class="ctl-stat-box">
+      <div class="ctl-stat-label">Race Day CTL</div>
+      <div class="ctl-stat-value accent-green" id="ctlRaceDay">--</div>
+    </div>
+  </div>
+
+  <!-- Big Fitness Display -->
+  <div class="ctl-big-fitness">
+    <div class="ctl-big-label">Race Day Fitness</div>
+    <div class="ctl-big-value" id="ctlFitness">--</div>
+  </div>
+
+  <!-- Compare Button -->
+  <button class="ctl-btn-compare" onclick="showCTLScenarios()">
+    📈 Compare Training Scenarios
+  </button>
+</div>
+
+<!-- Keep your existing JavaScript functions (ctlToFitness, updateCTLProjection, etc.) -->
+<!-- The modal styling will use your existing modal or the glassmorphism styles above -->
