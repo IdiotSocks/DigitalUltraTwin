@@ -2063,17 +2063,17 @@
       // ========== PACE DECAY PROJECTION ==========
       // Calculate pace degradation at different time horizons
       // Based on durability score: higher score = slower decay
+      // Note: HTML structure is Hour 0-4 (static 100%), Hour 4-8, Hour 8-12, Hour 12+
       const basePaceDecay = {
-        '4h': 0,
-        '8h': 100 - durabilityScore * 0.15, // 0-15% decay at 8h
-        '12h': 100 - durabilityScore * 0.25, // 0-25% decay at 12h
-        '12plus': 100 - durabilityScore * 0.40 // 0-40% decay beyond 12h
+        '4to8h': 100 - durabilityScore * 0.08, // 0-8% decay at 4-8h
+        '8to12h': 100 - durabilityScore * 0.15, // 0-15% decay at 8-12h
+        '12plus': 100 - durabilityScore * 0.25 // 0-25% decay beyond 12h
       };
 
-      document.getElementById('decay-4h').innerText = '100%';
-      document.getElementById('decay-8h').innerText = basePaceDecay['8h'].toFixed(0) + '%';
-      document.getElementById('decay-12h').innerText = basePaceDecay['12h'].toFixed(0) + '%';
-      document.getElementById('decay-12plus').innerText = basePaceDecay['12plus'].toFixed(0) + '%';
+      // Map to correct HTML IDs: decay-4h is for Hour 4-8, decay-8h is for Hour 8-12, decay-12h is for Hour 12+
+      document.getElementById('decay-4h').innerText = basePaceDecay['4to8h'].toFixed(0) + '%';
+      document.getElementById('decay-8h').innerText = basePaceDecay['8to12h'].toFixed(0) + '%';
+      document.getElementById('decay-12h').innerText = basePaceDecay['12plus'].toFixed(0) + '%';
 
       // ========== DOWNHILL RESILIENCE & ECCENTRIC LOAD ==========
       // Calculate total descent volume and steepness
