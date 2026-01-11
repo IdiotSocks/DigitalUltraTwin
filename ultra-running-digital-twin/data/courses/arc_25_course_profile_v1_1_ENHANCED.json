@@ -1,0 +1,385 @@
+{
+  "course_metadata": {
+    "race_id": "arc_25",
+    "race_name": "Arc of Attrition 25",
+    "distance_km": 40.0,
+    "elevation_gain_m": 2300,
+    "elevation_loss_m": 2300,
+    "region": "Cornwall, UK",
+    "course_type": "technical_coastal_trail",
+    "start_time": "08:00",
+    "cutoff_hours": 12.0,
+    "loop_type": "point_to_point",
+    "navigation_difficulty": "marked",
+    "exposure_rating": "extreme",
+    "notes": "Highly technical coastal ultra with constant punchy climbs, exposure, and quad damage. Cornwall's toughest 40km.",
+    "version": "1.1",
+    "calibration_source": "Arc 2025 actual result: 4:23 at fitness 1.15, 4-8°C conditions, respiratory incident at 15km"
+  },
+
+  "environment_profile": {
+    "altitude_band_m": [0, 300],
+    "altitude_penalty": {
+      "apply": false,
+      "starts_m": 800,
+      "requires_continuous_exposure_min": 60,
+      "multiplier_per_1000m": 0.97,
+      "expected_effect_multiplier": 1.0,
+      "notes": "Sea-level course. No altitude effect."
+    },
+    "temperature_band_c": [4, 12],
+    "temperature_variation": {
+      "start_temp_c": 5,
+      "peak_temp_c": 10,
+      "peak_time": "13:00",
+      "night_low_c": 4,
+      "notes": "February race. Cold start, moderate warming. Wind chill significant on exposed sections."
+    },
+    "wind_band_kmh": [10, 40],
+    "wind_exposure_sections": [
+      "Coastpath sections - almost constant exposure",
+      "Cliff tops have 20-40 km/h winds typical",
+      "Some shelter in valleys but brief"
+    ],
+    "precipitation_scenarios": ["dry", "rain", "storm"],
+    "seasonal_considerations": {
+      "february": "Cold, wet, stormy. Respiratory risk for asthma. Typical Arc conditions.",
+      "spring": "N/A - race is February only",
+      "summer": "N/A",
+      "autumn": "N/A",
+      "winter": "See February"
+    }
+  },
+
+  "terrain_profile": {
+    "surface_mix": {
+      "paved_pct": 15,
+      "gravel_track_pct": 0,
+      "singletrack_pct": 30,
+      "rocky_technical_pct": 40,
+      "sand_pct": 5,
+      "snow_ice_pct": 0,
+      "bog_mud_pct": 10,
+      "scramble_pct": 0
+    },
+    "technicality": {
+      "dry_multiplier": 0.92,
+      "light_rain_multiplier": 0.88,
+      "rain_multiplier": 0.85,
+      "storm_multiplier": 0.78,
+      "notes": "Extremely technical. Wet rocks, mud, constant transitions. One of UK's most technical short ultras."
+    },
+    "runnability": {
+      "runnable_fraction_estimate": 0.45,
+      "short_climb_pattern": true,
+      "sustained_climb_pattern": false,
+      "notes": "Constant transitions. Very little sustained rhythm. Up/down/up/down for 40km."
+    },
+    "foot_hazards": {
+      "ankle_twist_risk": "high",
+      "slip_hazard": "extreme",
+      "notes": "Wet rocks and mud create constant slip hazard. Ankle rolls common on rocky sections."
+    }
+  },
+
+  "climb_descent_structure": {
+    "climb_blocks": {
+      "typical_duration_min": [3, 12],
+      "typical_grade_pct": [10, 25],
+      "max_single_climb_m": 150,
+      "total_climbing_sections": 25,
+      "apply_short_climb_fatigue_multiplier": 1.10,
+      "notes": "Repeated steep climbs drive early fatigue accumulation. No time to recover between efforts."
+    },
+    "descent_blocks": {
+      "typical_duration_min": [3, 10],
+      "typical_grade_pct": [-25, -10],
+      "max_single_descent_m": 150,
+      "total_descent_sections": 25,
+      "downhill_damage_multiplier": 1.12,
+      "technical_descent_pct": 70,
+      "notes": "Severe eccentric load. High quad and foot fatigue. Technical rocky descents require constant focus."
+    }
+  },
+
+  "aid_stations": [
+    {
+      "name": "Start - Bude",
+      "distance_km": 0.0,
+      "elevation_m": 20,
+      "type": "start",
+      "features": {
+        "crew_access": true,
+        "drop_bag": false,
+        "full_aid": true,
+        "medical": false,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 0,
+      "target_stop_seconds": 0,
+      "available_supplies": ["water", "electrolytes", "gels", "pre-race"],
+      "cutoff_time": "08:00",
+      "cumulative_cutoff_time": "08:00",
+      "crew_instructions": "Send off only. No crew access after start.",
+      "athlete_checklist": ["Inhaler accessible", "Layers appropriate", "Headlamp checked"],
+      "notes": "Start line at Bude. Cold morning, warm up thoroughly."
+    },
+    {
+      "name": "CP1 - Widemouth Bay",
+      "distance_km": 8.5,
+      "elevation_m": 50,
+      "type": "aid",
+      "features": {
+        "crew_access": false,
+        "drop_bag": false,
+        "full_aid": true,
+        "medical": false,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 45,
+      "target_stop_seconds": 30,
+      "available_supplies": ["water", "electrolytes", "gels", "bars", "fruit", "salty_food"],
+      "cutoff_time": "10:00",
+      "buffer_to_cutoff_min": 60,
+      "cumulative_cutoff_time": "10:00",
+      "crew_instructions": "No crew access",
+      "athlete_checklist": ["Quick refill", "Check inhaler", "Continue moving"],
+      "notes": "First checkpoint. Keep moving. Still in vulnerable respiratory zone (km 3-25)."
+    },
+    {
+      "name": "CP2 - Crackington Haven",
+      "distance_km": 16.0,
+      "elevation_m": 15,
+      "type": "crew",
+      "features": {
+        "crew_access": true,
+        "drop_bag": true,
+        "full_aid": true,
+        "medical": true,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 90,
+      "target_stop_seconds": 60,
+      "available_supplies": ["water", "electrolytes", "gels", "bars", "fruit", "salty_food", "hot_food", "medical", "blister_care"],
+      "cutoff_time": "11:45",
+      "buffer_to_cutoff_min": 75,
+      "cumulative_cutoff_time": "11:45",
+      "crew_instructions": "Drop bag available. Have backup inhaler ready. Warm drink if cold. Check for blisters.",
+      "athlete_checklist": [
+        "Refill water/electrolytes",
+        "Take 1-2 gels",
+        "Check inhaler status (past 15km incident zone)",
+        "Blister check",
+        "Layer adjustment if needed"
+      ],
+      "notes": "Major checkpoint. Crew access. Just past km 15 respiratory incident risk zone. Assess state carefully."
+    },
+    {
+      "name": "CP3 - Boscastle",
+      "distance_km": 24.5,
+      "elevation_m": 30,
+      "type": "aid",
+      "features": {
+        "crew_access": false,
+        "drop_bag": false,
+        "full_aid": true,
+        "medical": true,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 60,
+      "target_stop_seconds": 45,
+      "available_supplies": ["water", "electrolytes", "gels", "bars", "fruit", "salty_food", "hot_food"],
+      "cutoff_time": "13:30",
+      "buffer_to_cutoff_min": 90,
+      "cumulative_cutoff_time": "13:30",
+      "crew_instructions": "No crew access",
+      "athlete_checklist": ["Quick turnaround", "Fuel for final push", "Mental check - 60% done"],
+      "notes": "No crew. Quick stop. Over halfway - mental boost point."
+    },
+    {
+      "name": "CP4 - Tintagel",
+      "distance_km": 32.0,
+      "elevation_m": 100,
+      "type": "aid",
+      "features": {
+        "crew_access": false,
+        "drop_bag": false,
+        "full_aid": true,
+        "medical": false,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 60,
+      "target_stop_seconds": 45,
+      "available_supplies": ["water", "electrolytes", "gels", "bars", "fruit", "salty_food"],
+      "cutoff_time": "15:15",
+      "buffer_to_cutoff_min": 105,
+      "cumulative_cutoff_time": "15:15",
+      "crew_instructions": "No crew access",
+      "athlete_checklist": ["Final fuel", "Last caffeine if needed", "8km to go - dig in"],
+      "notes": "Last checkpoint. 8km remaining. Time to push through fatigue."
+    },
+    {
+      "name": "Finish - Trebarwith Strand",
+      "distance_km": 40.0,
+      "elevation_m": 10,
+      "type": "finish",
+      "features": {
+        "crew_access": true,
+        "drop_bag": false,
+        "full_aid": false,
+        "medical": true,
+        "timing_checkpoint": true
+      },
+      "estimated_stop_seconds": 0,
+      "target_stop_seconds": 0,
+      "available_supplies": ["post-race food", "medical"],
+      "cutoff_time": "20:00",
+      "cumulative_cutoff_time": "20:00",
+      "crew_instructions": "Recovery gear ready. Warm clothes, food.",
+      "athlete_checklist": ["Finish strong", "Recovery begins immediately"],
+      "notes": "Finish at beach. Celebrate and recover."
+    }
+  ],
+
+  "aid_station_model": {
+    "expected_stops_count": [4, 6],
+    "median_stop_seconds": 60,
+    "p90_stop_seconds": 120,
+    "stop_time_multiplier": 1.0,
+    "crew_stop_multiplier": 1.5,
+    "notes": "Stops are short but cognitively costly in poor weather. Crew stops at CP2 tend to be longer (60-90s vs 45-60s). Keep discipline - timer at each stop."
+  },
+
+  "navigation": {
+    "marking_quality": "excellent",
+    "gps_track_required": false,
+    "night_navigation_sections": [],
+    "technical_navigation_sections": [],
+    "notes": "Well-marked South West Coast Path. Navigation straightforward - following coastline. Focus on footing, not navigation."
+  },
+
+  "key_segments": [
+    {
+      "name": "Start to Widemouth (0-8.5km)",
+      "start_km": 0.0,
+      "end_km": 8.5,
+      "description": "First coastal section. Establishing rhythm on technical terrain.",
+      "difficulty_rating": "moderate",
+      "key_challenges": ["Cold start", "Respiratory vulnerable zone (km 3-8.5)", "Finding sustainable pace"],
+      "strategy_notes": "CONSERVATIVE START. Stay below HR threshold. Warm up thoroughly. This is where 2025 incident nearly happened."
+    },
+    {
+      "name": "Widemouth to Crackington (8.5-16km)",
+      "start_km": 8.5,
+      "end_km": 16.0,
+      "description": "Technical coastal path with constant elevation changes.",
+      "difficulty_rating": "hard",
+      "key_challenges": ["Km 15 respiratory danger zone", "Quad loading begins", "Constant transitions"],
+      "strategy_notes": "RESPIRATORY CRITICAL ZONE. If any breathing issues, slow immediately. Carry inhaler. Power hike steeper sections."
+    },
+    {
+      "name": "Crackington to Boscastle (16-24.5km)",
+      "start_km": 16.0,
+      "end_km": 24.5,
+      "description": "Midpoint push. Fatigue accumulating but past respiratory danger.",
+      "difficulty_rating": "hard",
+      "key_challenges": ["Cumulative fatigue", "Quad damage mounting", "Mental battle"],
+      "strategy_notes": "Past respiratory danger. Focus on fueling and quad preservation. Power hike aggressively on climbs."
+    },
+    {
+      "name": "Boscastle to Tintagel (24.5-32km)",
+      "start_km": 24.5,
+      "end_km": 32.0,
+      "description": "Deep fatigue zone. Grinding through.",
+      "difficulty_rating": "extreme",
+      "key_challenges": ["Deep quad fatigue", "Foot soreness", "Pace decay"],
+      "strategy_notes": "Survival mode. Just keep moving forward. Every step counts. Use caffeine if needed."
+    },
+    {
+      "name": "Tintagel to Finish (32-40km)",
+      "start_km": 32.0,
+      "end_km": 40.0,
+      "description": "Final push to beach finish.",
+      "difficulty_rating": "extreme",
+      "key_challenges": ["Extreme fatigue", "Quads destroyed", "Final mental push"],
+      "strategy_notes": "8km is nothing. You've got this. Push through pain. Finish is close."
+    }
+  ],
+
+  "simulation_defaults": {
+    "fatigue_model": {
+      "fatigue_inflection_km": 22,
+      "fatigue_slope_multiplier": 1.25,
+      "fatigue_per_km_base": 0.9985,
+      "notes": "Early fatigue onset despite short distance. Constant transitions and eccentric load accelerate fatigue."
+    },
+    "field_effects": {
+      "field_loss_multiplier_technical": 1.02,
+      "field_loss_multiplier_weather": 1.04,
+      "field_loss_multiplier_night": 1.0,
+      "notes": "You slightly outperform field on technical terrain and when weather deteriorates. Your strengths play here."
+    },
+    "dnf_risk_factors": {
+      "cutoff_pressure_sections": ["CP2 at 16km if behind pace", "CP4 at 32km if struggling"],
+      "high_dropout_sections": ["15-20km (respiratory + fatigue combo)", "28-35km (deep fatigue)"],
+      "notes": "Respiratory incident is highest DNF risk. Cold + effort in km 3-25 zone. Also quad damage in final 10km."
+    }
+  },
+
+  "validation_targets": {
+    "expected_finish_time_band_hhmm": {
+      "p10_elite": "05:00",
+      "p25_strong": "05:30",
+      "p50_competitive": "06:15",
+      "p75_solid": "07:00",
+      "p90_recreational": "08:30"
+    },
+    "athlete_specific_targets": {
+      "fitness_1.0": "06:00",
+      "fitness_1.15": "04:23",
+      "fitness_1.20": "04:10",
+      "notes": "Validated: 2025 result was 4:23 at fitness 1.15 with respiratory incident at 15km. Without incident, likely 4:15-4:18."
+    },
+    "sanity_checks": [
+      "Arc pace should be ~5.5–6.5 km/h average (validated: 4:23 = 9.1 km/h average - FASTER than expected due to runnable sections)",
+      "Fatigue must accumulate earlier than Chianti despite shorter distance",
+      "Downhill damage should be dominant limiter in final 10km",
+      "Respiratory risk peaks km 3-25, especially around km 15"
+    ]
+  },
+
+  "race_strategy": {
+    "pacing_approach": "CONSERVATIVE first 15km (respiratory danger zone). Target 6:30-7:00 min/km early even if you feel great. After CP2 (16km), can push harder if breathing is clear. Expect 10-15% slowdown after 25km due to quad fatigue.",
+    "nutrition_plan": "60g carbs/hour starting at hour 1. Water + electrolytes every 30min. First caffeine at 2.5-3 hours (around Boscastle). Save big caffeine dose (200mg) for final 10km if struggling.",
+    "gear_requirements": {
+      "mandatory": ["Inhaler (accessible!)", "Waterproof jacket", "Emergency whistle", "First aid kit", "Phone"],
+      "recommended": ["Buff/neck gaiter (warm air)", "Gloves", "Spare gel/bar", "Blister kit", "Poles for steep sections"],
+      "weather_dependent": ["Extra layer if <5°C", "Hat if cold", "Sunglasses if rare sun"]
+    },
+    "mental_preparation": "Embrace the suffering - Arc is supposed to hurt. Every runner is struggling. Your technical strength and descending ability are weapons here. The constant up/down is mentally tough but you're built for this. If respiratory incident occurs, SLOW DOWN immediately - don't push through.",
+    "crew_strategy": "Only crew access at CP2 (16km). Have backup inhaler ready. Quick turnaround - 60s target. Pre-pack next section nutrition. Warm drink if cold/wet. Blister check. Morale boost then send off."
+  },
+
+  "calibration_notes": {
+    "version_1_0": "Initial profile based on course description and general Arc results.",
+    "version_1_1_validation": {
+      "actual_result_2025": {
+        "finish_time": "4:23:00",
+        "conditions": "4-8°C, dry, light wind",
+        "fitness_level": 1.15,
+        "ctl": 138,
+        "respiratory_incident": "Yes at 15km (no inhaler available)",
+        "average_pace": "6:35 min/km",
+        "average_speed": "9.1 km/h",
+        "notes": "Faster than initial estimates. Course is more runnable than expected. Respiratory incident validated vulnerable zone model. Without incident, projected 4:15-4:18."
+      },
+      "adjustments_made": {
+        "technical_multiplier": "Improved from 0.90 to 0.92 (course faster than expected)",
+        "runnable_fraction": "Maintained at 0.45 (validated)",
+        "field_effects": "Added multipliers for technical (1.02) and weather (1.04) - you outperform field",
+        "fatigue_model": "Confirmed early onset at 22km despite 40km total",
+        "respiratory_model": "Validated km 3-25 vulnerable zone, particularly km 15"
+      }
+    }
+  }
+}
