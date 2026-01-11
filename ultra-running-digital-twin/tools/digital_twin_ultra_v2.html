@@ -2014,17 +2014,31 @@
       let effectiveVO2;
       let vo2Rating = '';
 
-      if(hasProfile && athleteProfile.performance_by_gradient) {
-        // Use profile median GAP speed for calculation
+      if(hasProfile && athleteProfile.physiological_profile?.aerobic_capacity?.vo2_max_ml_kg_min) {
+        // Priority 1: Use actual measured VO₂ max from Whoop/device
+        const measuredVO2 = athleteProfile.physiological_profile.aerobic_capacity.vo2_max_ml_kg_min;
+        const source = athleteProfile.physiological_profile.aerobic_capacity.source || 'Device';
+
+        // Apply current fitness multiplier to account for training state
+        // VO₂ max can vary ±5% based on fitness/fatigue
+        const fitnessEffect = (fitness - 1.0) * 0.05; // ±5% per 1.0 fitness change
+        effectiveVO2 = measuredVO2 * (1 + fitnessEffect);
+
+        // Rating based on measured value
+        if(effectiveVO2 < 40) vo2Rating = `Novice (${source})`;
+        else if(effectiveVO2 < 48) vo2Rating = `Recreational (${source})`;
+        else if(effectiveVO2 < 55) vo2Rating = `Competitive (${source})`;
+        else if(effectiveVO2 < 62) vo2Rating = `Elite (${source})`;
+        else vo2Rating = `World-Class (${source})`;
+      } else if(hasProfile && athleteProfile.performance_by_gradient) {
+        // Priority 2: Estimate from profile race performance
         const median_gap = athleteProfile.performance_by_gradient.overall_metrics?.median_gap_speed_kmh || 5.34;
-        // Convert to m/min: 5.34 km/h = 89 m/min
         const speed_m_min = (median_gap * 1000) / 60;
-        // Simplified VO2 estimation for ultra endurance
         const baseVO2_from_gap = speed_m_min * 0.2 + 3.5;
         effectiveVO2 = baseVO2_from_gap * fitness;
-        vo2Rating = `${profileIndicator} Profile-based`;
+        vo2Rating = `${profileIndicator} Estimated from races`;
       } else {
-        // Generic calculation
+        // Priority 3: Generic calculation
         const baseVO2 = 45;
         const ctlFactor = Math.pow(ctlCurrent / 100, 0.3);
         effectiveVO2 = baseVO2 * ctlFactor * fitness;

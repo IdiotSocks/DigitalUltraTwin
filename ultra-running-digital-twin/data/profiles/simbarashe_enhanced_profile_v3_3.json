@@ -161,6 +161,13 @@
     }
   },
   "physiological_profile": {
+    "aerobic_capacity": {
+      "vo2_max_ml_kg_min": 57,
+      "source": "Whoop",
+      "date_measured": "2026-01",
+      "rating": "Elite - excellent for ultra-endurance",
+      "notes": "Measured VO₂ max significantly higher than typical ultra runner (avg ~48-52). Strong aerobic engine combined with efficiency = competitive advantage."
+    },
     "heart_rate": {
       "max_hr": 163,
       "threshold_hr": 150,
