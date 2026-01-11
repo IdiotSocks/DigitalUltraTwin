@@ -411,11 +411,18 @@
       <div class="glass-card" style="padding: 18px;">
         <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📁 Course</div>
 
-        <label for="gpxInput" class="file-input-wrapper" style="padding: 16px; margin-bottom: 12px;">
-          <div style="color: white; font-size: 24px; margin-bottom: 4px;">📍</div>
+        <label for="gpxInput" class="file-input-wrapper" style="padding: 12px; margin-bottom: 8px;">
+          <div style="color: white; font-size: 20px; margin-bottom: 4px;">📍</div>
           <div style="color: white; font-weight: 700; font-size: 11px;">Upload GPX</div>
           <div class="file-status" id="gpxStatus" style="font-size: 10px; margin-top: 6px;">No file</div>
           <input type="file" id="gpxInput" accept=".gpx,.xml">
+        </label>
+
+        <label for="courseProfileInput" class="file-input-wrapper" style="padding: 12px; margin-bottom: 0px;">
+          <div style="color: white; font-size: 20px; margin-bottom: 4px;">🗂️</div>
+          <div style="color: white; font-weight: 700; font-size: 11px;">Upload Course Profile</div>
+          <div class="file-status" id="courseProfileStatus" style="font-size: 10px; margin-top: 6px;">Optional</div>
+          <input type="file" id="courseProfileInput" accept=".json">
         </label>
       </div>
 
@@ -766,6 +773,110 @@
 
     </div>
 
+    <!-- Execution Risk Pane -->
+    <div class="glass-card-white" id="executionRiskCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">⚠️ Execution Risk - How Likely You Are to Sabotage Yourself</h2>
+      <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">"Where psychology quietly meets statistics"</p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+
+        <!-- Early Pacing Deviation Risk -->
+        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-radius: 12px; padding: 16px; border: 2px solid #f87171;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #991b1b; margin-bottom: 10px;">🏃 Early Pacing Deviation Risk</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="pacing-risk-value" style="font-size: 28px; font-weight: 900; color: #dc2626;">--%</div>
+              <div id="pacing-risk-label" style="font-size: 10px; color: #7f1d1d; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="pacing-risk-details" style="font-size: 11px; color: #991b1b; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Aid Station Dwell Time Creep -->
+        <div style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); border-radius: 12px; padding: 16px; border: 2px solid #facc15;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 10px;">⏱️ Aid Station Dwell Time Creep</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="aid-creep-value" style="font-size: 28px; font-weight: 900; color: #d97706;">--min</div>
+              <div id="aid-creep-label" style="font-size: 10px; color: #78350f; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="aid-creep-details" style="font-size: 11px; color: #92400e; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Night Section Cognitive Load -->
+        <div style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-radius: 12px; padding: 16px; border: 2px solid #a78bfa;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #5b21b6; margin-bottom: 10px;">🌙 Night Section Cognitive Load Index</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="night-load-value" style="font-size: 28px; font-weight: 900; color: #7c3aed;">--</div>
+              <div id="night-load-label" style="font-size: 10px; color: #5b21b6; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="night-load-details" style="font-size: 11px; color: #6d28d9; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Previous Failure Pattern Overlap -->
+        <div style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 12px; padding: 16px; border: 2px solid #f472b6;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #831843; margin-bottom: 10px;">📉 Previous Failure Pattern Overlap</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="failure-overlap-value" style="font-size: 28px; font-weight: 900; color: #be185d;">--%</div>
+              <div id="failure-overlap-label" style="font-size: 10px; color: #831843; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="failure-overlap-details" style="font-size: 11px; color: #9f1239; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Decision Triggers Pane -->
+    <div class="glass-card-white" id="decisionTriggersCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Decision Triggers - What to Do Mid-Race</h2>
+      <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">Real-time decision framework for race execution</p>
+
+      <!-- Pace Caps Per Segment -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 16px; border: 2px solid #4ade80; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 12px;">📏 Pace Caps Per Segment</h3>
+        <div id="pace-caps-container" style="font-size: 11px; color: #166534; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Fuel and Caffeine Triggers -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #fbbf24; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 12px;">⚡ Fuel & Caffeine Triggers (by Clock Time)</h3>
+        <div id="fuel-triggers-container" style="font-size: 11px; color: #78350f; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Walk vs Run Thresholds -->
+      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; border: 2px solid #60a5fa; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 12px;">🚶‍♂️ Walk vs Run Thresholds on Climbs</h3>
+        <div id="walk-run-thresholds" style="font-size: 11px; color: #1e3a8a; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Abort or Salvage Criteria -->
+      <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-radius: 12px; padding: 16px; border: 2px solid #f87171;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #991b1b; margin-bottom: 12px;">🛑 Abort or Salvage Criteria</h3>
+        <div id="abort-criteria-container" style="font-size: 11px; color: #7f1d1d; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- Race Profile Chart -->
     <div class="glass-card-white" id="chartCard" style="display: none;">
       <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
@@ -986,6 +1097,34 @@
       reader.readAsText(file);
     });
 
+    // ========== COURSE PROFILE ==========
+    let courseProfile = null;
+
+    document.getElementById('courseProfileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          courseProfile = JSON.parse(evt.target.result);
+
+          // Display course info
+          const courseName = courseProfile.course_metadata?.race_name || 'Unknown Course';
+          const distance = courseProfile.course_metadata?.distance_km || '?';
+          document.getElementById('courseProfileStatus').innerText = `✓ ${courseName} (${distance}km)`;
+          document.getElementById('courseProfileStatus').style.color = '#4ade80';
+
+          console.log('Course profile loaded:', courseProfile.course_metadata);
+        } catch(err) {
+          document.getElementById('courseProfileStatus').innerText = `✗ Error parsing JSON`;
+          document.getElementById('courseProfileStatus').style.color = '#f87171';
+          alert('Error loading course profile: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
     // ========== RACE SIMULATION ==========
     const ATHLETE = {
       speeds: { steep_d: 5.92, mod_d: 6.96, flat: 6.62, mod_u: 4.95, steep_u: 3.71 },
@@ -1100,6 +1239,8 @@
           document.getElementById('outcomeCard').style.display = 'block';
           document.getElementById('courseCard').style.display = 'block';
           document.getElementById('athleteCard').style.display = 'block';
+          document.getElementById('executionRiskCard').style.display = 'block';
+          document.getElementById('decisionTriggersCard').style.display = 'block';
 
           // Render chart
           renderChart(res);
@@ -1112,6 +1253,12 @@
 
           // Run Athlete State Analysis
           runAthleteStateAnalysis();
+
+          // Run Execution Risk Analysis
+          runExecutionRiskAnalysis();
+
+          // Run Decision Triggers Analysis
+          runDecisionTriggersAnalysis();
 
           btn.innerHTML = 'RUN PREDICTION';
           btn.disabled = false;
@@ -2318,6 +2465,328 @@
       document.getElementById('adaptation-altitude').innerHTML = `
         <strong style="color: ${altitudeColor};">${altitudeAdaptation}</strong>
       `;
+    }
+
+    function runExecutionRiskAnalysis() {
+      const track = currentCourse;
+      if(!track || track.length === 0) return;
+
+      const hasProfile = athleteProfile !== null;
+      const hasCourseProfile = courseProfile !== null;
+      const totalDistKm = track[track.length-1].distKm;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+
+      // ========== EARLY PACING DEVIATION RISK ==========
+      // Risk that you'll go out too fast in the first 10-20km
+      let pacingRisk = 50; // Baseline 50%
+      let pacingLabel = 'MODERATE RISK';
+      let pacingColor = '#f59e0b';
+      let pacingDetails = '';
+
+      if(hasProfile && athleteProfile.athlete_info?.racing_experience?.strengths) {
+        const strengths = athleteProfile.athlete_info.racing_experience.strengths;
+        if(strengths.includes("Pacing discipline")) {
+          pacingRisk -= 20;
+          pacingDetails += '✓ Proven pacing discipline (-20%)<br>';
+        }
+      }
+
+      // Course profile affects pacing risk - runnable courses tempt faster starts
+      if(hasCourseProfile && courseProfile.terrain_profile?.runnability) {
+        const runnability = courseProfile.terrain_profile.runnability.runnable_fraction_estimate || 0.5;
+        if(runnability > 0.7) {
+          pacingRisk += 15;
+          pacingDetails += '⚠️ Highly runnable terrain tempts fast starts (+15%)<br>';
+        }
+      }
+
+      // Fitness affects confidence (and thus pacing risk)
+      if(fitness > 1.15) {
+        pacingRisk += 10;
+        pacingDetails += '⚠️ High fitness may breed overconfidence (+10%)<br>';
+      }
+
+      pacingRisk = Math.max(0, Math.min(100, pacingRisk));
+
+      if(pacingRisk < 30) { pacingLabel = 'LOW RISK'; pacingColor = '#10b981'; }
+      else if(pacingRisk < 50) { pacingLabel = 'MODERATE RISK'; pacingColor = '#f59e0b'; }
+      else { pacingLabel = 'HIGH RISK'; pacingColor = '#dc2626'; }
+
+      pacingDetails += `<br><strong>Mitigation:</strong> Set hard pace cap for first 15km at ${(1.1 * 7).toFixed(1)} min/km. Use HR monitor - stay <${hasProfile && athleteProfile.physiological_profile?.heart_rate ? athleteProfile.physiological_profile.heart_rate.threshold_hr - 10 : 145} bpm.`;
+
+      document.getElementById('pacing-risk-value').innerText = pacingRisk.toFixed(0) + '%';
+      document.getElementById('pacing-risk-value').style.color = pacingColor;
+      document.getElementById('pacing-risk-label').innerText = pacingLabel;
+      document.getElementById('pacing-risk-label').style.color = pacingColor;
+      document.getElementById('pacing-risk-details').innerHTML = pacingDetails;
+
+      // ========== AID STATION DWELL TIME CREEP ==========
+      const expectedStops = hasCourseProfile && courseProfile.aid_station_model
+        ? (courseProfile.aid_station_model.expected_stops_count[0] + courseProfile.aid_station_model.expected_stops_count[1]) / 2
+        : Math.floor(totalDistKm / 10);
+
+      const medianStopSeconds = hasCourseProfile && courseProfile.aid_station_model
+        ? courseProfile.aid_station_model.median_stop_seconds
+        : 90;
+
+      // Creep factor: stops get longer as race progresses
+      const earlyStops = Math.floor(expectedStops / 2);
+      const lateStops = expectedStops - earlyStops;
+
+      const earlyStopAvg = medianStopSeconds;
+      const lateStopAvg = medianStopSeconds * 1.5; // 50% longer in second half
+
+      const totalCreepMinutes = ((earlyStops * earlyStopAvg) + (lateStops * lateStopAvg)) / 60;
+      const targetTotalMinutes = (expectedStops * medianStopSeconds) / 60;
+      const creepMinutes = totalCreepMinutes - targetTotalMinutes;
+
+      let aidCreepLabel = 'MANAGED';
+      let aidCreepColor = '#10b981';
+      let aidCreepDetails = `Expected ${expectedStops} stops<br>`;
+      aidCreepDetails += `Target avg: ${medianStopSeconds}s/stop (${targetTotalMinutes.toFixed(1)}min total)<br>`;
+      aidCreepDetails += `Actual likely: ${(totalCreepMinutes / expectedStops).toFixed(0)}s/stop (${totalCreepMinutes.toFixed(1)}min total)<br>`;
+      aidCreepDetails += `<br><strong>Time leak:</strong> ${creepMinutes.toFixed(1)}min from dwell creep<br>`;
+
+      if(creepMinutes > 5) { aidCreepLabel = 'HIGH CREEP'; aidCreepColor = '#dc2626'; }
+      else if(creepMinutes > 2) { aidCreepLabel = 'MODERATE CREEP'; aidCreepColor = '#f59e0b'; }
+
+      aidCreepDetails += `<br><strong>Mitigation:</strong> Set ${medianStopSeconds}s timer at each stop. Pre-plan what you need.`;
+
+      document.getElementById('aid-creep-value').innerText = creepMinutes.toFixed(1);
+      document.getElementById('aid-creep-value').style.color = aidCreepColor;
+      document.getElementById('aid-creep-label').innerText = aidCreepLabel;
+      document.getElementById('aid-creep-label').style.color = aidCreepColor;
+      document.getElementById('aid-creep-details').innerHTML = aidCreepDetails;
+
+      // ========== NIGHT SECTION COGNITIVE LOAD ==========
+      // Assuming 6am start for most ultras
+      const startTime = 6; // 6am
+      const estimatedFinishHours = parseFloat(document.getElementById('kpi-time').innerText.split('h')[0]) || 10;
+
+      let nightKm = 0;
+      let nightSections = [];
+
+      // Night is roughly 8pm to 6am (14 hours into race to 24 hours into race)
+      const nightStartHour = 14; // 8pm
+      const nightEndHour = 24; // 6am next day
+
+      if(estimatedFinishHours > nightStartHour) {
+        // Will run through at least some night
+        // Calculate how much distance is covered during night hours
+        const avgSpeed = totalDistKm / estimatedFinishHours;
+
+        const nightStartKm = nightStartHour * avgSpeed;
+        const nightEndKm = Math.min(totalDistKm, nightEndHour * avgSpeed);
+
+        nightKm = Math.max(0, nightEndKm - nightStartKm);
+        if(nightKm > 0) {
+          nightSections.push({ start: nightStartKm, end: nightEndKm, duration: (nightEndKm - nightStartKm) / avgSpeed });
+        }
+      }
+
+      const nightLoadIndex = nightKm / Math.max(totalDistKm, 1) * 100; // Percentage of race in dark
+
+      let nightLabel = 'NO NIGHT RUNNING';
+      let nightColor = '#10b981';
+      let nightDetails = '';
+
+      if(nightLoadIndex === 0) {
+        nightDetails = 'Race finishes before nightfall - no cognitive load from darkness.';
+      } else if(nightLoadIndex < 20) {
+        nightLabel = 'MINIMAL NIGHT';
+        nightColor = '#3b82f6';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Low cognitive load - most of race in daylight.`;
+      } else if(nightLoadIndex < 40) {
+        nightLabel = 'MODERATE NIGHT';
+        nightColor = '#f59e0b';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Significant night running - headlamp navigation, reduced visual input.`;
+      } else {
+        nightLabel = 'HEAVY NIGHT';
+        nightColor = '#dc2626';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Major cognitive challenge - most/all of race in dark.`;
+      }
+
+      if(nightKm > 0) {
+        nightDetails += `<br><br><strong>Mitigation:</strong> Fresh batteries, backup headlamp, recce night sections if possible. Expect 5-10% slower pace.`;
+      }
+
+      document.getElementById('night-load-value').innerText = nightLoadIndex.toFixed(0);
+      document.getElementById('night-load-value').style.color = nightColor;
+      document.getElementById('night-load-label').innerText = nightLabel;
+      document.getElementById('night-load-label').style.color = nightColor;
+      document.getElementById('night-load-details').innerHTML = nightDetails;
+
+      // ========== PREVIOUS FAILURE PATTERN OVERLAP ==========
+      // Check if conditions match past DNF/struggles
+      let failureOverlap = 0;
+      let failureLabel = 'NO PATTERN MATCH';
+      let failureColor = '#10b981';
+      let failureDetails = '';
+
+      const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+      const avgTemp = (startTemp + parseFloat(document.getElementById('finishTemp').value || 14)) / 2;
+
+      // Check temperature vs respiratory profile
+      if(hasProfile && athleteProfile.respiratory_profile) {
+        const tempThresholds = athleteProfile.respiratory_profile.temperature_thresholds;
+
+        if(avgTemp <= tempThresholds.extreme_danger_c) {
+          failureOverlap += 80;
+          failureDetails += `🚨 Temperature matches EXTREME DANGER zone (+80%)<br>`;
+          failureDetails += `Arc 2025 incident pattern: Cold triggers respiratory failure<br>`;
+        } else if(avgTemp <= tempThresholds.high_risk_c) {
+          failureOverlap += 60;
+          failureDetails += `⚠️ Temperature matches HIGH RISK zone (+60%)<br>`;
+        } else if(avgTemp <= tempThresholds.moderate_risk_c) {
+          failureOverlap += 30;
+          failureDetails += `⚡ Temperature matches MODERATE RISK zone (+30%)<br>`;
+        }
+      }
+
+      // Check if course characteristics match past struggles
+      if(totalDistKm > 100 && fitness < 1.15) {
+        failureOverlap += 30;
+        failureDetails += `⚠️ Distance >100km with fitness <1.15 (+30%)<br>`;
+      }
+
+      failureOverlap = Math.min(100, failureOverlap);
+
+      if(failureOverlap < 20) { failureLabel = 'LOW OVERLAP'; failureColor = '#10b981'; }
+      else if(failureOverlap < 50) { failureLabel = 'MODERATE OVERLAP'; failureColor = '#f59e0b'; }
+      else if(failureOverlap < 70) { failureLabel = 'HIGH OVERLAP'; failureColor = '#dc2626'; }
+      else { failureLabel = 'CRITICAL OVERLAP'; failureColor = '#7f1d1d'; }
+
+      if(failureOverlap === 0) {
+        failureDetails = 'No match to historical failure patterns - conditions are favorable.';
+      } else {
+        failureDetails += `<br><strong>Action:</strong> ${failureOverlap > 50 ? 'Seriously consider DNS/deferring.' : 'Implement all mitigation strategies.'}`;
+      }
+
+      document.getElementById('failure-overlap-value').innerText = failureOverlap.toFixed(0);
+      document.getElementById('failure-overlap-value').style.color = failureColor;
+      document.getElementById('failure-overlap-label').innerText = failureLabel;
+      document.getElementById('failure-overlap-label').style.color = failureColor;
+      document.getElementById('failure-overlap-details').innerHTML = failureDetails;
+    }
+
+    function runDecisionTriggersAnalysis() {
+      const track = currentCourse;
+      if(!track || track.length === 0) return;
+
+      const hasProfile = athleteProfile !== null;
+      const hasCourseProfile = courseProfile !== null;
+      const totalDistKm = track[track.length-1].distKm;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+      const estimatedFinishHours = parseFloat(document.getElementById('kpi-time').innerText.split('h')[0]) || 10;
+
+      // ========== PACE CAPS PER SEGMENT ==========
+      let paceCapsHtml = '<table style="width: 100%; border-collapse: collapse;">';
+      paceCapsHtml += '<thead><tr style="border-bottom: 2px solid #166534;">';
+      paceCapsHtml += '<th style="text-align: left; padding: 6px; font-weight: 700;">Segment</th>';
+      paceCapsHtml += '<th style="text-align: right; padding: 6px; font-weight: 700;">Pace Cap (min/km)</th>';
+      paceCapsHtml += '<th style="text-align: right; padding: 6px; font-weight: 700;">Max HR</th>';
+      paceCapsHtml += '</tr></thead><tbody>';
+
+      const segments = [
+        { name: '0-15km (Start)', paceMultiplier: 1.1, hrLimit: 145 },
+        { name: '15-30km (Settled)', paceMultiplier: 1.0, hrLimit: 150 },
+        { name: `30-${Math.floor(totalDistKm * 0.6)}km (Mid)', paceMultiplier: 1.0, hrLimit: 150 },
+        { name: `${Math.floor(totalDistKm * 0.6)}-${Math.floor(totalDistKm * 0.85)}km (Deep)`, paceMultiplier: 1.15, hrLimit: 155 },
+        { name: `${Math.floor(totalDistKm * 0.85)}km-Finish (Push)`, paceMultiplier: 0.95, hrLimit: 160 }
+      ];
+
+      const basePace = (estimatedFinishHours * 60) / totalDistKm;
+
+      segments.forEach(seg => {
+        const cap = (basePace * seg.paceMultiplier).toFixed(1);
+        const hr = hasProfile && athleteProfile.physiological_profile?.heart_rate
+          ? Math.min(seg.hrLimit, athleteProfile.physiological_profile.heart_rate.threshold_hr)
+          : seg.hrLimit;
+
+        paceCapsHtml += `<tr style="border-bottom: 1px solid #dcfce7;">`;
+        paceCapsHtml += `<td style="padding: 6px;">${seg.name}</td>`;
+        paceCapsHtml += `<td style="text-align: right; padding: 6px; font-weight: 600;">${cap}</td>`;
+        paceCapsHtml += `<td style="text-align: right; padding: 6px;">${hr} bpm</td>`;
+        paceCapsHtml += `</tr>`;
+      });
+
+      paceCapsHtml += '</tbody></table>';
+      paceCapsHtml += '<div style="margin-top: 10px; font-size: 10px; font-style: italic;">* Going faster than cap = high risk of bonk/DNF</div>';
+
+      document.getElementById('pace-caps-container').innerHTML = paceCapsHtml;
+
+      // ========== FUEL & CAFFEINE TRIGGERS ==========
+      let fuelHtml = '<strong>Nutrition Schedule (by clock time from start):</strong><br><br>';
+
+      const startTime = 6; // Assume 6am start
+      const carbsPerHour = parseFloat(document.getElementById('carbInput').value) || 60;
+
+      for(let hour = 0; hour <= Math.ceil(estimatedFinishHours); hour++) {
+        const clockTime = (startTime + hour) % 24;
+        const clockStr = `${String(clockTime).padStart(2, '0')}:00`;
+
+        if(hour === 0) {
+          fuelHtml += `<strong>${clockStr}</strong> - START: Pre-loaded with breakfast 2-3h ago<br>`;
+        } else if(hour <= 3) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs (gels/bar), 500ml fluids<br>`;
+        } else if(hour === 4) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids, <strong>CAFFEINE 100mg</strong><br>`;
+        } else if(hour === Math.ceil(estimatedFinishHours * 0.7)) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids, <strong>CAFFEINE 200mg (big push)</strong><br>`;
+        } else {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids<br>`;
+        }
+      }
+
+      fuelHtml += '<br><div style="font-size: 10px; font-style: italic;">* Use clock time, not distance, to avoid missing fuel due to slow sections</div>';
+
+      document.getElementById('fuel-triggers-container').innerHTML = fuelHtml;
+
+      // ========== WALK VS RUN THRESHOLDS ==========
+      let walkRunHtml = '<strong>Power-hiking thresholds to preserve energy:</strong><br><br>';
+
+      const hrThreshold = hasProfile && athleteProfile.physiological_profile?.heart_rate
+        ? athleteProfile.physiological_profile.heart_rate.threshold_hr
+        : 150;
+
+      walkRunHtml += `• <strong>Gradient >12%:</strong> Power hike (faster than slow run)<br>`;
+      walkRunHtml += `• <strong>Gradient 8-12%:</strong> Run if HR <${hrThreshold-10}, hike if HR >${hrThreshold-5}<br>`;
+      walkRunHtml += `• <strong>Gradient <8%:</strong> Run unless extremely fatigued<br>`;
+      walkRunHtml += `<br><strong>After ${Math.floor(totalDistKm * 0.6)}km:</strong><br>`;
+      walkRunHtml += `• <strong>Gradient >8%:</strong> Default to power hiking<br>`;
+      walkRunHtml += `• <strong>Gradient 5-8%:</strong> Hike if HR >${hrThreshold-10}<br>`;
+      walkRunHtml += `<br><div style="font-size: 10px; font-style: italic;">* Power hiking = competitive weapon, not failure</div>`;
+
+      document.getElementById('walk-run-thresholds').innerHTML = walkRunHtml;
+
+      // ========== ABORT OR SALVAGE CRITERIA ==========
+      let abortHtml = '<strong>🛑 ABORT CRITERIA (DNS/DNF Decision Gates):</strong><br><br>';
+
+      const avgTemp = (parseFloat(document.getElementById('startTemp').value) + parseFloat(document.getElementById('finishTemp').value)) / 2;
+
+      if(hasProfile && athleteProfile.respiratory_profile) {
+        const tempThresholds = athleteProfile.respiratory_profile.temperature_thresholds;
+        if(avgTemp <= tempThresholds.extreme_danger_c) {
+          abortHtml += `🚨 <strong>PRE-RACE ABORT:</strong> Temperature ≤${tempThresholds.extreme_danger_c}°C = EXTREME respiratory danger. <strong>DNS strongly recommended.</strong><br><br>`;
+        } else if(avgTemp <= tempThresholds.high_risk_c) {
+          abortHtml += `⚠️ <strong>PRE-RACE CAUTION:</strong> Temperature ≤${tempThresholds.high_risk_c}°C = HIGH respiratory risk. Race only if inhaler accessible and pacing conservative.<br><br>`;
+        }
+      }
+
+      abortHtml += `<strong>IN-RACE ABORT GATES:</strong><br>`;
+      abortHtml += `• Respiratory incident requiring >5min stop: DNF unless <10km from finish<br>`;
+      abortHtml += `• HR unable to drop below ${hrThreshold+10} on descents: DNF risk - medical check<br>`;
+      abortHtml += `• Nausea/vomiting preventing fluid intake >1hr: DNF - dehydration spiral<br>`;
+      abortHtml += `• Pace >25% slower than target for >10km (not on major climb): Assess salvage<br>`;
+      abortHtml += `<br><strong>💡 SALVAGE CRITERIA:</strong><br>`;
+      abortHtml += `• If >60% complete and moving forward: Finish for completion, drop time goal<br>`;
+      abortHtml += `• If <40% complete and struggling: DNF is smart - live to race another day<br>`;
+      abortHtml += `• Race cutoffs: Always have 30min buffer - if within 15min, pick up urgently<br>`;
+
+      document.getElementById('abort-criteria-container').innerHTML = abortHtml;
     }
 
     // ========== INITIALIZATION ==========
