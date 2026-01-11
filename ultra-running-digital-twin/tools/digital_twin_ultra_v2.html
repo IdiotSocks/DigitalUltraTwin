@@ -669,6 +669,96 @@
 
     </div>
 
+    <!-- Athlete State Pane -->
+    <div class="glass-card-white" id="athleteCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">👤 Athlete State - What Version of You Is Turning Up</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+
+        <!-- VO2 Proxy -->
+        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; border: 2px solid #3b82f6;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">💨</span>
+            <div style="font-size: 11px; font-weight: 700; color: #1e40af; text-transform: uppercase;">VO₂ Proxy</div>
+          </div>
+          <div id="vo2-value" style="font-size: 32px; font-weight: 900; color: #1e3a8a;">--</div>
+          <div id="vo2-rating" style="font-size: 10px; color: #1e40af; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Durability Score -->
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">⏱️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #92400e; text-transform: uppercase;">Durability</div>
+          </div>
+          <div id="durability-value" style="font-size: 32px; font-weight: 900; color: #78350f;">--</div>
+          <div id="durability-rating" style="font-size: 10px; color: #92400e; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Downhill Resilience -->
+        <div style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-radius: 12px; padding: 16px; border: 2px solid #a855f7;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">⬇️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #6b21a8; text-transform: uppercase;">Downhill</div>
+          </div>
+          <div id="downhill-value" style="font-size: 32px; font-weight: 900; color: #581c87;">--</div>
+          <div id="downhill-rating" style="font-size: 10px; color: #6b21a8; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Adaptation Status -->
+        <div style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 12px; padding: 16px; border: 2px solid #22c55e;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">🌡️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase;">Adaptation</div>
+          </div>
+          <div id="adaptation-heat" style="font-size: 12px; color: #166534; margin-bottom: 4px; font-weight: 600;">--</div>
+          <div id="adaptation-altitude" style="font-size: 12px; color: #166534; font-weight: 600;">--</div>
+        </div>
+
+      </div>
+
+      <!-- Pace Decay Projection -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">📉 Pace Decay Projection (Durability Model)</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 10px; padding: 12px; border: 2px solid #22c55e;">
+            <div style="font-size: 10px; color: #166534; font-weight: 600; margin-bottom: 4px;">Hour 0-4</div>
+            <div style="font-size: 20px; font-weight: 900; color: #15803d;">100%</div>
+            <div style="font-size: 9px; color: #16a34a; margin-top: 2px;">Baseline pace</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); border-radius: 10px; padding: 12px; border: 2px solid #eab308;">
+            <div style="font-size: 10px; color: #713f12; font-weight: 600; margin-bottom: 4px;">Hour 4-8</div>
+            <div id="decay-4h" style="font-size: 20px; font-weight: 900; color: #854d0e;">--%</div>
+            <div style="font-size: 9px; color: #a16207; margin-top: 2px;">of baseline</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-radius: 10px; padding: 12px; border: 2px solid #f97316;">
+            <div style="font-size: 10px; color: #7c2d12; font-weight: 600; margin-bottom: 4px;">Hour 8-12</div>
+            <div id="decay-8h" style="font-size: 20px; font-weight: 900; color: #9a3412;">--%</div>
+            <div style="font-size: 9px; color: #c2410c; margin-top: 2px;">of baseline</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); border-radius: 10px; padding: 12px; border: 2px solid #ef4444;">
+            <div style="font-size: 10px; color: #7f1d1d; font-weight: 600; margin-bottom: 4px;">Hour 12+</div>
+            <div id="decay-12h" style="font-size: 20px; font-weight: 900; color: #991b1b;">--%</div>
+            <div style="font-size: 9px; color: #dc2626; margin-top: 2px;">of baseline</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Eccentric Load Tolerance -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+        <h3 style="font-size: 11px; font-weight: 700; color: #92400e; margin-bottom: 10px;">⚠️ ECCENTRIC LOAD TOLERANCE (Quad Destruction Index)</h3>
+        <div id="eccentricAnalysis" style="font-size: 12px; color: #78350f; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
     <!-- Race Profile Chart -->
     <div class="glass-card-white" id="chartCard" style="display: none;">
       <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
@@ -974,6 +1064,7 @@
           document.getElementById('chartCard').style.display = 'block';
           document.getElementById('outcomeCard').style.display = 'block';
           document.getElementById('courseCard').style.display = 'block';
+          document.getElementById('athleteCard').style.display = 'block';
 
           // Render chart
           renderChart(res);
@@ -983,6 +1074,9 @@
 
           // Run Course Interaction Analysis
           runCourseInteractionAnalysis();
+
+          // Run Athlete State Analysis
+          runAthleteStateAnalysis();
 
           btn.innerHTML = 'RUN PREDICTION';
           btn.disabled = false;
@@ -1863,6 +1957,181 @@
       `;
 
       container.innerHTML = html;
+    }
+
+    function runAthleteStateAnalysis() {
+      const ctlCurrent = parseFloat(document.getElementById('ctlCurrent').value) || 100;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+      const track = currentCourse;
+
+      if(!track || track.length === 0) return;
+
+      // ========== VO₂ PROXY CALCULATION ==========
+      // Estimate effective VO₂max from CTL and fitness multiplier
+      // Base VO₂max = 45 ml/kg/min, scaled by CTL (100 CTL = baseline)
+      // Fitness multiplier represents current form
+      const baseVO2 = 45;
+      const ctlFactor = Math.pow(ctlCurrent / 100, 0.3); // Diminishing returns above 100 CTL
+      const effectiveVO2 = baseVO2 * ctlFactor * fitness;
+
+      document.getElementById('vo2-value').innerText = effectiveVO2.toFixed(1);
+
+      // Rating based on VO₂ for ultrarunners
+      let vo2Rating = '';
+      if(effectiveVO2 < 40) vo2Rating = 'Novice';
+      else if(effectiveVO2 < 48) vo2Rating = 'Recreational';
+      else if(effectiveVO2 < 55) vo2Rating = 'Competitive';
+      else if(effectiveVO2 < 62) vo2Rating = 'Elite';
+      else vo2Rating = 'World-Class';
+
+      document.getElementById('vo2-rating').innerText = vo2Rating;
+
+      // ========== DURABILITY SCORE CALCULATION ==========
+      // Based on CTL consistency - higher CTL = better durability
+      // Scale: 0-100, where 100 = exceptional ultra endurance
+      const durabilityScore = Math.min(100, Math.max(0, 30 + (ctlCurrent - 80) * 0.7));
+
+      document.getElementById('durability-value').innerText = durabilityScore.toFixed(0);
+
+      // ========== PACE DECAY PROJECTION ==========
+      // Calculate pace degradation at different time horizons
+      // Based on durability score: higher score = slower decay
+      const basePaceDecay = {
+        '4h': 0,
+        '8h': 100 - durabilityScore * 0.15, // 0-15% decay at 8h
+        '12h': 100 - durabilityScore * 0.25, // 0-25% decay at 12h
+        '12plus': 100 - durabilityScore * 0.40 // 0-40% decay beyond 12h
+      };
+
+      document.getElementById('decay-4h').innerText = '100%';
+      document.getElementById('decay-8h').innerText = basePaceDecay['8h'].toFixed(0) + '%';
+      document.getElementById('decay-12h').innerText = basePaceDecay['12h'].toFixed(0) + '%';
+      document.getElementById('decay-12plus').innerText = basePaceDecay['12plus'].toFixed(0) + '%';
+
+      // ========== DOWNHILL RESILIENCE & ECCENTRIC LOAD ==========
+      // Calculate total descent volume and steepness
+      let totalDescent = 0;
+      let steepDescentKm = 0;
+      let eccentricLoadIndex = 0;
+
+      for(let i = 1; i < track.length; i++) {
+        const seg = track[i];
+        const prevSeg = track[i-1];
+        const elevChange = seg.ele - prevSeg.ele;
+        const distance = seg.distKm - prevSeg.distKm;
+
+        if(elevChange < 0) {
+          totalDescent += Math.abs(elevChange);
+
+          // Count steep descents (gradient < -10%)
+          if(seg.grad < -10) {
+            steepDescentKm += distance;
+          }
+
+          // Eccentric load = descent meters × gradient severity
+          // Steep descents cause more quad damage
+          const gradientMultiplier = Math.abs(seg.grad) < 10 ? 1.0 :
+                                      Math.abs(seg.grad) < 20 ? 2.0 : 3.0;
+          eccentricLoadIndex += Math.abs(elevChange) * gradientMultiplier;
+        }
+      }
+
+      // Downhill resilience: Based on CTL and typical descent tolerance
+      // Average ultra has ~1500m descent, high durability = better tolerance
+      const descentTolerance = durabilityScore * 15; // Up to 1500m at max durability
+      const downhillResilience = Math.min(100, (descentTolerance / Math.max(totalDescent, 1)) * 100);
+
+      document.getElementById('downhill-value').innerText = downhillResilience.toFixed(0);
+
+      // Eccentric Load Warning
+      const eccentricContainer = document.getElementById('eccentricAnalysis');
+      let eccentricHtml = '<h4 style="font-size: 13px; font-weight: 700; color: #78350f; margin: 0 0 8px 0;">📊 Quad Destruction Index</h4>';
+
+      const quadDestructionIndex = eccentricLoadIndex / 1000; // Scale to 0-10 range
+      let warningColor = '#10b981';
+      let warningText = 'Manageable';
+
+      if(quadDestructionIndex > 8) {
+        warningColor = '#dc2626';
+        warningText = 'EXTREME - Significant quad damage expected';
+      } else if(quadDestructionIndex > 5) {
+        warningColor = '#f59e0b';
+        warningText = 'HIGH - Major eccentric stress';
+      } else if(quadDestructionIndex > 3) {
+        warningColor = '#3b82f6';
+        warningText = 'MODERATE - Standard ultra load';
+      }
+
+      eccentricHtml += `
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 12px; border-radius: 8px; border: 1px solid #fbbf24;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 24px; font-weight: 900; color: ${warningColor};">${quadDestructionIndex.toFixed(1)}</div>
+              <div style="font-size: 10px; color: #78350f; margin-top: 4px;">${warningText}</div>
+            </div>
+            <div style="text-align: right; font-size: 11px; color: #92400e;">
+              <div><strong>${totalDescent.toFixed(0)}m</strong> total descent</div>
+              <div><strong>${steepDescentKm.toFixed(1)}km</strong> steep (&lt;-10%)</div>
+            </div>
+          </div>
+          <div style="margin-top: 8px; font-size: 10px; color: #78350f; font-style: italic;">
+            * Index combines descent volume × gradient severity. Train downhill running and eccentric strength to prepare.
+          </div>
+        </div>
+      `;
+
+      eccentricContainer.innerHTML = eccentricHtml;
+
+      // ========== HEAT & ALTITUDE ADAPTATION ==========
+      // Determine adaptation status based on race conditions and training history
+      const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+      const finishTemp = parseFloat(document.getElementById('finishTemp').value) || 14;
+      const avgTemp = (startTemp + finishTemp) / 2;
+
+      // Heat adaptation: Check if racing in hot conditions
+      let heatAdaptation = 'Not Required';
+      let heatColor = '#6b7280';
+      if(avgTemp > 25) {
+        // Assume 2 weeks of heat training = adapted
+        // In real app, would check training log
+        heatAdaptation = '⚠️ HEAT STRESS - Acclimatization recommended';
+        heatColor = '#dc2626';
+      } else if(avgTemp > 20) {
+        heatAdaptation = '⚡ Moderate heat - Some acclimatization beneficial';
+        heatColor = '#f59e0b';
+      } else {
+        heatAdaptation = '✓ Cool conditions - No heat stress';
+        heatColor = '#10b981';
+      }
+
+      // Altitude adaptation: Check max elevation on course
+      let maxElevation = 0;
+      for(let i = 0; i < track.length; i++) {
+        if(track[i].ele > maxElevation) maxElevation = track[i].ele;
+      }
+
+      let altitudeAdaptation = 'Not Required';
+      let altitudeColor = '#6b7280';
+      if(maxElevation > 2500) {
+        altitudeAdaptation = '⚠️ HIGH ALTITUDE - Pre-acclimatization critical';
+        altitudeColor = '#dc2626';
+      } else if(maxElevation > 2000) {
+        altitudeAdaptation = '⚡ Moderate altitude - Some acclimatization beneficial';
+        altitudeColor = '#f59e0b';
+      } else if(maxElevation > 1500) {
+        altitudeAdaptation = '✓ Elevated - Minor hypoxic effect';
+        altitudeColor = '#3b82f6';
+      } else {
+        altitudeAdaptation = '✓ Low altitude - No adaptation needed';
+        altitudeColor = '#10b981';
+      }
+
+      document.getElementById('adaptation-heat').innerHTML = `
+        <strong style="color: ${heatColor};">${heatAdaptation}</strong>
+      `;
+      document.getElementById('adaptation-altitude').innerHTML = `
+        <strong style="color: ${altitudeColor};">${altitudeAdaptation}</strong>
+      `;
     }
 
     // ========== INITIALIZATION ==========
