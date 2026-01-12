@@ -204,55 +204,39 @@
       background-clip: text;
     }
 
-    .file-input-wrapper {
-      position: relative;
-      overflow: hidden;
+    .upload-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
       background: white;
-      border: 3px dashed #d1d5db;
-      border-radius: 16px;
-      padding: 32px 20px;
-      text-align: center;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .file-input-wrapper:hover {
+    .upload-btn:hover {
       background: #f9fafb;
       border-color: #667eea;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-      transform: translateY(-2px);
     }
 
-    .file-input-wrapper.active {
-      border-color: #4ade80;
-      background: #ecfdf5;
-    }
-
-    .file-input-wrapper input[type=file] {
-      position: absolute;
-      left: -9999px;
+    input[type=file] {
+      display: none;
     }
 
     .file-status {
-      display: inline-block;
-      padding: 6px 16px;
-      background: #e5e7eb;
-      border-radius: 20px;
-      color: #6b7280;
       font-size: 12px;
-      font-weight: 600;
-      margin-top: 12px;
-    }
-
-    .file-status.success {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .file-status.error {
-      background: #fee2e2;
-      color: #991b1b;
+      color: #6b7280;
+      padding: 8px 12px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 8px;
     }
 
     .grid-2 {
@@ -360,13 +344,11 @@
       <div class="glass-card" style="padding: 18px;">
         <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Fitness</div>
 
-        <label for="profileInput" class="file-input-wrapper" id="athleteUploadArea" style="margin-bottom: 16px;">
-          <div style="font-size: 48px; margin-bottom: 8px;">📁</div>
-          <div style="color: #374151; font-weight: 600; font-size: 14px; margin-bottom: 4px;">Click to upload athlete profile</div>
-          <div style="color: #6b7280; font-size: 12px; margin-bottom: 12px;">JSON file with your training and performance data</div>
-          <div class="file-status" id="profileStatus">No profile</div>
+        <label for="profileInput" class="upload-btn">
+          📁 Upload Athlete Profile
           <input type="file" id="profileInput" accept=".json">
         </label>
+        <div class="file-status" id="profileStatus">No file selected</div>
 
         <div class="compact-input-group">
           <label class="input-label" style="font-size: 10px;">Current CTL</label>
@@ -442,13 +424,11 @@
           <input type="file" id="gpxInput" accept=".gpx,.xml">
         </label>
 
-        <label for="courseProfileInput" class="file-input-wrapper" id="courseUploadArea">
-          <div style="font-size: 48px; margin-bottom: 8px;">📁</div>
-          <div style="color: #374151; font-weight: 600; font-size: 14px; margin-bottom: 4px;">Click to upload course profile</div>
-          <div style="color: #6b7280; font-size: 12px; margin-bottom: 12px;">JSON file with race course details</div>
-          <div class="file-status" id="courseProfileStatus">No profile</div>
+        <label for="courseProfileInput" class="upload-btn">
+          📁 Upload Course Profile
           <input type="file" id="courseProfileInput" accept=".json">
         </label>
+        <div class="file-status" id="courseProfileStatus">No file selected</div>
       </div>
 
       <!-- Conditions Card -->
@@ -1106,21 +1086,12 @@
         try {
           athleteProfile = JSON.parse(evt.target.result);
 
-          // Display profile info
-          const athleteName = athleteProfile.athlete_info?.name || 'Unknown';
-          const version = athleteProfile.metadata?.version || '?';
-          const status = document.getElementById('profileStatus');
-          const uploadArea = document.getElementById('athleteUploadArea');
-
-          status.innerText = `✓ ${athleteName} v${version}`;
-          status.className = 'file-status success';
-          uploadArea.classList.add('active');
+          // Display just the filename
+          document.getElementById('profileStatus').innerText = file.name;
 
           console.log('Athlete profile loaded:', athleteProfile.metadata);
         } catch(err) {
-          const status = document.getElementById('profileStatus');
-          status.innerText = `✗ Error: ${err.message}`;
-          status.className = 'file-status error';
+          document.getElementById('profileStatus').innerText = `Error: ${err.message}`;
           alert('Error loading profile: ' + err.message);
         }
       };
@@ -1139,21 +1110,12 @@
         try {
           courseProfile = JSON.parse(evt.target.result);
 
-          // Display course info
-          const courseName = courseProfile.course_metadata?.race_name || 'Unknown Course';
-          const distance = courseProfile.course_metadata?.distance_km || '?';
-          const status = document.getElementById('courseProfileStatus');
-          const uploadArea = document.getElementById('courseUploadArea');
-
-          status.innerText = `✓ ${courseName} (${distance}km)`;
-          status.className = 'file-status success';
-          uploadArea.classList.add('active');
+          // Display just the filename
+          document.getElementById('courseProfileStatus').innerText = file.name;
 
           console.log('Course profile loaded:', courseProfile.course_metadata);
         } catch(err) {
-          const status = document.getElementById('courseProfileStatus');
-          status.innerText = `✗ Error: ${err.message}`;
-          status.className = 'file-status error';
+          document.getElementById('courseProfileStatus').innerText = `Error: ${err.message}`;
           alert('Error loading course profile: ' + err.message);
         }
       };
