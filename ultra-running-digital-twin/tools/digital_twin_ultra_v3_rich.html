@@ -344,10 +344,10 @@
       <div class="glass-card" style="padding: 18px;">
         <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Fitness</div>
 
-        <label for="profileInput" class="upload-btn">
+        <input type="file" id="profileInput" accept=".json" style="display: none;">
+        <button type="button" class="upload-btn" onclick="document.getElementById('profileInput').click()">
           📁 Upload Athlete Profile
-          <input type="file" id="profileInput" accept=".json">
-        </label>
+        </button>
         <div class="file-status" id="profileStatus">No file selected</div>
 
         <div class="compact-input-group">
@@ -424,10 +424,10 @@
           <input type="file" id="gpxInput" accept=".gpx,.xml">
         </label>
 
-        <label for="courseProfileInput" class="upload-btn">
+        <input type="file" id="courseProfileInput" accept=".json" style="display: none;">
+        <button type="button" class="upload-btn" onclick="document.getElementById('courseProfileInput').click()">
           📁 Upload Course Profile
-          <input type="file" id="courseProfileInput" accept=".json">
-        </label>
+        </button>
         <div class="file-status" id="courseProfileStatus">No file selected</div>
       </div>
 
@@ -1077,10 +1077,22 @@
     // ========== ATHLETE PROFILE ==========
     let athleteProfile = null;
 
-    document.getElementById('profileInput').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if(!file) return;
+    // Verify elements exist
+    console.log('Checking if elements exist...');
+    console.log('profileInput:', document.getElementById('profileInput'));
+    console.log('courseProfileInput:', document.getElementById('courseProfileInput'));
+    console.log('profileStatus:', document.getElementById('profileStatus'));
+    console.log('courseProfileStatus:', document.getElementById('courseProfileStatus'));
 
+    document.getElementById('profileInput').addEventListener('change', function(e) {
+      console.log('File input changed!', e.target.files);
+      const file = e.target.files[0];
+      if(!file) {
+        console.log('No file selected');
+        return;
+      }
+
+      console.log('File selected:', file.name);
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
@@ -1089,11 +1101,15 @@
           // Display just the filename
           document.getElementById('profileStatus').innerText = file.name;
 
-          console.log('Athlete profile loaded:', athleteProfile.metadata);
+          console.log('✅ Athlete profile loaded successfully:', athleteProfile.metadata);
         } catch(err) {
+          console.error('Error parsing JSON:', err);
           document.getElementById('profileStatus').innerText = `Error: ${err.message}`;
           alert('Error loading profile: ' + err.message);
         }
+      };
+      reader.onerror = function(err) {
+        console.error('FileReader error:', err);
       };
       reader.readAsText(file);
     });
@@ -1102,9 +1118,14 @@
     let courseProfile = null;
 
     document.getElementById('courseProfileInput').addEventListener('change', function(e) {
+      console.log('Course file input changed!', e.target.files);
       const file = e.target.files[0];
-      if(!file) return;
+      if(!file) {
+        console.log('No file selected');
+        return;
+      }
 
+      console.log('Course file selected:', file.name);
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
@@ -1113,11 +1134,15 @@
           // Display just the filename
           document.getElementById('courseProfileStatus').innerText = file.name;
 
-          console.log('Course profile loaded:', courseProfile.course_metadata);
+          console.log('✅ Course profile loaded successfully:', courseProfile.course_metadata);
         } catch(err) {
+          console.error('Error parsing JSON:', err);
           document.getElementById('courseProfileStatus').innerText = `Error: ${err.message}`;
           alert('Error loading course profile: ' + err.message);
         }
+      };
+      reader.onerror = function(err) {
+        console.error('FileReader error:', err);
       };
       reader.readAsText(file);
     });
