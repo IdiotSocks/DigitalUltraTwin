@@ -1,0 +1,351 @@
+# CTL Fitness Tracker - HTML Integration Guide
+
+## Overview
+This guide shows you how to add CTL fitness tracking to your existing Digital Twin HTML page.
+
+## Step 1: Add CTL Input Section
+
+**Location:** In your left sidebar, after the "2. Training Inputs" card (around line 115)
+
+**Add this HTML:**
+
+```html
+<div class="card border-l-4 border-emerald-500 space-y-3">
+  <h2 class="font-bold text-sm text-slate-900 uppercase">📊 CTL Fitness Tracker</h2>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Current CTL</label>
+    <input type="number" id="ctlCurrent" value="106" class="w-full p-1 border rounded text-sm font-bold text-emerald-700">
+  </div>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Race Date</label>
+    <input type="date" id="raceDate" class="w-full p-1 border rounded text-sm">
+  </div>
+
+  <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Training Plan</label>
+    <select id="trainingPlan" onchange="updateCTLProjection()" class="w-full p-1 border rounded text-xs font-bold text-slate-700">
+      <option value="2.5">Conservative (2.5 CTL/week)</option>
+      <option value="3.5" selected>Moderate (3.5 CTL/week)</option>
+      <option value="5.0">Aggressive (5.0 CTL/week)</option>
+      <option value="0">Maintenance (0 CTL/week)</option>
+    </select>
+  </div>
+
+  <div class="text-[10px] text-slate-400 pt-2 border-t space-y-1">
+    <div class="flex justify-between">
+      <span>Weeks to Race:</span>
+      <span id="ctlWeeksToRace" class="font-bold text-slate-600">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Peak CTL:</span>
+      <span id="ctlPeak" class="font-bold text-emerald-600">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Race Day CTL:</span>
+      <span id="ctlRaceDay" class="font-bold text-emerald-700">--</span>
+    </div>
+    <div class="flex justify-between">
+      <span>Race Day Fitness:</span>
+      <span id="ctlFitness" class="font-bold text-green-600">--</span>
+    </div>
+  </div>
+
+  <button onclick="showCTLScenarios()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded">
+    📈 Compare Scenarios
+  </button>
+</div>
+```
+
+## Step 2: Add CTL Scenarios Modal
+
+**Location:** Before the closing `</body>` tag (at the end of your HTML)
+
+**Add this HTML:**
+
+```html
+<!-- CTL Scenarios Modal -->
+<div id="ctlModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto;">
+  <div style="max-width: 800px; margin: 40px auto; background: white; border-radius: 12px; padding: 30px;">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-slate-900">CTL Training Scenarios</h2>
+      <button onclick="document.getElementById('ctlModal').style.display='none'" class="text-slate-500 hover:text-slate-700 text-2xl font-bold">&times;</button>
+    </div>
+
+    <div id="ctlScenariosContent" class="space-y-4">
+      <!-- Scenarios will be inserted here -->
+    </div>
+  </div>
+</div>
+```
+
+## Step 3: Add CTL JavaScript Functions
+
+**Location:** Inside your existing `<script>` tag, add these functions at the top (after your variable declarations)
+
+```javascript
+// ========== CTL FITNESS TRACKING ==========
+
+// CTL to Fitness conversion (calibrated: CTL 120 = Fitness 1.0)
+const CTL_BASELINE = 120;
+const CTL_TO_FITNESS_RATE = 0.00833;  // Per CTL point
+
+function ctlToFitness(ctl) {
+  const fitness = 1.0 + ((ctl - CTL_BASELINE) * CTL_TO_FITNESS_RATE);
+  return Math.max(0.5, fitness);
+}
+
+function fitnessToCtl(fitness) {
+  return CTL_BASELINE + ((fitness - 1.0) / CTL_TO_FITNESS_RATE);
+}
+
+function calculateWeeksToRace() {
+  const raceDateInput = document.getElementById('raceDate');
+  if (!raceDateInput.value) return 0;
+
+  const today = new Date();
+  const raceDate = new Date(raceDateInput.value);
+  const diffTime = raceDate - today;
+  const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  return diffDays / 7;
+}
+
+function updateCTLProjection() {
+  const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+  const weeksToRace = calculateWeeksToRace();
+  const weeklyGain = parseFloat(document.getElementById('trainingPlan').value) || 3.5;
+
+  document.getElementById('ctlWeeksToRace').innerText = weeksToRace.toFixed(1);
+
+  if (weeksToRace === 0) {
+    document.getElementById('ctlPeak').innerText = currentCtl.toFixed(0);
+    document.getElementById('ctlRaceDay').innerText = currentCtl.toFixed(0);
+    document.getElementById('ctlFitness').innerText = ctlToFitness(currentCtl).toFixed(3);
+    return;
+  }
+
+  // Calculate with 2-week taper
+  const taperWeeks = Math.min(2, weeksToRace);
+  const buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+
+  const peakCtl = currentCtl + (buildWeeks * weeklyGain);
+  const raceDayCtl = peakCtl - (taperWeeks * 2); // Lose 2 CTL/week during taper
+  const raceDayFitness = ctlToFitness(raceDayCtl);
+
+  document.getElementById('ctlPeak').innerText = peakCtl.toFixed(0);
+  document.getElementById('ctlRaceDay').innerText = raceDayCtl.toFixed(0);
+  document.getElementById('ctlFitness').innerText = raceDayFitness.toFixed(3);
+
+  // Update the old fitness level display to match CTL
+  const fitEl = document.getElementById('fitnessLevel');
+  if (fitEl) fitEl.innerText = raceDayFitness.toFixed(2);
+}
+
+function showCTLScenarios() {
+  const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+  const weeksToRace = calculateWeeksToRace();
+
+  if (weeksToRace === 0) {
+    alert('Please set a race date first!');
+    return;
+  }
+
+  const taperWeeks = Math.min(2, weeksToRace);
+  const buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+
+  const scenarios = [
+    { name: 'Current Fitness (No Training)', ctl: currentCtl, plan: 0 },
+    { name: 'Conservative Training', ctl: currentCtl + (buildWeeks * 2.5) - (taperWeeks * 2), plan: 2.5 },
+    { name: 'Moderate Training', ctl: currentCtl + (buildWeeks * 3.5) - (taperWeeks * 2), plan: 3.5 },
+    { name: 'Aggressive Training', ctl: currentCtl + (buildWeeks * 5.0) - (taperWeeks * 2), plan: 5.0 }
+  ];
+
+  let html = `
+    <div class="mb-4 p-4 bg-slate-50 rounded">
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div><strong>Current CTL:</strong> ${currentCtl.toFixed(0)}</div>
+        <div><strong>Weeks to Race:</strong> ${weeksToRace.toFixed(1)}</div>
+        <div><strong>Build Weeks:</strong> ${buildWeeks.toFixed(1)}</div>
+        <div><strong>Taper Weeks:</strong> ${taperWeeks.toFixed(1)}</div>
+      </div>
+    </div>
+
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="bg-slate-100">
+          <th class="p-2 text-left border-b-2">Scenario</th>
+          <th class="p-2 text-center border-b-2">Race CTL</th>
+          <th class="p-2 text-center border-b-2">Fitness</th>
+          <th class="p-2 text-center border-b-2">CTL Gain</th>
+          <th class="p-2 text-center border-b-2">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  scenarios.forEach((s, idx) => {
+    const fitness = ctlToFitness(s.ctl);
+    const gain = s.ctl - currentCtl;
+    const gainClass = gain > 0 ? 'text-green-600' : 'text-slate-500';
+
+    html += `
+      <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}">
+        <td class="p-2 border-b font-medium">${s.name}</td>
+        <td class="p-2 border-b text-center font-bold text-emerald-600">${s.ctl.toFixed(0)}</td>
+        <td class="p-2 border-b text-center font-bold text-green-600">${fitness.toFixed(3)}</td>
+        <td class="p-2 border-b text-center ${gainClass} font-bold">${gain >= 0 ? '+' : ''}${gain.toFixed(1)}</td>
+        <td class="p-2 border-b text-center">
+          <button onclick="applyCTLScenario(${s.ctl.toFixed(1)}, ${s.plan})"
+            class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded">
+            Use This
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+
+    <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-600 text-xs text-slate-700">
+      <strong>📝 Note:</strong> All scenarios include a 2-week taper period (-2 CTL/week).
+      Click "Use This" to apply that fitness level to your current race prediction.
+    </div>
+  `;
+
+  document.getElementById('ctlScenariosContent').innerHTML = html;
+  document.getElementById('ctlModal').style.display = 'block';
+}
+
+function applyCTLScenario(ctl, plan) {
+  document.getElementById('ctlCurrent').value = ctl;
+  document.getElementById('trainingPlan').value = plan;
+  updateCTLProjection();
+  document.getElementById('ctlModal').style.display = 'none';
+
+  log('Applied CTL scenario: ' + ctl.toFixed(0) + ' (Fitness: ' + ctlToFitness(ctl).toFixed(3) + ')', 'success');
+
+  // Automatically re-run analysis with new fitness
+  if (currentCourse && currentCourse.length > 0) {
+    runAnalysis();
+  }
+}
+
+// Set default race date to 8 weeks from now
+(function setDefaultRaceDate() {
+  const today = new Date();
+  const futureDate = new Date(today.getTime() + (8 * 7 * 24 * 60 * 60 * 1000));
+  const dateStr = futureDate.toISOString().split('T')[0];
+  const raceDateEl = document.getElementById('raceDate');
+  if (raceDateEl) {
+    raceDateEl.value = dateStr;
+    updateCTLProjection();
+  }
+})();
+
+// Update CTL projection when inputs change
+document.getElementById('ctlCurrent').addEventListener('input', updateCTLProjection);
+document.getElementById('raceDate').addEventListener('change', updateCTLProjection);
+```
+
+## Step 4: Update Your runAnalysis Function
+
+**Location:** Find your `runAnalysis` function (around line 550), locate this section:
+
+```javascript
+// OLD CODE (around line 560):
+var projCTL = ctl + (weeks * ramp);
+var fitness = 1.10 + ((projCTL - 150) * 0.0025);
+if(fitness < 1.0) fitness = 1.0;
+if(fitness > 1.5) fitness = 1.5;
+```
+
+**REPLACE WITH:**
+
+```javascript
+// Use CTL-based fitness calculation
+var raceDayCtlText = document.getElementById('ctlRaceDay').innerText;
+var raceDayCtl = parseFloat(raceDayCtlText.replace('--', '0'));
+if (!raceDayCtl || isNaN(raceDayCtl)) raceDayCtl = 120; // default
+var fitness = ctlToFitness(raceDayCtl);
+
+log('Using CTL-based fitness: CTL=' + raceDayCtl.toFixed(0) + ', Fitness=' + fitness.toFixed(3), 'info');
+```
+
+## Step 5: Initialize on Page Load
+
+**Location:** Find your `init()` function at the bottom of your script (around line 900)
+
+**Add this line at the end of the init() function:**
+
+```javascript
+(function init() {
+  var status = document.getElementById('js-status');
+  if(status) { status.innerText = "READY"; status.style.color = "#4ade80"; }
+  log("System initialized.", "success");
+  updateProjections();
+  applyWeatherScenario();
+
+  // ADD THIS LINE:
+  updateCTLProjection();  // Initialize CTL calculations
+})();
+```
+
+## Testing
+
+After making these changes:
+
+1. **Open your HTML file** in a browser
+2. You should see a new **"📊 CTL Fitness Tracker"** section in the sidebar
+3. **Enter your current CTL** (e.g., 106)
+4. **Set a race date** (e.g., 8 weeks from now)
+5. **Select a training plan** (Conservative/Moderate/Aggressive)
+6. You'll see:
+   - Weeks to race
+   - Peak CTL (before taper)
+   - Race day CTL (after taper)
+   - Race day fitness multiplier
+
+7. **Click "📈 Compare Scenarios"** to see all 4 training options side-by-side
+8. **Click "Use This"** on any scenario to apply it and re-run your race prediction
+
+## CTL Conversion Reference
+
+```
+CTL 80  = Fitness 0.667 (-33%)
+CTL 100 = Fitness 0.833 (-17%)
+CTL 106 = Fitness 0.883 (-12%) ← Your current
+CTL 120 = Fitness 1.000 (baseline)
+CTL 138 = Fitness 1.150 (+15%)
+CTL 187 = Fitness 1.558 (+56%) ← UTMB peak
+```
+
+## What Changed
+
+- **Old system:** Used generic "CTL + weeks × ramp" formula
+- **New system:** Uses Training Peaks CTL with proper conversion to fitness multipliers
+- **Benefit:** More accurate predictions based on actual training load
+
+## Troubleshooting
+
+**CTL values not updating?**
+- Check browser console for errors (F12)
+- Make sure `updateCTLProjection()` is called in init()
+
+**Race prediction not using new fitness?**
+- Verify Step 4 was done correctly
+- Check that `ctlToFitness()` function is defined
+
+**Scenarios modal not showing?**
+- Verify Step 2 modal HTML was added
+- Check that `showCTLScenarios()` is defined
+
+## Next Steps
+
+Once integrated, you can:
+1. Update your current CTL weekly from Training Peaks
+2. Compare different training plans
+3. See predicted race times at different fitness levels
+4. Plan your training progression to race day

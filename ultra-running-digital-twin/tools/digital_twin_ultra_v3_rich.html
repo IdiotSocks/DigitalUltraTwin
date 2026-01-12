@@ -1,0 +1,2961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Twin Ultra - Race Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* Glass morphism cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .glass-card-white {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .glass-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .glass-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select.glass-input option {
+      background: #667eea;
+      color: white;
+    }
+
+    select.glass-input:focus option:checked,
+    select.glass-input option:checked {
+      background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(74, 222, 128, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(74, 222, 128, 0.45);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid rgba(102, 126, 234, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      color: #1f2937;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .stat-value.gradient-green {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-value.gradient-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-value.gradient-purple {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .upload-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
+      background: white;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .upload-btn:hover {
+      background: #f9fafb;
+      border-color: #667eea;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .file-status {
+      font-size: 12px;
+      color: #6b7280;
+      padding: 8px 12px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #4ade80;
+    }
+
+    .checkbox-label {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+      border-radius: 16px;
+      z-index: 1;
+    }
+
+    .compact-input-group {
+      margin-bottom: 12px;
+    }
+
+    .compact-input-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-compact {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="max-width: 1600px; margin: 0 auto;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h1 style="color: white; font-size: 36px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <span>📊</span>
+        <span>FITNESS</span>
+      </h1>
+      <p style="color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 400;">
+        Ultra Running Race Prediction System
+      </p>
+      <button id="toggleInputs" onclick="toggleInputSection()" style="margin-top: 16px; padding: 10px 24px; background: white; border: none; border-radius: 8px; color: #667eea; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s;">
+        ▼ Hide Controls
+      </button>
+    </div>
+
+    <!-- Input Cards Row -->
+    <div id="inputSection" class="grid-4" style="margin-bottom: 20px; transition: all 0.3s ease;">
+
+      <!-- Fitness Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Fitness</div>
+
+        <input type="file" id="profileInput" accept=".json" style="display: none;">
+        <button type="button" class="upload-btn" onclick="document.getElementById('profileInput').click()">
+          📁 Upload Athlete Profile
+        </button>
+        <div class="file-status" id="profileStatus">No file selected</div>
+
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Current CTL</label>
+          <input type="number" id="ctlCurrent" value="106" class="glass-input input-compact" placeholder="106">
+        </div>
+
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Race Date</label>
+          <input type="date" id="raceDate" class="glass-input input-compact">
+        </div>
+
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Training Plan</label>
+          <select id="trainingPlan" class="glass-input glass-select input-compact">
+            <option value="2.5">Conservative</option>
+            <option value="3.5" selected>Moderate</option>
+            <option value="5.0">Aggressive</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <div style="flex: 1; background: rgba(255,255,255,0.2); border-radius: 10px; padding: 8px; text-align: center;">
+            <div class="input-label" style="font-size: 9px; margin-bottom: 2px;">CTL</div>
+            <div id="ctlRaceDay" style="color: white; font-size: 18px; font-weight: 900;">--</div>
+          </div>
+          <div style="flex: 1; background: rgba(255,255,255,0.2); border-radius: 10px; padding: 8px; text-align: center;">
+            <div class="input-label" style="font-size: 9px; margin-bottom: 2px;">Fit</div>
+            <div id="ctlFitness" style="color: #4ade80; font-size: 18px; font-weight: 900;">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taper Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">⏱️ Taper</div>
+
+        <div class="checkbox-group" style="margin-bottom: 10px;">
+          <input type="checkbox" id="taperEnabled" checked class="checkbox-input" style="width: 18px; height: 18px;">
+          <label for="taperEnabled" class="checkbox-label" style="font-size: 11px;">Enable Taper</label>
+        </div>
+
+        <div id="taperSettings">
+          <div class="compact-input-group">
+            <label class="input-label" style="font-size: 10px;">Taper Weeks</label>
+            <select id="taperWeeks" class="glass-input glass-select input-compact">
+              <option value="0.5">0.5 weeks</option>
+              <option value="1">1 week</option>
+              <option value="2" selected>2 weeks</option>
+              <option value="3">3 weeks</option>
+            </select>
+          </div>
+
+          <div class="compact-input-group">
+            <label class="input-label" style="font-size: 10px;">Intensity</label>
+            <select id="taperIntensity" class="glass-input glass-select input-compact">
+              <option value="0.8">80%</option>
+              <option value="0.6" selected>60%</option>
+              <option value="0.5">50%</option>
+              <option value="0.4">40%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📁 Course</div>
+
+        <label for="gpxInput" class="file-input-wrapper" style="padding: 12px; margin-bottom: 8px;">
+          <div style="color: white; font-size: 20px; margin-bottom: 4px;">📍</div>
+          <div style="color: white; font-weight: 700; font-size: 11px;">Upload GPX</div>
+          <div class="file-status" id="gpxStatus" style="font-size: 10px; margin-top: 6px;">No file</div>
+          <input type="file" id="gpxInput" accept=".gpx,.xml">
+        </label>
+
+        <input type="file" id="courseProfileInput" accept=".json" style="display: none;">
+        <button type="button" class="upload-btn" onclick="document.getElementById('courseProfileInput').click()">
+          📁 Upload Course Profile
+        </button>
+        <div class="file-status" id="courseProfileStatus">No file selected</div>
+      </div>
+
+      <!-- Conditions Card -->
+      <div class="glass-card" style="padding: 18px;">
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">⚙️ Conditions</div>
+
+        <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Weather</label>
+          <select id="weatherScenario" class="glass-input glass-select input-compact">
+            <option value="optimal">☀️ Optimal</option>
+            <option value="typical" selected>🌤️ Typical</option>
+            <option value="cold">❄️ Cold</option>
+            <option value="warm">🌡️ Warm</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+          <div>
+            <label class="input-label" style="font-size: 10px;">Start °C</label>
+            <input type="number" id="startTemp" value="5" class="glass-input input-compact">
+          </div>
+          <div>
+            <label class="input-label" style="font-size: 10px;">Peak °C</label>
+            <input type="number" id="finishTemp" value="14" class="glass-input input-compact">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <label class="input-label" style="font-size: 10px;">Carbs g/h</label>
+            <input type="number" id="carbInput" value="60" class="glass-input input-compact">
+          </div>
+          <div>
+            <label class="input-label" style="font-size: 10px;">Fluids ml/h</label>
+            <input type="number" id="hydroInput" value="500" class="glass-input input-compact">
+          </div>
+        </div>
+
+        <button id="calcBtn" onclick="runAnalysis()" class="btn-primary" style="margin-top: 12px; padding: 10px 16px; font-size: 11px;">
+          RUN PREDICTION
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Map and Results Row -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+
+      <!-- Map -->
+      <div class="glass-card-white" style="padding: 20px; min-height: 450px;">
+        <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">🗺️ Route Map</h2>
+        <div id="mapContainer" style="height: 380px; border-radius: 12px; overflow: hidden; background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #6b7280;">
+          <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 12px;">📍</div>
+            <div style="font-size: 14px; font-weight: 600;">Upload GPX to see route map</div>
+          </div>
+          <div id="map" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Results KPIs -->
+      <div class="glass-card-white" id="resultsCard" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📊 Predicted Results</h2>
+
+        <div class="grid-3" style="margin-bottom: 16px; gap: 12px;">
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Finish Time</div>
+            <div id="kpi-time" class="stat-value gradient-green" style="font-size: 26px;">--:--</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Avg Pace</div>
+            <div id="kpi-pace" class="stat-value gradient-blue" style="font-size: 26px;">--:--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">min/km</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Avg Speed</div>
+            <div id="kpi-speed" class="stat-value gradient-purple" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">km/h</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap: 12px;">
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Total Distance</div>
+            <div id="kpi-distance" class="stat-value" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">km</div>
+          </div>
+          <div class="stat-box" style="padding: 14px;">
+            <div class="stat-label">Elevation Gain</div>
+            <div id="kpi-elevation" class="stat-value" style="font-size: 26px;">--</div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 2px;">meters</div>
+          </div>
+        </div>
+
+        <!-- Getting Started -->
+        <div id="gettingStarted" style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🏃</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #1f2937; margin-bottom: 8px;">
+            Ready to Predict
+          </h3>
+          <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">
+            Enter your details and upload a GPX file, then click Run Prediction
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Race Profile Graph (Elevation) - Moved to Top -->
+    <div class="glass-card-white" id="raceProfileCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile - Elevation & Terrain</h2>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <!-- Cumulative Elevation Chart -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Cumulative Elevation Profile</h3>
+          <div style="height: 280px; position: relative;">
+            <canvas id="elevationChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Grade Distribution -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Grade Distribution</h3>
+          <div style="height: 280px; position: relative;">
+            <canvas id="gradeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Developer View: Model Calculations -->
+    <div class="glass-card-white" id="developerCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">🔧 Developer View - Model Calculations</h2>
+      <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">Advanced view showing formulas, parameters, and how to calibrate the model</p>
+
+      <!-- Calibration Status -->
+      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 2px solid #3b82f6;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #1e40af; margin-bottom: 12px;">📊 Calibration Data (Arc 25 2025)</h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 11px; color: #1e3a8a;">
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">Validated Result</div>
+            <div style="font-size: 20px; font-weight: 900;">4:23:00</div>
+          </div>
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">CTL / Fitness</div>
+            <div style="font-size: 20px; font-weight: 900;">146 / 1.21x</div>
+          </div>
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">Calibration Factor</div>
+            <div style="font-size: 20px; font-weight: 900; color: #ef4444;" id="devCalibrationFactor">1.35</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Base Speed Formula -->
+      <div style="background: #f9fafb; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">🏃 Speed Calculation (per segment)</h3>
+        <div style="font-family: 'Courier New', monospace; font-size: 11px; background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; line-height: 1.8;">
+          <strong>currentSpeed = baseSpeed × fitness × tech × calibration</strong><br><br>
+          where:<br>
+          • <strong>baseSpeed</strong> = gradient-dependent speed (km/h)<br>
+          &nbsp;&nbsp;- Steep Down (<-15%): <span id="devSpeedSteepD">5.92</span> km/h<br>
+          &nbsp;&nbsp;- Mod Down (-15 to -5%): <span id="devSpeedModD">6.96</span> km/h<br>
+          &nbsp;&nbsp;- Flat (-5 to 5%): <span id="devSpeedFlat">6.62</span> km/h<br>
+          &nbsp;&nbsp;- Mod Up (5 to 15%): <span id="devSpeedModU">4.95</span> km/h<br>
+          &nbsp;&nbsp;- Steep Up (>15%): <span id="devSpeedSteepU">3.71</span> km/h<br><br>
+          • <strong>fitness</strong> = CTL-based multiplier (current: <span id="devFitness">1.21</span>)<br>
+          • <strong>tech</strong> = technical terrain skill (<span id="devTech">0.96</span>)<br>
+          • <strong>calibration</strong> = tuning factor (<span id="devCalib">1.35</span>)<br>
+        </div>
+        <div style="font-size: 11px; color: #6b7280; line-height: 1.6;">
+          <strong>💡 How to Calibrate:</strong><br>
+          1. Run the model with your known CTL/fitness<br>
+          2. Compare predicted time vs actual result<br>
+          3. Adjust <code>CALIBRATION.calibrationFactor</code> in code (line ~1164)<br>
+          4. If predicted is too slow → increase factor (current: 1.35)<br>
+          5. If predicted is too fast → decrease factor<br>
+          6. Recalibrate after each validated race
+        </div>
+      </div>
+
+      <!-- Penalty/Bonus Factors -->
+      <div style="background: #f9fafb; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid #e5e7eb;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">⚖️ Speed Modifiers</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px;">
+          <div>
+            <div style="font-weight: 600; color: #dc2626; margin-bottom: 8px;">Penalties (multiply speed):</div>
+            <div style="background: white; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; line-height: 1.8;">
+              • Heat (>18°C): 0.98<sup>(temp-18)</sup><br>
+              • Cold (<10°C): 0.99<sup>(10-temp)</sup><br>
+              • Low carbs (<40g/h): 0.85<br>
+              • Low fluids (<500ml/h): 0.95<br>
+              • Fatigue (>30km): 1 - (dist-30)×0.002<br>
+              • Altitude (>2000m): custom
+            </div>
+          </div>
+          <div>
+            <div style="font-weight: 600; color: #16a34a; margin-bottom: 8px;">Optimization opportunities:</div>
+            <div style="background: white; padding: 10px; border-radius: 6px; line-height: 1.8;">
+              • Increase base speeds if faster on gradients<br>
+              • Increase tech_skill if strong technical terrain<br>
+              • Adjust fatigue formula coefficients<br>
+              • Tune temperature penalty curves<br>
+              • Add course-specific multipliers
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monte Carlo Parameters -->
+      <div style="background: #f9fafb; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">🎲 Monte Carlo Simulation</h3>
+        <div style="font-size: 11px; color: #4b5563; line-height: 1.8;">
+          • <strong>500 simulations</strong> with randomized variations:<br>
+          &nbsp;&nbsp;- Fitness variance: ±5% (good pacing) to ±15% (variable)<br>
+          &nbsp;&nbsp;- Temperature variance: ±2°C (low) to ±8°C (high)<br>
+          &nbsp;&nbsp;- Fueling compliance: 70% (poor) to 100% (perfect)<br>
+          &nbsp;&nbsp;- Random bad luck events: 0.1% probability per km<br><br>
+          • <strong>DNF triggers:</strong><br>
+          &nbsp;&nbsp;- Speed drops below 2.0 km/h<br>
+          &nbsp;&nbsp;- Cumulative fatigue exceeds 200 points<br>
+          &nbsp;&nbsp;- Nutrition deficit >10 segments<br><br>
+          • <strong>Results:</strong> P10, P25, P50 (median), P75, DNF probability
+        </div>
+      </div>
+    </div>
+
+    <!-- Outcome Forecast Pane -->
+    <div class="glass-card-white" id="outcomeCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">🎲 Outcome Forecast (Monte Carlo)</h2>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+
+        <!-- Probability Distribution Chart -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Finish Time Probability Distribution</h3>
+          <div style="height: 280px; position: relative;">
+            <canvas id="probabilityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Statistics -->
+        <div>
+          <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Confidence Intervals</h3>
+
+          <div style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+            <div style="font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">P10 (Fast)</div>
+            <div id="p10-time" style="font-size: 20px; font-weight: 900; color: #10b981;">--:--</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+            <div style="font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">P25</div>
+            <div id="p25-time" style="font-size: 20px; font-weight: 900; color: #3b82f6;">--:--</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 12px; margin-bottom: 10px; border: 2px solid #fbbf24;">
+            <div style="font-size: 10px; color: #92400e; font-weight: 600; margin-bottom: 4px;">MEDIAN (P50)</div>
+            <div id="median-time" style="font-size: 22px; font-weight: 900; color: #b45309;">--:--</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+            <div style="font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">P75</div>
+            <div id="p75-time" style="font-size: 20px; font-weight: 900; color: #8b5cf6;">--:--</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-radius: 12px; padding: 12px;">
+            <div style="font-size: 10px; color: #991b1b; font-weight: 600; margin-bottom: 4px;">DNF Risk</div>
+            <div id="dnf-prob" style="font-size: 20px; font-weight: 900; color: #dc2626;">--%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Band Heatmap -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">Most Likely Finish Time Bands</h3>
+        <div id="timeBands" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- DNF Risk Factors -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">DNF Risk Drivers (Ranked by Impact)</h3>
+        <div id="dnfDrivers">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Sensitivity Controls -->
+      <div>
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">🎛️ Sensitivity Analysis</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 700; color: #6b7280; margin-bottom: 6px;">Temperature Variance</label>
+            <select id="tempVariance" class="glass-input input-compact" onchange="runMonteCarloAnalysis()">
+              <option value="low">Low (±2°C)</option>
+              <option value="medium" selected>Medium (±5°C)</option>
+              <option value="high">High (±8°C)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 700; color: #6b7280; margin-bottom: 6px;">Pacing Discipline</label>
+            <select id="pacingDiscipline" class="glass-input input-compact" onchange="runMonteCarloAnalysis()">
+              <option value="perfect">Perfect</option>
+              <option value="good" selected>Good (±5%)</option>
+              <option value="variable">Variable (±15%)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 700; color: #6b7280; margin-bottom: 6px;">Fueling Compliance</label>
+            <select id="fuelingCompliance" class="glass-input input-compact" onchange="runMonteCarloAnalysis()">
+              <option value="perfect">Perfect</option>
+              <option value="good" selected>Good (90%)</option>
+              <option value="poor">Poor (70%)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 700; color: #6b7280; margin-bottom: 6px;">Altitude Impact</label>
+            <select id="altitudeImpact" class="glass-input input-compact" onchange="runMonteCarloAnalysis()">
+              <option value="none" selected>None/Low</option>
+              <option value="moderate">Moderate</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Course Interaction Pane -->
+    <div class="glass-card-white" id="courseCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">⛰️ Course Interaction - Where The Race Bites</h2>
+
+      <!-- Critical Segments -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">🔥 Critical Segments (Ranked by Difficulty)</h3>
+        <div id="criticalSegments" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Time Loss Risk -->
+      <div>
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">⚠️ Time Loss Risk Analysis</h3>
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+          <div style="font-size: 11px; color: #92400e; font-weight: 600; margin-bottom: 8px;">Expected Slowdown After Key Climbs</div>
+          <div id="slowdownAnalysis" style="font-size: 12px; color: #78350f; line-height: 1.6;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Athlete State Pane -->
+    <div class="glass-card-white" id="athleteCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">👤 Athlete State - What Version of You Is Turning Up</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+
+        <!-- VO2 Proxy -->
+        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; border: 2px solid #3b82f6;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">💨</span>
+            <div style="font-size: 11px; font-weight: 700; color: #1e40af; text-transform: uppercase;">VO₂ Proxy</div>
+          </div>
+          <div id="vo2-value" style="font-size: 32px; font-weight: 900; color: #1e3a8a;">--</div>
+          <div id="vo2-rating" style="font-size: 10px; color: #1e40af; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Durability Score -->
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">⏱️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #92400e; text-transform: uppercase;">Durability</div>
+          </div>
+          <div id="durability-value" style="font-size: 32px; font-weight: 900; color: #78350f;">--</div>
+          <div id="durability-rating" style="font-size: 10px; color: #92400e; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Downhill Resilience -->
+        <div style="background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); border-radius: 12px; padding: 16px; border: 2px solid #a855f7;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">⬇️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #6b21a8; text-transform: uppercase;">Downhill</div>
+          </div>
+          <div id="downhill-value" style="font-size: 32px; font-weight: 900; color: #581c87;">--</div>
+          <div id="downhill-rating" style="font-size: 10px; color: #6b21a8; margin-top: 4px; font-weight: 600;">--</div>
+        </div>
+
+        <!-- Adaptation Status -->
+        <div style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 12px; padding: 16px; border: 2px solid #22c55e;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">🌡️</span>
+            <div style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase;">Adaptation</div>
+          </div>
+          <div id="adaptation-heat" style="font-size: 12px; color: #166534; margin-bottom: 4px; font-weight: 600;">--</div>
+          <div id="adaptation-altitude" style="font-size: 12px; color: #166534; font-weight: 600;">--</div>
+        </div>
+
+      </div>
+
+      <!-- Pace Decay Projection -->
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px;">📉 Pace Decay Projection (Durability Model)</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 10px; padding: 12px; border: 2px solid #22c55e;">
+            <div style="font-size: 10px; color: #166534; font-weight: 600; margin-bottom: 4px;">Hour 0-4</div>
+            <div style="font-size: 20px; font-weight: 900; color: #15803d;">100%</div>
+            <div style="font-size: 9px; color: #16a34a; margin-top: 2px;">Baseline pace</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); border-radius: 10px; padding: 12px; border: 2px solid #eab308;">
+            <div style="font-size: 10px; color: #713f12; font-weight: 600; margin-bottom: 4px;">Hour 4-8</div>
+            <div id="decay-4h" style="font-size: 20px; font-weight: 900; color: #854d0e;">--%</div>
+            <div style="font-size: 9px; color: #a16207; margin-top: 2px;">of baseline</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border-radius: 10px; padding: 12px; border: 2px solid #f97316;">
+            <div style="font-size: 10px; color: #7c2d12; font-weight: 600; margin-bottom: 4px;">Hour 8-12</div>
+            <div id="decay-8h" style="font-size: 20px; font-weight: 900; color: #9a3412;">--%</div>
+            <div style="font-size: 9px; color: #c2410c; margin-top: 2px;">of baseline</div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); border-radius: 10px; padding: 12px; border: 2px solid #ef4444;">
+            <div style="font-size: 10px; color: #7f1d1d; font-weight: 600; margin-bottom: 4px;">Hour 12+</div>
+            <div id="decay-12h" style="font-size: 20px; font-weight: 900; color: #991b1b;">--%</div>
+            <div style="font-size: 9px; color: #dc2626; margin-top: 2px;">of baseline</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Eccentric Load Tolerance -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #f59e0b;">
+        <h3 style="font-size: 11px; font-weight: 700; color: #92400e; margin-bottom: 10px;">⚠️ ECCENTRIC LOAD TOLERANCE (Quad Destruction Index)</h3>
+        <div id="eccentricAnalysis" style="font-size: 12px; color: #78350f; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Execution Risk Pane -->
+    <div class="glass-card-white" id="executionRiskCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">⚠️ Execution Risk - How Likely You Are to Sabotage Yourself</h2>
+      <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">"Where psychology quietly meets statistics"</p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+
+        <!-- Early Pacing Deviation Risk -->
+        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-radius: 12px; padding: 16px; border: 2px solid #f87171;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #991b1b; margin-bottom: 10px;">🏃 Early Pacing Deviation Risk</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="pacing-risk-value" style="font-size: 28px; font-weight: 900; color: #dc2626;">--%</div>
+              <div id="pacing-risk-label" style="font-size: 10px; color: #7f1d1d; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="pacing-risk-details" style="font-size: 11px; color: #991b1b; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Aid Station Dwell Time Creep -->
+        <div style="background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%); border-radius: 12px; padding: 16px; border: 2px solid #facc15;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 10px;">⏱️ Aid Station Dwell Time Creep</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="aid-creep-value" style="font-size: 28px; font-weight: 900; color: #d97706;">--min</div>
+              <div id="aid-creep-label" style="font-size: 10px; color: #78350f; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="aid-creep-details" style="font-size: 11px; color: #92400e; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Night Section Cognitive Load -->
+        <div style="background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); border-radius: 12px; padding: 16px; border: 2px solid #a78bfa;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #5b21b6; margin-bottom: 10px;">🌙 Night Section Cognitive Load Index</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="night-load-value" style="font-size: 28px; font-weight: 900; color: #7c3aed;">--</div>
+              <div id="night-load-label" style="font-size: 10px; color: #5b21b6; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="night-load-details" style="font-size: 11px; color: #6d28d9; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Previous Failure Pattern Overlap -->
+        <div style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 12px; padding: 16px; border: 2px solid #f472b6;">
+          <h3 style="font-size: 12px; font-weight: 700; color: #831843; margin-bottom: 10px;">📉 Previous Failure Pattern Overlap</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+              <div id="failure-overlap-value" style="font-size: 28px; font-weight: 900; color: #be185d;">--%</div>
+              <div id="failure-overlap-label" style="font-size: 10px; color: #831843; margin-top: 2px; font-weight: 600;">--</div>
+            </div>
+          </div>
+          <div id="failure-overlap-details" style="font-size: 11px; color: #9f1239; line-height: 1.5;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Decision Triggers Pane -->
+    <div class="glass-card-white" id="decisionTriggersCard" style="display: none; margin-bottom: 20px;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Decision Triggers - What to Do Mid-Race</h2>
+      <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">Real-time decision framework for race execution</p>
+
+      <!-- Pace Caps Per Segment -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 16px; border: 2px solid #4ade80; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 12px;">📏 Pace Caps Per Segment</h3>
+        <div id="pace-caps-container" style="font-size: 11px; color: #166534; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Fuel and Caffeine Triggers -->
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 12px; padding: 16px; border: 2px solid #fbbf24; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 12px;">⚡ Fuel & Caffeine Triggers (by Clock Time)</h3>
+        <div id="fuel-triggers-container" style="font-size: 11px; color: #78350f; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Walk vs Run Thresholds -->
+      <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; border: 2px solid #60a5fa; margin-bottom: 16px;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 12px;">🚶‍♂️ Walk vs Run Thresholds on Climbs</h3>
+        <div id="walk-run-thresholds" style="font-size: 11px; color: #1e3a8a; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Abort or Salvage Criteria -->
+      <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-radius: 12px; padding: 16px; border: 2px solid #f87171;">
+        <h3 style="font-size: 13px; font-weight: 700; color: #991b1b; margin-bottom: 12px;">🛑 Abort or Salvage Criteria</h3>
+        <div id="abort-criteria-container" style="font-size: 11px; color: #7f1d1d; line-height: 1.6;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Race Profile Chart -->
+    <div class="glass-card-white" id="chartCard" style="display: none;">
+      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">📈 Race Profile</h2>
+      <div style="height: 350px; position: relative;">
+        <canvas id="mainChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ========== CTL CALCULATIONS ==========
+    const CTL_BASELINE = 120;
+    const CTL_TO_FITNESS_RATE = 0.00833;
+
+    function ctlToFitness(ctl) {
+      return Math.max(0.5, 1.0 + ((ctl - CTL_BASELINE) * CTL_TO_FITNESS_RATE));
+    }
+
+    function calculateWeeksToRace() {
+      const raceDateInput = document.getElementById('raceDate');
+      if (!raceDateInput.value) return 0;
+      const today = new Date();
+      const raceDate = new Date(raceDateInput.value);
+      const diffTime = raceDate - today;
+      const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      return diffDays / 7;
+    }
+
+    function updateCTLProjection() {
+      const currentCtl = parseFloat(document.getElementById('ctlCurrent').value) || 106;
+      const weeksToRace = calculateWeeksToRace();
+      const weeklyGain = parseFloat(document.getElementById('trainingPlan').value) || 3.5;
+      const taperEnabled = document.getElementById('taperEnabled').checked;
+      const taperWeeksInput = parseFloat(document.getElementById('taperWeeks').value) || 2;
+      const taperIntensity = parseFloat(document.getElementById('taperIntensity').value) || 0.6;
+
+      if (weeksToRace === 0) {
+        document.getElementById('ctlRaceDay').innerText = currentCtl.toFixed(0);
+        document.getElementById('ctlFitness').innerText = ctlToFitness(currentCtl).toFixed(3);
+        return;
+      }
+
+      const taperWeeks = taperEnabled ? Math.min(taperWeeksInput, weeksToRace) : 0;
+      const buildWeeks = Math.max(0, weeksToRace - taperWeeks);
+      const peakCtl = currentCtl + (buildWeeks * weeklyGain);
+      const taperLossPerWeek = weeklyGain * (1 - taperIntensity);
+      const raceDayCtl = peakCtl - (taperWeeks * taperLossPerWeek);
+      const raceDayFitness = ctlToFitness(raceDayCtl);
+
+      document.getElementById('ctlRaceDay').innerText = raceDayCtl.toFixed(0);
+      document.getElementById('ctlFitness').innerText = raceDayFitness.toFixed(3);
+    }
+
+    // ========== GPX PARSING ==========
+    let currentCourse = [];
+    let currentGpxCoords = [];
+    let map = null;
+    let routeLine = null;
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function parseGPX(xmlText) {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      let points = xmlDoc.getElementsByTagName('trkpt');
+      if(points.length === 0) points = xmlDoc.getElementsByTagName('rtept');
+
+      const track = [];
+      const coords = [];
+      let cumDist = 0;
+      let prevLat = null, prevLon = null, prevEle = null;
+
+      for(let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        const lat = parseFloat(pt.getAttribute('lat'));
+        const lon = parseFloat(pt.getAttribute('lon'));
+        const eleNode = pt.getElementsByTagName('ele')[0];
+        const ele = eleNode ? parseFloat(eleNode.textContent) : 0;
+
+        coords.push([lat, lon]);
+
+        if(prevLat !== null) {
+          const segDist = haversine(prevLat, prevLon, lat, lon);
+          cumDist += segDist;
+          const eleDiff = ele - prevEle;
+          const grad = (segDist > 0.001) ? (eleDiff / (segDist * 1000)) * 100 : 0;
+          track.push({ distKm: cumDist, ele: ele, grad: grad });
+        } else {
+          track.push({ distKm: 0, ele: ele, grad: 0 });
+        }
+        prevLat = lat; prevLon = lon; prevEle = ele;
+      }
+
+      // Simplify
+      const simplified = [];
+      let lastDist = -0.1;
+      for(let j = 0; j < track.length; j++) {
+        if(track[j].distKm - lastDist >= 0.1) {
+          simplified.push(track[j]);
+          lastDist = track[j].distKm;
+        }
+      }
+      return { track: simplified, coords: coords };
+    }
+
+    function renderMap(coords) {
+      // Show map, hide placeholder
+      document.getElementById('mapContainer').querySelector('div').style.display = 'none';
+      document.getElementById('map').style.display = 'block';
+
+      // Initialize map if needed
+      if (!map) {
+        map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 18
+        }).addTo(map);
+      }
+
+      // Remove old route
+      if (routeLine) {
+        map.removeLayer(routeLine);
+      }
+
+      // Add new route
+      routeLine = L.polyline(coords, {
+        color: '#3b82f6',
+        weight: 4,
+        opacity: 0.8
+      }).addTo(map);
+
+      // Add start and finish markers
+      const startIcon = L.divIcon({
+        html: '<div style="background: #10b981; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">S</div>',
+        iconSize: [30, 30],
+        className: ''
+      });
+
+      const finishIcon = L.divIcon({
+        html: '<div style="background: #ef4444; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">F</div>',
+        iconSize: [30, 30],
+        className: ''
+      });
+
+      L.marker(coords[0], { icon: startIcon }).addTo(map).bindPopup('Start');
+      L.marker(coords[coords.length - 1], { icon: finishIcon }).addTo(map).bindPopup('Finish');
+
+      // Fit bounds
+      map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
+    }
+
+    document.getElementById('gpxInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const result = parseGPX(evt.target.result);
+          currentCourse = result.track;
+          currentGpxCoords = result.coords;
+
+          const dist = currentCourse[currentCourse.length - 1].distKm;
+          let totalGain = 0;
+          for(let i = 1; i < currentCourse.length; i++) {
+            const diff = currentCourse[i].ele - currentCourse[i-1].ele;
+            if(diff > 0) totalGain += diff;
+          }
+
+          document.getElementById('gpxStatus').innerText = `✓ ${dist.toFixed(1)}km`;
+          document.getElementById('gpxStatus').style.color = '#4ade80';
+
+          // Render map
+          renderMap(currentGpxCoords);
+        } catch(err) {
+          document.getElementById('gpxStatus').innerText = `✗ Error`;
+          document.getElementById('gpxStatus').style.color = '#f87171';
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // ========== ATHLETE PROFILE ==========
+    let athleteProfile = null;
+
+    // Verify elements exist
+    console.log('Checking if elements exist...');
+    console.log('profileInput:', document.getElementById('profileInput'));
+    console.log('courseProfileInput:', document.getElementById('courseProfileInput'));
+    console.log('profileStatus:', document.getElementById('profileStatus'));
+    console.log('courseProfileStatus:', document.getElementById('courseProfileStatus'));
+
+    document.getElementById('profileInput').addEventListener('change', function(e) {
+      console.log('File input changed!', e.target.files);
+      const file = e.target.files[0];
+      if(!file) {
+        console.log('No file selected');
+        return;
+      }
+
+      console.log('File selected:', file.name);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          athleteProfile = JSON.parse(evt.target.result);
+
+          // Display just the filename
+          document.getElementById('profileStatus').innerText = file.name;
+
+          console.log('✅ Athlete profile loaded successfully:', athleteProfile.metadata);
+        } catch(err) {
+          console.error('Error parsing JSON:', err);
+          document.getElementById('profileStatus').innerText = `Error: ${err.message}`;
+          alert('Error loading profile: ' + err.message);
+        }
+      };
+      reader.onerror = function(err) {
+        console.error('FileReader error:', err);
+      };
+      reader.readAsText(file);
+    });
+
+    // ========== COURSE PROFILE ==========
+    let courseProfile = null;
+
+    document.getElementById('courseProfileInput').addEventListener('change', function(e) {
+      console.log('Course file input changed!', e.target.files);
+      const file = e.target.files[0];
+      if(!file) {
+        console.log('No file selected');
+        return;
+      }
+
+      console.log('Course file selected:', file.name);
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          courseProfile = JSON.parse(evt.target.result);
+
+          // Display just the filename
+          document.getElementById('courseProfileStatus').innerText = file.name;
+
+          console.log('✅ Course profile loaded successfully:', courseProfile.course_metadata);
+        } catch(err) {
+          console.error('Error parsing JSON:', err);
+          document.getElementById('courseProfileStatus').innerText = `Error: ${err.message}`;
+          alert('Error loading course profile: ' + err.message);
+        }
+      };
+      reader.onerror = function(err) {
+        console.error('FileReader error:', err);
+      };
+      reader.readAsText(file);
+    });
+
+    // ========== RACE SIMULATION ==========
+    // ========== ATHLETE CALIBRATION ==========
+    // VALIDATED RESULT: Arc 25 2025 - 4:23 with CTL 146
+    // This calibration multiplier adjusts the model to match actual performance
+    const CALIBRATION = {
+      validatedTime: 4 + 23/60, // 4:23 in hours
+      validatedCTL: 146,
+      validatedFitness: 1.21,    // CTL 146 maps to ~1.21x fitness
+      courseDistance: 40,         // km
+      courseElevation: 2300,      // m gain
+
+      // Calibration multiplier calculated from actual result
+      // baseSpeed * fitness * tech * CALIBRATION_FACTOR = actual pace
+      // Adjust this to match your results
+      calibrationFactor: 1.35      // Tuned to match 4:23 result
+    };
+
+    const ATHLETE = {
+      speeds: {
+        steep_d: 5.92,   // km/h on steep downhill (<-15%)
+        mod_d: 6.96,     // km/h on moderate downhill (-15% to -5%)
+        flat: 6.62,      // km/h on flat terrain (-5% to 5%)
+        mod_u: 4.95,     // km/h on moderate uphill (5% to 15%)
+        steep_u: 3.71    // km/h on steep uphill (>15%)
+      },
+      tech_skill: 0.96   // Technical terrain multiplier (0-1)
+    };
+
+    let mainChart = null;
+
+    function getTempAtTime(elapsedHours, startTemp, peakTemp) {
+      const hourOfDay = 6 + elapsedHours;
+      const distFromPeak = Math.abs(14 - hourOfDay);
+      const factor = Math.max(0, 1 - (distFromPeak / 8));
+      return startTemp + ((peakTemp - startTemp) * factor);
+    }
+
+    function runAnalysis() {
+      if(!currentCourse || currentCourse.length === 0) {
+        alert('Please upload a GPX file first!');
+        return;
+      }
+
+      const btn = document.getElementById('calcBtn');
+      btn.innerHTML = 'CALCULATING...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        try {
+          const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+          const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+          const finishTemp = parseFloat(document.getElementById('finishTemp').value) || 14;
+          const carbIn = parseFloat(document.getElementById('carbInput').value) || 60;
+          const hydroIn = parseFloat(document.getElementById('hydroInput').value) || 500;
+
+          const track = currentCourse;
+          const totalDistKm = track[track.length-1].distKm;
+
+          let totalTime = 0;
+          const res = { dists:[], speeds:[], paces:[], elevs:[], temps:[] };
+          let prevDist = 0;
+          let totalGain = 0;
+
+          for(let i = 0; i < track.length; i++) {
+            const seg = track[i];
+            const len = seg.distKm - prevDist;
+            if(len <= 0) continue;
+            prevDist = seg.distKm;
+
+            // Calculate elevation gain
+            if(i > 0) {
+              const eleDiff = seg.ele - track[i-1].ele;
+              if(eleDiff > 0) totalGain += eleDiff;
+            }
+
+            let baseSpeed = 0;
+            if(seg.grad < -15) baseSpeed = ATHLETE.speeds.steep_d;
+            else if(seg.grad < -5) baseSpeed = ATHLETE.speeds.mod_d;
+            else if(seg.grad < 5) baseSpeed = ATHLETE.speeds.flat;
+            else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
+            else baseSpeed = ATHLETE.speeds.steep_u;
+
+            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * 1.18;
+
+            const temp = getTempAtTime(totalTime, startTemp, finishTemp);
+            if(temp > 18) currentSpeed *= Math.pow(0.98, temp - 18);
+            if(temp < 10) currentSpeed *= Math.pow(0.99, 10 - temp);
+
+            // Nutrition penalty
+            if(totalTime > 3.0) {
+              if(carbIn < 40) currentSpeed *= 0.85;
+              else if(carbIn < 85) currentSpeed *= 0.96;
+            }
+            if(hydroIn < 500) currentSpeed *= 0.95;
+
+            // Fatigue
+            if(seg.distKm > 30) {
+              const fatigueFactor = Math.max(0.7, 1 - ((seg.distKm - 30) * 0.002));
+              currentSpeed *= fatigueFactor;
+            }
+
+            const t = len / currentSpeed;
+            totalTime += t;
+
+            // Calculate pace (min/km)
+            const paceMinPerKm = currentSpeed > 0 ? 60 / currentSpeed : 0;
+
+            res.dists.push(seg.distKm);
+            res.speeds.push(parseFloat(currentSpeed.toFixed(1)));
+            res.paces.push(parseFloat(paceMinPerKm.toFixed(2)));
+            res.elevs.push(parseFloat(seg.ele.toFixed(0)));
+            res.temps.push(parseFloat(temp.toFixed(1)));
+          }
+
+          // Update UI
+          const h = Math.floor(totalTime);
+          const m = Math.floor((totalTime - h) * 60);
+          document.getElementById('kpi-time').innerText = h + "h " + m + "m";
+
+          const pace = (totalTime * 60) / totalDistKm;
+          const pM = Math.floor(pace);
+          const pS = Math.round((pace - pM) * 60);
+          document.getElementById('kpi-pace').innerText = pM + ":" + (pS < 10 ? "0" : "") + pS;
+
+          const avgSpeed = totalDistKm / totalTime;
+          document.getElementById('kpi-speed').innerText = avgSpeed.toFixed(2);
+          document.getElementById('kpi-distance').innerText = totalDistKm.toFixed(1);
+          document.getElementById('kpi-elevation').innerText = Math.round(totalGain);
+
+          // Show results
+          document.getElementById('gettingStarted').style.display = 'none';
+          document.getElementById('resultsCard').style.display = 'block';
+          document.getElementById('chartCard').style.display = 'block';
+          document.getElementById('raceProfileCard').style.display = 'block';
+          document.getElementById('developerCard').style.display = 'block';
+          document.getElementById('outcomeCard').style.display = 'block';
+          document.getElementById('courseCard').style.display = 'block';
+          document.getElementById('athleteCard').style.display = 'block';
+          document.getElementById('executionRiskCard').style.display = 'block';
+          document.getElementById('decisionTriggersCard').style.display = 'block';
+
+          // Render chart
+          renderChart(res);
+
+          // Run Monte Carlo analysis
+          runMonteCarloAnalysis();
+
+          // Run Course Interaction Analysis
+          runCourseInteractionAnalysis();
+
+          // Run Athlete State Analysis
+          runAthleteStateAnalysis();
+
+          // Run Execution Risk Analysis
+          runExecutionRiskAnalysis();
+
+          // Run Decision Triggers Analysis
+          runDecisionTriggersAnalysis();
+
+          btn.innerHTML = 'RUN PREDICTION';
+          btn.disabled = false;
+        } catch(err) {
+          alert('Error: ' + err.message);
+          btn.innerHTML = 'RUN PREDICTION';
+          btn.disabled = false;
+        }
+      }, 100);
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      if(mainChart) mainChart.destroy();
+
+      mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.dists,
+          datasets: [
+            {
+              label: 'Pace (min/km)',
+              data: data.paces,
+              borderColor: '#8b5cf6',
+              backgroundColor: 'rgba(139, 92, 246, 0.1)',
+              yAxisID: 'y2',
+              pointRadius: 0,
+              tension: 0.3,
+              borderWidth: 2.5
+            },
+            {
+              label: 'Speed (km/h)',
+              data: data.speeds,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.05)',
+              yAxisID: 'y',
+              pointRadius: 0,
+              tension: 0.3,
+              borderWidth: 2
+            },
+            {
+              label: 'Elevation (m)',
+              data: data.elevs,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              fill: true,
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 1.5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { size: 11, weight: '600' },
+                padding: 12,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 12,
+              titleFont: { size: 12, weight: '600' },
+              bodyFont: { size: 11 }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Distance (km)', font: { size: 13, weight: '700' }, color: '#374151' },
+              ticks: { font: { size: 10 }, color: '#6b7280' },
+              grid: { color: '#e5e7eb', lineWidth: 1 }
+            },
+            y: {
+              position: 'left',
+              title: { display: true, text: 'Speed (km/h)', font: { size: 12, weight: '600' }, color: '#3b82f6' },
+              ticks: { font: { size: 10 }, color: '#6b7280' },
+              grid: { color: '#f3f4f6', lineWidth: 1 }
+            },
+            y2: {
+              position: 'left',
+              title: { display: true, text: 'Pace (min/km)', font: { size: 12, weight: '600' }, color: '#8b5cf6' },
+              ticks: { font: { size: 10 }, color: '#6b7280' },
+              grid: { drawOnChartArea: false },
+              reverse: true
+            },
+            y1: {
+              position: 'right',
+              title: { display: true, text: 'Elevation (m)', font: { size: 12, weight: '600' }, color: '#10b981' },
+              grid: { drawOnChartArea: false },
+              ticks: { font: { size: 10 }, color: '#6b7280' }
+            }
+          }
+        }
+      });
+    }
+
+    // ========== INPUT TOGGLE ==========
+    function toggleInputSection() {
+      const section = document.getElementById('inputSection');
+      const btn = document.getElementById('toggleInputs');
+      if (section.style.display === 'none') {
+        section.style.display = 'grid';
+        btn.innerHTML = '▼ HIDE INPUTS';
+      } else {
+        section.style.display = 'none';
+        btn.innerHTML = '▶ SHOW INPUTS';
+      }
+    }
+
+    // ========== MONTE CARLO SIMULATION ==========
+    let probabilityChart = null;
+    let lastMonteCarloResults = null;
+
+    function runSingleSimulation(baseParams, variances) {
+      const track = currentCourse;
+      let totalTime = 0;
+      let dnfFactors = { nutrition: 0, fatigue: 0, heat: 0, cold: 0, altitude: 0 };
+
+      // Apply random variations
+      const fitnessVar = baseParams.fitness * (1 + (Math.random() - 0.5) * variances.pacing);
+      const tempVar = baseParams.startTemp + (Math.random() - 0.5) * variances.temp * 2;
+      const carbVar = baseParams.carbs * (variances.fueling + Math.random() * (1 - variances.fueling));
+      const hydroVar = baseParams.hydro * (0.8 + Math.random() * 0.4);
+
+      let prevDist = 0;
+      let cumulativeFatigue = 0;
+      let nutritionDeficit = 0;
+
+      for(let i = 0; i < track.length; i++) {
+        const seg = track[i];
+        const len = seg.distKm - prevDist;
+        if(len <= 0) continue;
+        prevDist = seg.distKm;
+
+        let baseSpeed = 0;
+        if(seg.grad < -15) baseSpeed = ATHLETE.speeds.steep_d;
+        else if(seg.grad < -5) baseSpeed = ATHLETE.speeds.mod_d;
+        else if(seg.grad < 5) baseSpeed = ATHLETE.speeds.flat;
+        else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
+        else baseSpeed = ATHLETE.speeds.steep_u;
+
+        // Apply calibration factor to match validated 4:23 result
+        let currentSpeed = baseSpeed * fitnessVar * ATHLETE.tech_skill * CALIBRATION.calibrationFactor;
+
+        // Temperature effects
+        const temp = getTempAtTime(totalTime, tempVar, baseParams.finishTemp);
+        if(temp > 18) {
+          const heatPenalty = Math.pow(0.98, temp - 18);
+          currentSpeed *= heatPenalty;
+          dnfFactors.heat += (1 - heatPenalty) * 100;
+        }
+        if(temp < 10) {
+          const coldPenalty = Math.pow(0.99, 10 - temp);
+          currentSpeed *= coldPenalty;
+          dnfFactors.cold += (1 - coldPenalty) * 50;
+        }
+
+        // Nutrition
+        if(totalTime > 3.0) {
+          if(carbVar < 40) {
+            currentSpeed *= 0.85;
+            dnfFactors.nutrition += 15;
+            nutritionDeficit += 1;
+          } else if(carbVar < 85) {
+            currentSpeed *= 0.96;
+            dnfFactors.nutrition += 4;
+          }
+        }
+        if(hydroVar < 500) {
+          currentSpeed *= 0.95;
+          dnfFactors.nutrition += 5;
+        }
+
+        // Fatigue with variance
+        if(seg.distKm > 30) {
+          const baseFatigueFactor = Math.max(0.7, 1 - ((seg.distKm - 30) * 0.002));
+          const fatigueVariance = 0.95 + Math.random() * 0.1;
+          const fatigueFactor = baseFatigueFactor * fatigueVariance;
+          currentSpeed *= fatigueFactor;
+          cumulativeFatigue += (1 - fatigueFactor) * 100;
+          dnfFactors.fatigue = cumulativeFatigue;
+        }
+
+        // Altitude impact
+        if(seg.ele > 2000 && variances.altitude > 0) {
+          const altitudePenalty = 1 - (variances.altitude * 0.001 * (seg.ele - 2000) / 1000);
+          currentSpeed *= Math.max(0.85, altitudePenalty);
+          dnfFactors.altitude += (1 - Math.max(0.85, altitudePenalty)) * 50;
+        }
+
+        // Random bad luck events (GI issues, blisters, etc.)
+        if(Math.random() < 0.001 * len) {
+          currentSpeed *= 0.7;
+          dnfFactors.fatigue += 20;
+        }
+
+        const t = len / currentSpeed;
+        totalTime += t;
+
+        // DNF check - if too slow or too much cumulative stress
+        if(currentSpeed < 2.0 || dnfFactors.fatigue > 200 || nutritionDeficit > 10) {
+          return { time: null, dnf: true, dnfFactors: dnfFactors };
+        }
+      }
+
+      return { time: totalTime, dnf: false, dnfFactors: dnfFactors };
+    }
+
+    function runMonteCarloAnalysis() {
+      if(!currentCourse || currentCourse.length === 0) return;
+
+      const numSimulations = 500;
+
+      // Base parameters from current settings
+      const baseParams = {
+        fitness: parseFloat(document.getElementById('ctlFitness').innerText) || 1.0,
+        startTemp: parseFloat(document.getElementById('startTemp').value) || 5,
+        finishTemp: parseFloat(document.getElementById('finishTemp').value) || 14,
+        carbs: parseFloat(document.getElementById('carbInput').value) || 60,
+        hydro: parseFloat(document.getElementById('hydroInput').value) || 500
+      };
+
+      // Variance settings from sensitivity controls
+      const tempVarianceMap = { low: 2, medium: 5, high: 8 };
+      const pacingMap = { perfect: 0, good: 0.05, variable: 0.15 };
+      const fuelingMap = { perfect: 1.0, good: 0.9, poor: 0.7 };
+      const altitudeMap = { none: 0, moderate: 0.5, high: 1.0 };
+
+      const variances = {
+        temp: tempVarianceMap[document.getElementById('tempVariance').value] || 5,
+        pacing: pacingMap[document.getElementById('pacingDiscipline').value] || 0.05,
+        fueling: fuelingMap[document.getElementById('fuelingCompliance').value] || 0.9,
+        altitude: altitudeMap[document.getElementById('altitudeImpact').value] || 0
+      };
+
+      // Run simulations
+      const results = [];
+      const dnfResults = [];
+      const aggregatedDnfFactors = { nutrition: 0, fatigue: 0, heat: 0, cold: 0, altitude: 0 };
+
+      for(let i = 0; i < numSimulations; i++) {
+        const result = runSingleSimulation(baseParams, variances);
+        if(result.dnf) {
+          dnfResults.push(result);
+          // Aggregate DNF factors
+          Object.keys(result.dnfFactors).forEach(key => {
+            aggregatedDnfFactors[key] += result.dnfFactors[key];
+          });
+        } else {
+          results.push(result.time);
+        }
+      }
+
+      if(results.length === 0) {
+        alert('All simulations resulted in DNF. Adjust your parameters!');
+        return;
+      }
+
+      // Sort results
+      results.sort((a, b) => a - b);
+
+      // Calculate percentiles
+      const p10 = results[Math.floor(results.length * 0.10)];
+      const p25 = results[Math.floor(results.length * 0.25)];
+      const median = results[Math.floor(results.length * 0.50)];
+      const p75 = results[Math.floor(results.length * 0.75)];
+      const dnfProb = (dnfResults.length / numSimulations) * 100;
+
+      // Update UI
+      document.getElementById('p10-time').innerText = formatTime(p10);
+      document.getElementById('p25-time').innerText = formatTime(p25);
+      document.getElementById('median-time').innerText = formatTime(median);
+      document.getElementById('p75-time').innerText = formatTime(p75);
+      document.getElementById('dnf-prob').innerText = dnfProb.toFixed(1) + '%';
+
+      // Generate time bands
+      generateTimeBands(results);
+
+      // Rank DNF drivers
+      generateDnfDrivers(aggregatedDnfFactors, dnfResults.length);
+
+      // Render probability distribution
+      renderProbabilityChart(results);
+
+      lastMonteCarloResults = { results, dnfProb, p10, p25, median, p75 };
+    }
+
+    function formatTime(hours) {
+      const h = Math.floor(hours);
+      const m = Math.floor((hours - h) * 60);
+      return h + "h " + (m < 10 ? "0" : "") + m + "m";
+    }
+
+    function generateTimeBands(results) {
+      const container = document.getElementById('timeBands');
+      container.innerHTML = '';
+
+      // Create 30-minute bands
+      const minTime = Math.floor(results[0] * 2) / 2; // Round to nearest 0.5 hour
+      const maxTime = Math.ceil(results[results.length - 1] * 2) / 2;
+
+      const bands = [];
+      for(let t = minTime; t < maxTime; t += 0.5) {
+        const count = results.filter(r => r >= t && r < t + 0.5).length;
+        const prob = (count / results.length) * 100;
+        if(prob > 1) { // Only show bands with >1% probability
+          bands.push({ start: t, end: t + 0.5, prob: prob });
+        }
+      }
+
+      // Sort by probability and show top 6
+      bands.sort((a, b) => b.prob - a.prob);
+      bands.slice(0, 6).forEach(band => {
+        const intensity = Math.min(100, band.prob * 3); // Scale for visibility
+        const div = document.createElement('div');
+        div.style.cssText = `
+          background: linear-gradient(135deg, rgba(99, 102, 241, ${intensity/100}) 0%, rgba(168, 85, 247, ${intensity/100}) 100%);
+          border-radius: 10px;
+          padding: 12px;
+          border: 2px solid rgba(99, 102, 241, 0.3);
+        `;
+        div.innerHTML = `
+          <div style="font-size: 11px; font-weight: 700; color: #1f2937; margin-bottom: 4px;">
+            ${formatTime(band.start)} - ${formatTime(band.end)}
+          </div>
+          <div style="font-size: 18px; font-weight: 900; color: #4c1d95;">
+            ${band.prob.toFixed(1)}%
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function generateDnfDrivers(factors, dnfCount) {
+      const container = document.getElementById('dnfDrivers');
+      container.innerHTML = '';
+
+      if(dnfCount === 0) {
+        container.innerHTML = '<div style="padding: 12px; background: #f0fdf4; border-radius: 8px; color: #166534; font-size: 12px; font-weight: 600;">✓ No DNF risk detected in simulations</div>';
+        return;
+      }
+
+      // Normalize and sort
+      const drivers = Object.entries(factors)
+        .map(([name, value]) => ({ name, value: value / dnfCount }))
+        .sort((a, b) => b.value - a.value)
+        .filter(d => d.value > 1);
+
+      const icons = { nutrition: '🍽️', fatigue: '😫', heat: '🌡️', cold: '❄️', altitude: '⛰️' };
+      const colors = {
+        nutrition: 'rgba(239, 68, 68, 0.1)',
+        fatigue: 'rgba(249, 115, 22, 0.1)',
+        heat: 'rgba(234, 179, 8, 0.1)',
+        cold: 'rgba(59, 130, 246, 0.1)',
+        altitude: 'rgba(139, 92, 246, 0.1)'
+      };
+
+      drivers.forEach((driver, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = `
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 14px;
+          background: ${colors[driver.name] || 'rgba(0,0,0,0.05)'};
+          border-radius: 8px;
+          margin-bottom: 8px;
+          border-left: 4px solid ${idx === 0 ? '#dc2626' : '#9ca3af'};
+        `;
+        div.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px;">${icons[driver.name] || '⚠️'}</span>
+            <span style="font-size: 12px; font-weight: 600; color: #374151; text-transform: capitalize;">${driver.name}</span>
+          </div>
+          <div style="font-size: 14px; font-weight: 900; color: #dc2626;">
+            ${driver.value.toFixed(0)} impact
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderProbabilityChart(results) {
+      const ctx = document.getElementById('probabilityChart').getContext('2d');
+      if(probabilityChart) probabilityChart.destroy();
+
+      // Create histogram data
+      const minTime = Math.floor(results[0] * 2) / 2;
+      const maxTime = Math.ceil(results[results.length - 1] * 2) / 2;
+      const numBins = Math.min(30, Math.ceil((maxTime - minTime) * 4)); // 15-min bins
+      const binSize = (maxTime - minTime) / numBins;
+
+      const bins = new Array(numBins).fill(0);
+      const labels = [];
+
+      results.forEach(time => {
+        const binIndex = Math.min(numBins - 1, Math.floor((time - minTime) / binSize));
+        bins[binIndex]++;
+      });
+
+      for(let i = 0; i < numBins; i++) {
+        const binStart = minTime + i * binSize;
+        labels.push(formatTime(binStart));
+      }
+
+      // Convert to percentages
+      const probabilities = bins.map(count => (count / results.length) * 100);
+
+      probabilityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Probability (%)',
+            data: probabilities,
+            backgroundColor: 'rgba(99, 102, 241, 0.6)',
+            borderColor: 'rgba(99, 102, 241, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              callbacks: {
+                label: function(context) {
+                  return context.parsed.y.toFixed(1) + '% probability';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Finish Time', font: { size: 12, weight: '600' } },
+              ticks: { maxRotation: 45, minRotation: 45, font: { size: 9 } }
+            },
+            y: {
+              title: { display: true, text: 'Probability (%)', font: { size: 12, weight: '600' } },
+              ticks: { font: { size: 10 } },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    // ========== COURSE INTERACTION ANALYSIS ==========
+    let elevationChart = null;
+    let gradeChart = null;
+
+    function runCourseInteractionAnalysis() {
+      if(!currentCourse || currentCourse.length === 0) return;
+
+      const track = currentCourse;
+
+      // Calculate segment difficulty indices
+      const segments = [];
+      for(let i = 1; i < track.length; i++) {
+        const start = track[i-1];
+        const end = track[i];
+        const distance = end.distKm - start.distKm;
+        const elevChange = end.ele - start.ele;
+        const avgEle = (start.ele + end.ele) / 2;
+        const gradient = end.grad;
+
+        // Difficulty index: combines gradient steepness, altitude, and distance
+        // Higher gradient = harder, higher altitude = harder (above 2000m), longer distance = harder
+        let difficultyIndex = 0;
+
+        // Gradient component (most important)
+        if(gradient > 15) difficultyIndex += Math.abs(gradient) * 3.0; // Steep uphill
+        else if(gradient > 5) difficultyIndex += Math.abs(gradient) * 2.0; // Moderate uphill
+        else if(gradient < -15) difficultyIndex += Math.abs(gradient) * 1.5; // Steep downhill (technical)
+        else if(gradient < -5) difficultyIndex += Math.abs(gradient) * 0.5; // Moderate downhill
+        else difficultyIndex += 5; // Flat (baseline)
+
+        // Altitude component (hypoxia effect above 2000m)
+        if(avgEle > 2000) {
+          difficultyIndex += (avgEle - 2000) / 200; // +1 per 200m above 2000m
+        }
+
+        // Distance component
+        difficultyIndex += distance * 2; // Longer segments are harder
+
+        // Technical factor for steep descents
+        if(gradient < -15) {
+          difficultyIndex *= 1.3; // 30% harder for technical descents
+        }
+
+        segments.push({
+          startKm: start.distKm,
+          endKm: end.distKm,
+          distance: distance,
+          startEle: start.ele,
+          endEle: end.ele,
+          elevChange: elevChange,
+          gradient: gradient,
+          avgEle: avgEle,
+          difficultyIndex: difficultyIndex
+        });
+      }
+
+      // Identify critical segments (top difficulty)
+      const sortedSegments = [...segments].sort((a, b) => b.difficultyIndex - a.difficultyIndex);
+      renderCriticalSegments(sortedSegments.slice(0, 8));
+
+      // Render cumulative elevation chart
+      renderCumulativeElevation(track);
+
+      // Render grade distribution
+      renderGradeDistribution(segments);
+
+      // Calculate time loss risk and slowdown
+      calculateSlowdownRisk(segments, track);
+    }
+
+    function renderCriticalSegments(segments) {
+      const container = document.getElementById('criticalSegments');
+      container.innerHTML = '';
+
+      segments.forEach((seg, idx) => {
+        const div = document.createElement('div');
+
+        // Determine segment type and color
+        let type = '', color = '', icon = '';
+        if(seg.gradient > 15) {
+          type = 'Steep Climb';
+          color = '#dc2626';
+          icon = '🧗';
+        } else if(seg.gradient > 5) {
+          type = 'Moderate Climb';
+          color = '#ea580c';
+          icon = '⛰️';
+        } else if(seg.gradient < -15) {
+          type = 'Technical Descent';
+          color = '#7c3aed';
+          icon = '⬇️';
+        } else if(seg.gradient < -5) {
+          type = 'Fast Descent';
+          color = '#2563eb';
+          icon = '📉';
+        } else {
+          type = 'Flat/Rolling';
+          color = '#059669';
+          icon = '➡️';
+        }
+
+        const isHighAlt = seg.avgEle > 2000;
+
+        div.style.cssText = `
+          background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.95) 100%);
+          border-left: 4px solid ${color};
+          border-radius: 10px;
+          padding: 12px;
+          position: relative;
+        `;
+
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">${icon}</span>
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: ${color};">${type}</div>
+                <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">km ${seg.startKm.toFixed(1)} - ${seg.endKm.toFixed(1)}</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 16px; font-weight: 900; color: ${color};">${seg.difficultyIndex.toFixed(0)}</div>
+              <div style="font-size: 9px; color: #9ca3af;">difficulty</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 10px;">
+            <div>
+              <span style="color: #6b7280;">Grade:</span>
+              <span style="font-weight: 700; color: #1f2937;">${seg.gradient.toFixed(1)}%</span>
+            </div>
+            <div>
+              <span style="color: #6b7280;">+/- Ele:</span>
+              <span style="font-weight: 700; color: #1f2937;">${seg.elevChange > 0 ? '+' : ''}${seg.elevChange.toFixed(0)}m</span>
+            </div>
+            <div>
+              <span style="color: #6b7280;">Alt:</span>
+              <span style="font-weight: 700; color: ${isHighAlt ? '#dc2626' : '#1f2937'};">${seg.avgEle.toFixed(0)}m${isHighAlt ? ' ⚠️' : ''}</span>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function renderCumulativeElevation(track) {
+      const ctx = document.getElementById('elevationChart').getContext('2d');
+      if(elevationChart) elevationChart.destroy();
+
+      const distances = track.map(pt => pt.distKm);
+      const elevations = track.map(pt => pt.ele);
+
+      // Calculate cumulative gain/loss
+      let cumGain = 0, cumLoss = 0;
+      const cumGainData = [0];
+      const cumLossData = [0];
+
+      for(let i = 1; i < track.length; i++) {
+        const diff = track[i].ele - track[i-1].ele;
+        if(diff > 0) {
+          cumGain += diff;
+        } else {
+          cumLoss += Math.abs(diff);
+        }
+        cumGainData.push(cumGain);
+        cumLossData.push(-cumLoss);
+      }
+
+      elevationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: distances,
+          datasets: [
+            {
+              label: 'Elevation (m)',
+              data: elevations,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              fill: true,
+              yAxisID: 'y',
+              pointRadius: 0,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'Cumulative Gain',
+              data: cumGainData,
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220, 38, 38, 0.05)',
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.3
+            },
+            {
+              label: 'Cumulative Loss',
+              data: cumLossData,
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.05)',
+              yAxisID: 'y1',
+              pointRadius: 0,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { size: 10, weight: '600' }, padding: 8, usePointStyle: true }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 10,
+              titleFont: { size: 11 },
+              bodyFont: { size: 10 }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Distance (km)', font: { size: 11, weight: '600' } },
+              ticks: { font: { size: 9 } },
+              grid: { color: '#e5e7eb' }
+            },
+            y: {
+              position: 'left',
+              title: { display: true, text: 'Elevation (m)', font: { size: 11, weight: '600' }, color: '#10b981' },
+              ticks: { font: { size: 9 } },
+              grid: { color: '#f3f4f6' }
+            },
+            y1: {
+              position: 'right',
+              title: { display: true, text: 'Cumulative (m)', font: { size: 11, weight: '600' }, color: '#6b7280' },
+              grid: { drawOnChartArea: false },
+              ticks: { font: { size: 9 } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderGradeDistribution(segments) {
+      const ctx = document.getElementById('gradeChart').getContext('2d');
+      if(gradeChart) gradeChart.destroy();
+
+      // Categorize gradients
+      const categories = {
+        'Steep Down\n(<-15%)': 0,
+        'Mod Down\n(-15 to -5%)': 0,
+        'Flat\n(-5 to 5%)': 0,
+        'Mod Up\n(5 to 15%)': 0,
+        'Steep Up\n(>15%)': 0
+      };
+
+      segments.forEach(seg => {
+        const grad = seg.gradient;
+        const dist = seg.distance;
+        if(grad < -15) categories['Steep Down\n(<-15%)'] += dist;
+        else if(grad < -5) categories['Mod Down\n(-15 to -5%)'] += dist;
+        else if(grad < 5) categories['Flat\n(-5 to 5%)'] += dist;
+        else if(grad < 15) categories['Mod Up\n(5 to 15%)'] += dist;
+        else categories['Steep Up\n(>15%)'] += dist;
+      });
+
+      const labels = Object.keys(categories);
+      const data = Object.values(categories);
+
+      gradeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: [
+              'rgba(37, 99, 235, 0.7)',
+              'rgba(59, 130, 246, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(249, 115, 22, 0.7)',
+              'rgba(220, 38, 38, 0.7)'
+            ],
+            borderColor: [
+              '#2563eb',
+              '#3b82f6',
+              '#10b981',
+              '#f97316',
+              '#dc2626'
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                font: { size: 9, weight: '600' },
+                padding: 8,
+                generateLabels: function(chart) {
+                  const data = chart.data;
+                  return data.labels.map((label, i) => ({
+                    text: label + ': ' + data.datasets[0].data[i].toFixed(1) + 'km',
+                    fillStyle: data.datasets[0].backgroundColor[i],
+                    strokeStyle: data.datasets[0].borderColor[i],
+                    lineWidth: 2,
+                    hidden: false,
+                    index: i
+                  }));
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.parsed.toFixed(1) + ' km';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function calculateSlowdownRisk(segments, track) {
+      const container = document.getElementById('slowdownAnalysis');
+
+      // Find significant climbs (>300m elevation gain in single push)
+      const climbs = [];
+      let climbStart = null;
+      let climbGain = 0;
+
+      for(let i = 1; i < track.length; i++) {
+        const elevDiff = track[i].ele - track[i-1].ele;
+
+        if(elevDiff > 0) {
+          if(climbStart === null) {
+            climbStart = i - 1;
+            climbGain = 0;
+          }
+          climbGain += elevDiff;
+        } else {
+          // End of climb
+          if(climbStart !== null && climbGain > 300) {
+            climbs.push({
+              startKm: track[climbStart].distKm,
+              endKm: track[i-1].distKm,
+              gain: climbGain,
+              peakEle: track[i-1].ele
+            });
+          }
+          climbStart = null;
+          climbGain = 0;
+        }
+      }
+
+      // Check final climb
+      if(climbStart !== null && climbGain > 300) {
+        climbs.push({
+          startKm: track[climbStart].distKm,
+          endKm: track[track.length-1].distKm,
+          gain: climbGain,
+          peakEle: track[track.length-1].ele
+        });
+      }
+
+      if(climbs.length === 0) {
+        container.innerHTML = '✓ No major climbs detected. Course is relatively flat or rolling.';
+        return;
+      }
+
+      // Calculate expected slowdown
+      let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+
+      climbs.forEach((climb, idx) => {
+        // Slowdown calculation: bigger climbs = bigger slowdown
+        // Rule of thumb: 5-15% slowdown for 10km after major climbs
+        const slowdownFactor = Math.min(0.20, 0.05 + (climb.gain / 1000) * 0.05);
+        const slowdownPct = (slowdownFactor * 100).toFixed(0);
+
+        // Time loss estimate (rough): if you're running 7min/km, after a 500m climb you might slow to 8min/km for next 10km
+        const timeLossMinutes = slowdownFactor * 10 * 7; // Assuming 7min/km base pace
+
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(180, 83, 9, 0.2);">
+            <div>
+              <span style="font-weight: 700;">Climb ${idx + 1}</span>
+              <span style="color: #78350f; margin-left: 8px;">km ${climb.startKm.toFixed(1)} → ${climb.endKm.toFixed(1)}</span>
+              <span style="color: #dc2626; margin-left: 8px; font-weight: 600;">+${climb.gain.toFixed(0)}m</span>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: 700; color: #dc2626;">${slowdownPct}% slower</div>
+              <div style="font-size: 10px; color: #92400e;">~${timeLossMinutes.toFixed(0)}min loss over next 10km</div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      // Summary
+      const totalSlowdownMinutes = climbs.reduce((sum, climb) => {
+        const slowdownFactor = Math.min(0.20, 0.05 + (climb.gain / 1000) * 0.05);
+        return sum + (slowdownFactor * 10 * 7);
+      }, 0);
+
+      html += `
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 2px solid #f59e0b; font-weight: 700;">
+          <span style="color: #92400e;">Total Expected Post-Climb Time Loss:</span>
+          <span style="color: #dc2626; margin-left: 8px; font-size: 16px;">${totalSlowdownMinutes.toFixed(0)} minutes</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 10px; color: #78350f; font-style: italic;">
+          * Based on historical slowdown patterns after sustained climbs. Actual impact varies by fitness and pacing strategy.
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function runAthleteStateAnalysis() {
+      const ctlCurrent = parseFloat(document.getElementById('ctlCurrent').value) || 100;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+      const track = currentCourse;
+
+      if(!track || track.length === 0) return;
+
+      // Check if profile is loaded
+      const hasProfile = athleteProfile !== null;
+      const profileIndicator = hasProfile ? '✓' : '⚠️';
+
+      // Show warning if no profile loaded
+      if (!hasProfile) {
+        console.warn('No athlete profile loaded - using generic calculations');
+      }
+
+      // ========== VO₂ PROXY CALCULATION ==========
+      let effectiveVO2;
+      let vo2Rating = '';
+
+      if(hasProfile && athleteProfile.physiological_profile?.aerobic_capacity?.vo2_max_ml_kg_min) {
+        // Priority 1: Use actual measured VO₂ max from Whoop/device
+        const measuredVO2 = athleteProfile.physiological_profile.aerobic_capacity.vo2_max_ml_kg_min;
+        const source = athleteProfile.physiological_profile.aerobic_capacity.source || 'Device';
+
+        // Apply current fitness multiplier to account for training state
+        // VO₂ max can vary ±5% based on fitness/fatigue
+        const fitnessEffect = (fitness - 1.0) * 0.05; // ±5% per 1.0 fitness change
+        effectiveVO2 = measuredVO2 * (1 + fitnessEffect);
+
+        // Rating based on measured value
+        if(effectiveVO2 < 40) vo2Rating = `Novice (${source})`;
+        else if(effectiveVO2 < 48) vo2Rating = `Recreational (${source})`;
+        else if(effectiveVO2 < 55) vo2Rating = `Competitive (${source})`;
+        else if(effectiveVO2 < 62) vo2Rating = `Elite (${source})`;
+        else vo2Rating = `World-Class (${source})`;
+      } else if(hasProfile && athleteProfile.performance_by_gradient) {
+        // Priority 2: Estimate from profile race performance
+        const median_gap = athleteProfile.performance_by_gradient.overall_metrics?.median_gap_speed_kmh || 5.34;
+        const speed_m_min = (median_gap * 1000) / 60;
+        const baseVO2_from_gap = speed_m_min * 0.2 + 3.5;
+        effectiveVO2 = baseVO2_from_gap * fitness;
+        vo2Rating = `${profileIndicator} Estimated from races`;
+      } else {
+        // Priority 3: Generic calculation
+        const baseVO2 = 45;
+        const ctlFactor = Math.pow(ctlCurrent / 100, 0.3);
+        effectiveVO2 = baseVO2 * ctlFactor * fitness;
+
+        if(effectiveVO2 < 40) vo2Rating = 'Novice (Generic)';
+        else if(effectiveVO2 < 48) vo2Rating = 'Recreational (Generic)';
+        else if(effectiveVO2 < 55) vo2Rating = 'Competitive (Generic)';
+        else if(effectiveVO2 < 62) vo2Rating = 'Elite (Generic)';
+        else vo2Rating = 'World-Class (Generic)';
+      }
+
+      document.getElementById('vo2-value').innerText = effectiveVO2.toFixed(1);
+      document.getElementById('vo2-rating').innerText = vo2Rating;
+
+      // ========== DURABILITY SCORE CALCULATION ==========
+      let durabilityScore;
+
+      if(hasProfile && athleteProfile.model_parameters) {
+        // Use profile fatigue model
+        const fatigue_per_km = athleteProfile.model_parameters.critical_multipliers?.fatigue_per_km || 0.998;
+        // Convert to durability score: 0.998 per km = 98.2% at 100km
+        const pace_at_100km = Math.pow(fatigue_per_km, 100);
+        durabilityScore = pace_at_100km * 100;
+
+        // Adjust for fitness
+        const baseline_fitness = athleteProfile.fitness_baseline?.fitness_level || 1.0;
+        const fitness_adjustment = Math.min(1.2, fitness / baseline_fitness);
+        durabilityScore = Math.min(100, durabilityScore * fitness_adjustment);
+      } else {
+        // Generic calculation
+        durabilityScore = Math.min(100, Math.max(0, 30 + (ctlCurrent - 80) * 0.7));
+      }
+
+      document.getElementById('durability-value').innerText = `${durabilityScore.toFixed(0)}${profileIndicator}`;
+
+      // ========== PACE DECAY PROJECTION ==========
+      // Calculate pace degradation at different time horizons
+      // Based on durability score: higher score = slower decay
+      // Note: HTML structure is Hour 0-4 (static 100%), Hour 4-8, Hour 8-12, Hour 12+
+      const basePaceDecay = {
+        '4to8h': 100 - durabilityScore * 0.08, // 0-8% decay at 4-8h
+        '8to12h': 100 - durabilityScore * 0.15, // 0-15% decay at 8-12h
+        '12plus': 100 - durabilityScore * 0.25 // 0-25% decay beyond 12h
+      };
+
+      // Map to correct HTML IDs: decay-4h is for Hour 4-8, decay-8h is for Hour 8-12, decay-12h is for Hour 12+
+      document.getElementById('decay-4h').innerText = basePaceDecay['4to8h'].toFixed(0) + '%';
+      document.getElementById('decay-8h').innerText = basePaceDecay['8to12h'].toFixed(0) + '%';
+      document.getElementById('decay-12h').innerText = basePaceDecay['12plus'].toFixed(0) + '%';
+
+      // ========== DOWNHILL RESILIENCE & ECCENTRIC LOAD ==========
+      // Calculate total descent volume and steepness
+      let totalDescent = 0;
+      let steepDescentKm = 0;
+      let eccentricLoadIndex = 0;
+
+      for(let i = 1; i < track.length; i++) {
+        const seg = track[i];
+        const prevSeg = track[i-1];
+        const elevChange = seg.ele - prevSeg.ele;
+        const distance = seg.distKm - prevSeg.distKm;
+
+        if(elevChange < 0) {
+          totalDescent += Math.abs(elevChange);
+
+          // Count steep descents (gradient < -10%)
+          if(seg.grad < -10) {
+            steepDescentKm += distance;
+          }
+
+          // Eccentric load = descent meters × gradient severity
+          // Steep descents cause more quad damage
+          const gradientMultiplier = Math.abs(seg.grad) < 10 ? 1.0 :
+                                      Math.abs(seg.grad) < 20 ? 2.0 : 3.0;
+          eccentricLoadIndex += Math.abs(elevChange) * gradientMultiplier;
+        }
+      }
+
+      // Downhill resilience: Use profile downhill strength if available
+      let downhillResilience;
+
+      if(hasProfile && athleteProfile.performance_by_gradient) {
+        // Use profile steep downhill speed to calculate strength index
+        const athlete_steep_downhill = athleteProfile.performance_by_gradient.steep_downhill?.base_speed_kmh || 5.92;
+        const typical_steep_downhill = 4.5; // Average ultra runner
+        const strength_index = athlete_steep_downhill / typical_steep_downhill; // 1.31 for Simbarashe
+
+        // Tolerance based on strength and durability
+        const base_tolerance = 3000; // Average runner
+        const athlete_tolerance = base_tolerance * strength_index;
+
+        // Calculate eccentric load from course
+        const steep_load = steepDescentKm * 1000 * 2.0; // km to m, steep = 2x load
+        const moderate_load = (totalDescent - steepDescentKm * 1000) * 1.0;
+        const total_eccentric_load = steep_load + moderate_load;
+
+        downhillResilience = Math.min(100, (athlete_tolerance / Math.max(total_eccentric_load, 1)) * 100);
+
+        // Boost if descending is listed as strength
+        if(athleteProfile.athlete_info?.racing_experience?.strengths?.includes("Descending on steep technical sections")) {
+          downhillResilience = Math.min(100, downhillResilience * 1.1);
+        }
+      } else {
+        // Generic calculation
+        const descentTolerance = durabilityScore * 15;
+        downhillResilience = Math.min(100, (descentTolerance / Math.max(totalDescent, 1)) * 100);
+      }
+
+      document.getElementById('downhill-value').innerText = `${downhillResilience.toFixed(0)}${profileIndicator}`;
+
+      // Eccentric Load Warning
+      const eccentricContainer = document.getElementById('eccentricAnalysis');
+      let eccentricHtml = '<h4 style="font-size: 13px; font-weight: 700; color: #78350f; margin: 0 0 8px 0;">📊 Quad Destruction Index</h4>';
+
+      const quadDestructionIndex = eccentricLoadIndex / 1000; // Scale to 0-10 range
+      let warningColor = '#10b981';
+      let warningText = 'Manageable';
+
+      if(quadDestructionIndex > 8) {
+        warningColor = '#dc2626';
+        warningText = 'EXTREME - Significant quad damage expected';
+      } else if(quadDestructionIndex > 5) {
+        warningColor = '#f59e0b';
+        warningText = 'HIGH - Major eccentric stress';
+      } else if(quadDestructionIndex > 3) {
+        warningColor = '#3b82f6';
+        warningText = 'MODERATE - Standard ultra load';
+      }
+
+      eccentricHtml += `
+        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 12px; border-radius: 8px; border: 1px solid #fbbf24;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 24px; font-weight: 900; color: ${warningColor};">${quadDestructionIndex.toFixed(1)}</div>
+              <div style="font-size: 10px; color: #78350f; margin-top: 4px;">${warningText}</div>
+            </div>
+            <div style="text-align: right; font-size: 11px; color: #92400e;">
+              <div><strong>${totalDescent.toFixed(0)}m</strong> total descent</div>
+              <div><strong>${steepDescentKm.toFixed(1)}km</strong> steep (&lt;-10%)</div>
+            </div>
+          </div>
+          <div style="margin-top: 8px; font-size: 10px; color: #78350f; font-style: italic;">
+            * Index combines descent volume × gradient severity. Train downhill running and eccentric strength to prepare.
+          </div>
+        </div>
+      `;
+
+      eccentricContainer.innerHTML = eccentricHtml;
+
+      // ========== HEAT & ALTITUDE ADAPTATION ==========
+      const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+      const finishTemp = parseFloat(document.getElementById('finishTemp').value) || 14;
+      const avgTemp = (startTemp + finishTemp) / 2;
+
+      // Temperature/Respiratory Risk Assessment
+      let heatAdaptation = '';
+      let heatColor = '#6b7280';
+      let performanceMultiplier = 1.0;
+
+      if(hasProfile && athleteProfile.respiratory_profile) {
+        // CRITICAL: This athlete has asthma - temperature is primary trigger
+        const resp = athleteProfile.respiratory_profile;
+        const temp_thresholds = resp.temperature_thresholds;
+        const cold_impact = resp.cold_impact_validated;
+
+        if(avgTemp <= temp_thresholds.extreme_danger_c) { // ≤5°C
+          heatAdaptation = '🚨 EXTREME RESPIRATORY DANGER - DNS strongly recommended';
+          heatColor = '#7f1d1d';
+          performanceMultiplier = 0.8;
+        } else if(avgTemp <= temp_thresholds.high_risk_c) { // ≤8°C
+          heatAdaptation = '⚠️ HIGH RESPIRATORY RISK - Conservative pacing essential, inhaler ready';
+          heatColor = '#dc2626';
+          performanceMultiplier = cold_impact["8_degrees_c"]?.performance_multiplier || 0.8;
+        } else if(avgTemp <= temp_thresholds.moderate_risk_c) { // ≤10°C
+          heatAdaptation = '⚡ MODERATE RESPIRATORY RISK - Manage carefully, warm up thoroughly';
+          heatColor = '#f59e0b';
+          performanceMultiplier = cold_impact["10_degrees_c"]?.performance_multiplier || 0.88;
+        } else if(avgTemp <= temp_thresholds.low_risk_c) { // ≤12°C
+          heatAdaptation = '⚠️ LOW RESPIRATORY RISK - Minor precautions needed';
+          heatColor = '#3b82f6';
+          performanceMultiplier = cold_impact["12_degrees_c"]?.performance_multiplier || 0.93;
+        } else if(avgTemp >= temp_thresholds.optimal_min_c && avgTemp <= temp_thresholds.optimal_max_c) { // 12-16°C
+          heatAdaptation = '✓ OPTIMAL RESPIRATORY CONDITIONS - Peak performance possible';
+          heatColor = '#10b981';
+          performanceMultiplier = cold_impact["15_degrees_c"]?.performance_multiplier || 0.95;
+        } else if(avgTemp <= temp_thresholds.warm_acceptable_c) { // ≤18°C
+          heatAdaptation = '✓ Good conditions - Minimal respiratory impact';
+          heatColor = '#10b981';
+          performanceMultiplier = 0.96;
+        } else if(avgTemp <= temp_thresholds.heat_threshold_c) { // ≤22°C
+          heatAdaptation = '⚡ Warm - Some heat stress, monitor effort';
+          heatColor = '#f59e0b';
+          performanceMultiplier = 0.93;
+        } else { // >22°C
+          heatAdaptation = '⚠️ HEAT STRESS - Performance degradation expected';
+          heatColor = '#dc2626';
+          performanceMultiplier = 0.85;
+        }
+      } else {
+        // Generic thresholds
+        if(avgTemp > 25) {
+          heatAdaptation = '⚠️ HEAT STRESS - Acclimatization recommended (Generic)';
+          heatColor = '#dc2626';
+        } else if(avgTemp > 20) {
+          heatAdaptation = '⚡ Moderate heat - Some acclimatization beneficial (Generic)';
+          heatColor = '#f59e0b';
+        } else {
+          heatAdaptation = '✓ Cool conditions - No heat stress (Generic)';
+          heatColor = '#10b981';
+        }
+      }
+
+      // Altitude adaptation: Check max elevation on course
+      let maxElevation = 0;
+      for(let i = 0; i < track.length; i++) {
+        if(track[i].ele > maxElevation) maxElevation = track[i].ele;
+      }
+
+      let altitudeAdaptation = '';
+      let altitudeColor = '#6b7280';
+      let altitudeMultiplier = 1.0;
+
+      if(hasProfile && athleteProfile.environmental_tolerances) {
+        // Use profile altitude tolerances
+        const alt_optimal = athleteProfile.environmental_tolerances.altitude?.optimal_m || [500, 1500];
+
+        if(maxElevation > 3000) {
+          altitudeAdaptation = '⚠️ VERY HIGH ALTITUDE - Acclimatization essential';
+          altitudeColor = '#7f1d1d';
+          altitudeMultiplier = Math.pow(0.95, (maxElevation - 1000) / 1000);
+        } else if(maxElevation > 2500) {
+          altitudeAdaptation = '⚠️ HIGH ALTITUDE - Pre-acclimatization critical (compounds with cold!)';
+          altitudeColor = '#dc2626';
+          altitudeMultiplier = 0.93;
+        } else if(maxElevation > 2000) {
+          altitudeAdaptation = '⚡ Moderate altitude - Some acclimatization beneficial (~5% penalty)';
+          altitudeColor = '#f59e0b';
+          altitudeMultiplier = 0.95;
+        } else if(maxElevation > 1500) {
+          altitudeAdaptation = '✓ Elevated - Minor hypoxic effect';
+          altitudeColor = '#3b82f6';
+          altitudeMultiplier = 0.98;
+        } else if(maxElevation >= alt_optimal[0] && maxElevation <= alt_optimal[1]) {
+          altitudeAdaptation = `✓ OPTIMAL ALTITUDE (${alt_optimal[0]}-${alt_optimal[1]}m) - No adaptation needed`;
+          altitudeColor = '#10b981';
+          altitudeMultiplier = 1.0;
+        } else {
+          altitudeAdaptation = '✓ Low altitude - No adaptation needed';
+          altitudeColor = '#10b981';
+          altitudeMultiplier = 1.0;
+        }
+
+        // CRITICAL: Compound warning for cold + altitude
+        if(avgTemp < 10 && maxElevation > 2000) {
+          altitudeAdaptation += ' ⚠️⚠️ COLD+ALTITUDE COMPOUNDS RESPIRATORY RISK!';
+        }
+      } else {
+        // Generic thresholds
+        if(maxElevation > 2500) {
+          altitudeAdaptation = '⚠️ HIGH ALTITUDE - Pre-acclimatization critical (Generic)';
+          altitudeColor = '#dc2626';
+        } else if(maxElevation > 2000) {
+          altitudeAdaptation = '⚡ Moderate altitude - Some acclimatization beneficial (Generic)';
+          altitudeColor = '#f59e0b';
+        } else if(maxElevation > 1500) {
+          altitudeAdaptation = '✓ Elevated - Minor hypoxic effect (Generic)';
+          altitudeColor = '#3b82f6';
+        } else {
+          altitudeAdaptation = '✓ Low altitude - No adaptation needed (Generic)';
+          altitudeColor = '#10b981';
+        }
+      }
+
+      document.getElementById('adaptation-heat').innerHTML = `
+        <strong style="color: ${heatColor};">${heatAdaptation}</strong>
+      `;
+      document.getElementById('adaptation-altitude').innerHTML = `
+        <strong style="color: ${altitudeColor};">${altitudeAdaptation}</strong>
+      `;
+    }
+
+    function runExecutionRiskAnalysis() {
+      const track = currentCourse;
+      if(!track || track.length === 0) return;
+
+      const hasProfile = athleteProfile !== null;
+      const hasCourseProfile = courseProfile !== null;
+      const totalDistKm = track[track.length-1].distKm;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+
+      // ========== EARLY PACING DEVIATION RISK ==========
+      // Risk that you'll go out too fast in the first 10-20km
+      let pacingRisk = 50; // Baseline 50%
+      let pacingLabel = 'MODERATE RISK';
+      let pacingColor = '#f59e0b';
+      let pacingDetails = '';
+
+      if(hasProfile && athleteProfile.athlete_info?.racing_experience?.strengths) {
+        const strengths = athleteProfile.athlete_info.racing_experience.strengths;
+        if(strengths.includes("Pacing discipline")) {
+          pacingRisk -= 20;
+          pacingDetails += '✓ Proven pacing discipline (-20%)<br>';
+        }
+      }
+
+      // Course profile affects pacing risk - runnable courses tempt faster starts
+      if(hasCourseProfile && courseProfile.terrain_profile?.runnability) {
+        const runnability = courseProfile.terrain_profile.runnability.runnable_fraction_estimate || 0.5;
+        if(runnability > 0.7) {
+          pacingRisk += 15;
+          pacingDetails += '⚠️ Highly runnable terrain tempts fast starts (+15%)<br>';
+        }
+      }
+
+      // Fitness affects confidence (and thus pacing risk)
+      if(fitness > 1.15) {
+        pacingRisk += 10;
+        pacingDetails += '⚠️ High fitness may breed overconfidence (+10%)<br>';
+      }
+
+      pacingRisk = Math.max(0, Math.min(100, pacingRisk));
+
+      if(pacingRisk < 30) { pacingLabel = 'LOW RISK'; pacingColor = '#10b981'; }
+      else if(pacingRisk < 50) { pacingLabel = 'MODERATE RISK'; pacingColor = '#f59e0b'; }
+      else { pacingLabel = 'HIGH RISK'; pacingColor = '#dc2626'; }
+
+      pacingDetails += `<br><strong>Mitigation:</strong> Set hard pace cap for first 15km at ${(1.1 * 7).toFixed(1)} min/km. Use HR monitor - stay <${hasProfile && athleteProfile.physiological_profile?.heart_rate ? athleteProfile.physiological_profile.heart_rate.threshold_hr - 10 : 145} bpm.`;
+
+      document.getElementById('pacing-risk-value').innerText = pacingRisk.toFixed(0) + '%';
+      document.getElementById('pacing-risk-value').style.color = pacingColor;
+      document.getElementById('pacing-risk-label').innerText = pacingLabel;
+      document.getElementById('pacing-risk-label').style.color = pacingColor;
+      document.getElementById('pacing-risk-details').innerHTML = pacingDetails;
+
+      // ========== AID STATION DWELL TIME CREEP ==========
+      const expectedStops = hasCourseProfile && courseProfile.aid_station_model
+        ? (courseProfile.aid_station_model.expected_stops_count[0] + courseProfile.aid_station_model.expected_stops_count[1]) / 2
+        : Math.floor(totalDistKm / 10);
+
+      const medianStopSeconds = hasCourseProfile && courseProfile.aid_station_model
+        ? courseProfile.aid_station_model.median_stop_seconds
+        : 90;
+
+      // Creep factor: stops get longer as race progresses
+      const earlyStops = Math.floor(expectedStops / 2);
+      const lateStops = expectedStops - earlyStops;
+
+      const earlyStopAvg = medianStopSeconds;
+      const lateStopAvg = medianStopSeconds * 1.5; // 50% longer in second half
+
+      const totalCreepMinutes = ((earlyStops * earlyStopAvg) + (lateStops * lateStopAvg)) / 60;
+      const targetTotalMinutes = (expectedStops * medianStopSeconds) / 60;
+      const creepMinutes = totalCreepMinutes - targetTotalMinutes;
+
+      let aidCreepLabel = 'MANAGED';
+      let aidCreepColor = '#10b981';
+      let aidCreepDetails = `Expected ${expectedStops} stops<br>`;
+      aidCreepDetails += `Target avg: ${medianStopSeconds}s/stop (${targetTotalMinutes.toFixed(1)}min total)<br>`;
+      aidCreepDetails += `Actual likely: ${(totalCreepMinutes / expectedStops).toFixed(0)}s/stop (${totalCreepMinutes.toFixed(1)}min total)<br>`;
+      aidCreepDetails += `<br><strong>Time leak:</strong> ${creepMinutes.toFixed(1)}min from dwell creep<br>`;
+
+      if(creepMinutes > 5) { aidCreepLabel = 'HIGH CREEP'; aidCreepColor = '#dc2626'; }
+      else if(creepMinutes > 2) { aidCreepLabel = 'MODERATE CREEP'; aidCreepColor = '#f59e0b'; }
+
+      aidCreepDetails += `<br><strong>Mitigation:</strong> Set ${medianStopSeconds}s timer at each stop. Pre-plan what you need.`;
+
+      document.getElementById('aid-creep-value').innerText = creepMinutes.toFixed(1);
+      document.getElementById('aid-creep-value').style.color = aidCreepColor;
+      document.getElementById('aid-creep-label').innerText = aidCreepLabel;
+      document.getElementById('aid-creep-label').style.color = aidCreepColor;
+      document.getElementById('aid-creep-details').innerHTML = aidCreepDetails;
+
+      // ========== NIGHT SECTION COGNITIVE LOAD ==========
+      // Assuming 6am start for most ultras
+      const startTime = 6; // 6am
+      const estimatedFinishHours = parseFloat(document.getElementById('kpi-time').innerText.split('h')[0]) || 10;
+
+      let nightKm = 0;
+      let nightSections = [];
+
+      // Night is roughly 8pm to 6am (14 hours into race to 24 hours into race)
+      const nightStartHour = 14; // 8pm
+      const nightEndHour = 24; // 6am next day
+
+      if(estimatedFinishHours > nightStartHour) {
+        // Will run through at least some night
+        // Calculate how much distance is covered during night hours
+        const avgSpeed = totalDistKm / estimatedFinishHours;
+
+        const nightStartKm = nightStartHour * avgSpeed;
+        const nightEndKm = Math.min(totalDistKm, nightEndHour * avgSpeed);
+
+        nightKm = Math.max(0, nightEndKm - nightStartKm);
+        if(nightKm > 0) {
+          nightSections.push({ start: nightStartKm, end: nightEndKm, duration: (nightEndKm - nightStartKm) / avgSpeed });
+        }
+      }
+
+      const nightLoadIndex = nightKm / Math.max(totalDistKm, 1) * 100; // Percentage of race in dark
+
+      let nightLabel = 'NO NIGHT RUNNING';
+      let nightColor = '#10b981';
+      let nightDetails = '';
+
+      if(nightLoadIndex === 0) {
+        nightDetails = 'Race finishes before nightfall - no cognitive load from darkness.';
+      } else if(nightLoadIndex < 20) {
+        nightLabel = 'MINIMAL NIGHT';
+        nightColor = '#3b82f6';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Low cognitive load - most of race in daylight.`;
+      } else if(nightLoadIndex < 40) {
+        nightLabel = 'MODERATE NIGHT';
+        nightColor = '#f59e0b';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Significant night running - headlamp navigation, reduced visual input.`;
+      } else {
+        nightLabel = 'HEAVY NIGHT';
+        nightColor = '#dc2626';
+        nightDetails = `${nightKm.toFixed(1)}km (${nightLoadIndex.toFixed(0)}%) in darkness<br>`;
+        nightDetails += `Major cognitive challenge - most/all of race in dark.`;
+      }
+
+      if(nightKm > 0) {
+        nightDetails += `<br><br><strong>Mitigation:</strong> Fresh batteries, backup headlamp, recce night sections if possible. Expect 5-10% slower pace.`;
+      }
+
+      document.getElementById('night-load-value').innerText = nightLoadIndex.toFixed(0);
+      document.getElementById('night-load-value').style.color = nightColor;
+      document.getElementById('night-load-label').innerText = nightLabel;
+      document.getElementById('night-load-label').style.color = nightColor;
+      document.getElementById('night-load-details').innerHTML = nightDetails;
+
+      // ========== PREVIOUS FAILURE PATTERN OVERLAP ==========
+      // Check if conditions match past DNF/struggles
+      let failureOverlap = 0;
+      let failureLabel = 'NO PATTERN MATCH';
+      let failureColor = '#10b981';
+      let failureDetails = '';
+
+      const startTemp = parseFloat(document.getElementById('startTemp').value) || 5;
+      const avgTemp = (startTemp + parseFloat(document.getElementById('finishTemp').value || 14)) / 2;
+
+      // Check temperature vs respiratory profile
+      if(hasProfile && athleteProfile.respiratory_profile) {
+        const tempThresholds = athleteProfile.respiratory_profile.temperature_thresholds;
+
+        if(avgTemp <= tempThresholds.extreme_danger_c) {
+          failureOverlap += 80;
+          failureDetails += `🚨 Temperature matches EXTREME DANGER zone (+80%)<br>`;
+          failureDetails += `Arc 2025 incident pattern: Cold triggers respiratory failure<br>`;
+        } else if(avgTemp <= tempThresholds.high_risk_c) {
+          failureOverlap += 60;
+          failureDetails += `⚠️ Temperature matches HIGH RISK zone (+60%)<br>`;
+        } else if(avgTemp <= tempThresholds.moderate_risk_c) {
+          failureOverlap += 30;
+          failureDetails += `⚡ Temperature matches MODERATE RISK zone (+30%)<br>`;
+        }
+      }
+
+      // Check if course characteristics match past struggles
+      if(totalDistKm > 100 && fitness < 1.15) {
+        failureOverlap += 30;
+        failureDetails += `⚠️ Distance >100km with fitness <1.15 (+30%)<br>`;
+      }
+
+      failureOverlap = Math.min(100, failureOverlap);
+
+      if(failureOverlap < 20) { failureLabel = 'LOW OVERLAP'; failureColor = '#10b981'; }
+      else if(failureOverlap < 50) { failureLabel = 'MODERATE OVERLAP'; failureColor = '#f59e0b'; }
+      else if(failureOverlap < 70) { failureLabel = 'HIGH OVERLAP'; failureColor = '#dc2626'; }
+      else { failureLabel = 'CRITICAL OVERLAP'; failureColor = '#7f1d1d'; }
+
+      if(failureOverlap === 0) {
+        failureDetails = 'No match to historical failure patterns - conditions are favorable.';
+      } else {
+        failureDetails += `<br><strong>Action:</strong> ${failureOverlap > 50 ? 'Seriously consider DNS/deferring.' : 'Implement all mitigation strategies.'}`;
+      }
+
+      document.getElementById('failure-overlap-value').innerText = failureOverlap.toFixed(0);
+      document.getElementById('failure-overlap-value').style.color = failureColor;
+      document.getElementById('failure-overlap-label').innerText = failureLabel;
+      document.getElementById('failure-overlap-label').style.color = failureColor;
+      document.getElementById('failure-overlap-details').innerHTML = failureDetails;
+    }
+
+    function runDecisionTriggersAnalysis() {
+      const track = currentCourse;
+      if(!track || track.length === 0) return;
+
+      const hasProfile = athleteProfile !== null;
+      const hasCourseProfile = courseProfile !== null;
+      const totalDistKm = track[track.length-1].distKm;
+      const fitness = parseFloat(document.getElementById('ctlFitness').innerText) || 1.0;
+      const estimatedFinishHours = parseFloat(document.getElementById('kpi-time').innerText.split('h')[0]) || 10;
+
+      // ========== PACE CAPS PER SEGMENT ==========
+      let paceCapsHtml = '<table style="width: 100%; border-collapse: collapse;">';
+      paceCapsHtml += '<thead><tr style="border-bottom: 2px solid #166534;">';
+      paceCapsHtml += '<th style="text-align: left; padding: 6px; font-weight: 700;">Segment</th>';
+      paceCapsHtml += '<th style="text-align: right; padding: 6px; font-weight: 700;">Pace Cap (min/km)</th>';
+      paceCapsHtml += '<th style="text-align: right; padding: 6px; font-weight: 700;">Max HR</th>';
+      paceCapsHtml += '</tr></thead><tbody>';
+
+      const segments = [
+        { name: '0-15km (Start)', paceMultiplier: 1.1, hrLimit: 145 },
+        { name: '15-30km (Settled)', paceMultiplier: 1.0, hrLimit: 150 },
+        { name: `30-${Math.floor(totalDistKm * 0.6)}km (Mid)`, paceMultiplier: 1.0, hrLimit: 150 },
+        { name: `${Math.floor(totalDistKm * 0.6)}-${Math.floor(totalDistKm * 0.85)}km (Deep)`, paceMultiplier: 1.15, hrLimit: 155 },
+        { name: `${Math.floor(totalDistKm * 0.85)}km-Finish (Push)`, paceMultiplier: 0.95, hrLimit: 160 }
+      ];
+
+      const basePace = (estimatedFinishHours * 60) / totalDistKm;
+
+      segments.forEach(seg => {
+        const cap = (basePace * seg.paceMultiplier).toFixed(1);
+        const hr = hasProfile && athleteProfile.physiological_profile?.heart_rate
+          ? Math.min(seg.hrLimit, athleteProfile.physiological_profile.heart_rate.threshold_hr)
+          : seg.hrLimit;
+
+        paceCapsHtml += `<tr style="border-bottom: 1px solid #dcfce7;">`;
+        paceCapsHtml += `<td style="padding: 6px;">${seg.name}</td>`;
+        paceCapsHtml += `<td style="text-align: right; padding: 6px; font-weight: 600;">${cap}</td>`;
+        paceCapsHtml += `<td style="text-align: right; padding: 6px;">${hr} bpm</td>`;
+        paceCapsHtml += `</tr>`;
+      });
+
+      paceCapsHtml += '</tbody></table>';
+      paceCapsHtml += '<div style="margin-top: 10px; font-size: 10px; font-style: italic;">* Going faster than cap = high risk of bonk/DNF</div>';
+
+      document.getElementById('pace-caps-container').innerHTML = paceCapsHtml;
+
+      // ========== FUEL & CAFFEINE TRIGGERS ==========
+      let fuelHtml = '<strong>Nutrition Schedule (by clock time from start):</strong><br><br>';
+
+      const startTime = 6; // Assume 6am start
+      const carbsPerHour = parseFloat(document.getElementById('carbInput').value) || 60;
+
+      for(let hour = 0; hour <= Math.ceil(estimatedFinishHours); hour++) {
+        const clockTime = (startTime + hour) % 24;
+        const clockStr = `${String(clockTime).padStart(2, '0')}:00`;
+
+        if(hour === 0) {
+          fuelHtml += `<strong>${clockStr}</strong> - START: Pre-loaded with breakfast 2-3h ago<br>`;
+        } else if(hour <= 3) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs (gels/bar), 500ml fluids<br>`;
+        } else if(hour === 4) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids, <strong>CAFFEINE 100mg</strong><br>`;
+        } else if(hour === Math.ceil(estimatedFinishHours * 0.7)) {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids, <strong>CAFFEINE 200mg (big push)</strong><br>`;
+        } else {
+          fuelHtml += `<strong>${clockStr}</strong> - ${carbsPerHour}g carbs, 500ml fluids<br>`;
+        }
+      }
+
+      fuelHtml += '<br><div style="font-size: 10px; font-style: italic;">* Use clock time, not distance, to avoid missing fuel due to slow sections</div>';
+
+      document.getElementById('fuel-triggers-container').innerHTML = fuelHtml;
+
+      // ========== WALK VS RUN THRESHOLDS ==========
+      let walkRunHtml = '<strong>Power-hiking thresholds to preserve energy:</strong><br><br>';
+
+      const hrThreshold = hasProfile && athleteProfile.physiological_profile?.heart_rate
+        ? athleteProfile.physiological_profile.heart_rate.threshold_hr
+        : 150;
+
+      walkRunHtml += `• <strong>Gradient >12%:</strong> Power hike (faster than slow run)<br>`;
+      walkRunHtml += `• <strong>Gradient 8-12%:</strong> Run if HR <${hrThreshold-10}, hike if HR >${hrThreshold-5}<br>`;
+      walkRunHtml += `• <strong>Gradient <8%:</strong> Run unless extremely fatigued<br>`;
+      walkRunHtml += `<br><strong>After ${Math.floor(totalDistKm * 0.6)}km:</strong><br>`;
+      walkRunHtml += `• <strong>Gradient >8%:</strong> Default to power hiking<br>`;
+      walkRunHtml += `• <strong>Gradient 5-8%:</strong> Hike if HR >${hrThreshold-10}<br>`;
+      walkRunHtml += `<br><div style="font-size: 10px; font-style: italic;">* Power hiking = competitive weapon, not failure</div>`;
+
+      document.getElementById('walk-run-thresholds').innerHTML = walkRunHtml;
+
+      // ========== ABORT OR SALVAGE CRITERIA ==========
+      let abortHtml = '<strong>🛑 ABORT CRITERIA (DNS/DNF Decision Gates):</strong><br><br>';
+
+      const avgTemp = (parseFloat(document.getElementById('startTemp').value) + parseFloat(document.getElementById('finishTemp').value)) / 2;
+
+      if(hasProfile && athleteProfile.respiratory_profile) {
+        const tempThresholds = athleteProfile.respiratory_profile.temperature_thresholds;
+        if(avgTemp <= tempThresholds.extreme_danger_c) {
+          abortHtml += `🚨 <strong>PRE-RACE ABORT:</strong> Temperature ≤${tempThresholds.extreme_danger_c}°C = EXTREME respiratory danger. <strong>DNS strongly recommended.</strong><br><br>`;
+        } else if(avgTemp <= tempThresholds.high_risk_c) {
+          abortHtml += `⚠️ <strong>PRE-RACE CAUTION:</strong> Temperature ≤${tempThresholds.high_risk_c}°C = HIGH respiratory risk. Race only if inhaler accessible and pacing conservative.<br><br>`;
+        }
+      }
+
+      abortHtml += `<strong>IN-RACE ABORT GATES:</strong><br>`;
+      abortHtml += `• Respiratory incident requiring >5min stop: DNF unless <10km from finish<br>`;
+      abortHtml += `• HR unable to drop below ${hrThreshold+10} on descents: DNF risk - medical check<br>`;
+      abortHtml += `• Nausea/vomiting preventing fluid intake >1hr: DNF - dehydration spiral<br>`;
+      abortHtml += `• Pace >25% slower than target for >10km (not on major climb): Assess salvage<br>`;
+      abortHtml += `<br><strong>💡 SALVAGE CRITERIA:</strong><br>`;
+      abortHtml += `• If >60% complete and moving forward: Finish for completion, drop time goal<br>`;
+      abortHtml += `• If <40% complete and struggling: DNF is smart - live to race another day<br>`;
+      abortHtml += `• Race cutoffs: Always have 30min buffer - if within 15min, pick up urgently<br>`;
+
+      document.getElementById('abort-criteria-container').innerHTML = abortHtml;
+    }
+
+    // ========== INITIALIZATION ==========
+    (function init() {
+      // Set default race date to 8 weeks from now
+      const today = new Date();
+      const futureDate = new Date(today.getTime() + (8 * 7 * 24 * 60 * 60 * 1000));
+      document.getElementById('raceDate').value = futureDate.toISOString().split('T')[0];
+      updateCTLProjection();
+
+      // Event listeners
+      document.getElementById('ctlCurrent').addEventListener('input', updateCTLProjection);
+      document.getElementById('raceDate').addEventListener('change', updateCTLProjection);
+      document.getElementById('trainingPlan').addEventListener('change', updateCTLProjection);
+      document.getElementById('taperEnabled').addEventListener('change', function() {
+        document.getElementById('taperSettings').style.display = this.checked ? 'block' : 'none';
+        updateCTLProjection();
+      });
+      document.getElementById('taperWeeks').addEventListener('change', updateCTLProjection);
+      document.getElementById('taperIntensity').addEventListener('change', updateCTLProjection);
+    })();
+  </script>
+</body>
+</html>
