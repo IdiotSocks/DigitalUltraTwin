@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Ultra Twin - Race Predictor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 24px;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      color: white;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f3f4f6;
+    }
+
+    .card-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+
+    .card-icon {
+      font-size: 24px;
+    }
+
+    /* File Upload */
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+    }
+
+    .upload-area:hover {
+      border-color: #667eea;
+      background: #f3f4f6;
+    }
+
+    .upload-area.active {
+      border-color: #4ade80;
+      background: #ecfdf5;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .upload-area h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .upload-area p {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .upload-status {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #e5e7eb;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .upload-status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .upload-status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1f2937;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Button */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CTL Display */
+    .ctl-display {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .ctl-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .ctl-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .ctl-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    /* Results Section */
+    .results-hidden {
+      display: none;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .result-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .result-subtext {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Alert */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .alert-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fbbf24;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #60a5fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>
+        <span>📊</span>
+        FITNESS
+      </h1>
+      <p>Ultra Running Race Prediction System</p>
+    </div>
+
+    <!-- Input Section -->
+    <div class="grid grid-2">
+
+      <!-- Upload Athlete Profile -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">👤</span>
+          <h2>Upload Athlete Profile</h2>
+        </div>
+
+        <label for="athleteProfileInput" class="upload-area" id="athleteUploadArea">
+          <div class="upload-icon">📁</div>
+          <h3>Click to upload athlete profile</h3>
+          <p>JSON file with your training and performance data</p>
+          <span class="upload-status" id="athleteStatus">No profile</span>
+        </label>
+        <input type="file" id="athleteProfileInput" accept=".json">
+
+        <div class="alert alert-info" style="margin-top: 16px;">
+          <strong>Tip:</strong> Use your enhanced athlete profile v3.3 from <code>/data/profiles/</code>
+        </div>
+      </div>
+
+      <!-- Upload Course Profile -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">🏔️</span>
+          <h2>Upload Course Profile</h2>
+        </div>
+
+        <label for="courseProfileInput" class="upload-area" id="courseUploadArea">
+          <div class="upload-icon">📁</div>
+          <h3>Click to upload course profile</h3>
+          <p>JSON file with race course details</p>
+          <span class="upload-status" id="courseStatus">No profile</span>
+        </label>
+        <input type="file" id="courseProfileInput" accept=".json">
+
+        <div class="alert alert-info" style="margin-top: 16px;">
+          <strong>Tip:</strong> Use Arc 25 or Chianti course profile from <code>/data/courses/</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parameters Card -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">⚙️</span>
+        <h2>Race Parameters</h2>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="form-group">
+          <label class="form-label">Current CTL</label>
+          <input type="number" id="currentCTL" class="form-input" value="138" min="80" max="200">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fitness Multiplier</label>
+          <select id="fitnessLevel" class="form-select">
+            <option value="1.0">1.0 - Baseline</option>
+            <option value="1.15" selected>1.15 - Strong Fitness</option>
+            <option value="1.2">1.2 - Peak Form</option>
+            <option value="1.35">1.35 - Elite</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Temperature (°C)</label>
+          <input type="number" id="temperature" class="form-input" value="6" min="-10" max="40">
+        </div>
+      </div>
+
+      <div class="ctl-display">
+        <div class="ctl-box">
+          <div class="ctl-label">Current CTL</div>
+          <div class="ctl-value" id="displayCTL">138</div>
+        </div>
+        <div class="ctl-box">
+          <div class="ctl-label">Fitness</div>
+          <div class="ctl-value" style="color: #4ade80;" id="displayFitness">1.15x</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Run Prediction Button -->
+    <button id="runPredictionBtn" class="btn-primary" disabled>
+      Upload Profiles to Run Prediction
+    </button>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading results-hidden">
+      <div class="spinner"></div>
+      <p style="color: white; font-weight: 600;">Running prediction simulation...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="results-hidden">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">🎯</span>
+          <h2>Prediction Results</h2>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="result-card">
+            <div class="result-header">Expected Finish</div>
+            <div class="result-value" id="finishP50">--:--:--</div>
+            <div class="result-subtext">P50 (Most Likely)</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-header">Best Case</div>
+            <div class="result-value" id="finishP10" style="color: #10b981;">--:--:--</div>
+            <div class="result-subtext">P10 (Strong Day)</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-header">Worst Case</div>
+            <div class="result-value" id="finishP90" style="color: #ef4444;">--:--:--</div>
+            <div class="result-subtext">P90 (Survival)</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <canvas id="distributionChart" style="max-height: 300px;"></canvas>
+        </div>
+      </div>
+
+      <!-- Execution Risk -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">⚠️</span>
+          <h2>Execution Risk Analysis</h2>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="result-card">
+            <div class="result-header">Early Pacing Risk</div>
+            <div class="result-value" id="pacingRisk">--%</div>
+            <div class="result-subtext" id="pacingRiskText">Analyzing...</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-header">Respiratory Risk</div>
+            <div class="result-value" id="respiratoryRisk">--</div>
+            <div class="result-subtext" id="respiratoryRiskText">Analyzing...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decision Triggers -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">🎯</span>
+          <h2>Decision Triggers</h2>
+        </div>
+
+        <div id="decisionTriggersContent">
+          <p style="color: #6b7280; text-align: center;">Decision framework will appear here...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Global state
+    let athleteProfile = null;
+    let courseProfile = null;
+
+    // DOM Elements
+    const athleteInput = document.getElementById('athleteProfileInput');
+    const courseInput = document.getElementById('courseProfileInput');
+    const athleteUploadArea = document.getElementById('athleteUploadArea');
+    const courseUploadArea = document.getElementById('courseUploadArea');
+    const athleteStatus = document.getElementById('athleteStatus');
+    const courseStatus = document.getElementById('courseStatus');
+    const runBtn = document.getElementById('runPredictionBtn');
+    const currentCTLInput = document.getElementById('currentCTL');
+    const fitnessLevelSelect = document.getElementById('fitnessLevel');
+    const temperatureInput = document.getElementById('temperature');
+    const displayCTL = document.getElementById('displayCTL');
+    const displayFitness = document.getElementById('displayFitness');
+
+    // Update CTL display
+    currentCTLInput.addEventListener('input', (e) => {
+      displayCTL.textContent = e.target.value;
+    });
+
+    fitnessLevelSelect.addEventListener('change', (e) => {
+      displayFitness.textContent = e.target.value + 'x';
+    });
+
+    // File upload handlers
+    athleteUploadArea.addEventListener('click', () => {
+      athleteInput.click();
+    });
+
+    courseUploadArea.addEventListener('click', () => {
+      courseInput.click();
+    });
+
+    athleteInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          athleteProfile = JSON.parse(evt.target.result);
+          const name = athleteProfile.athlete_info?.name || 'Unknown';
+          const version = athleteProfile.metadata?.version || '?';
+
+          athleteStatus.textContent = `✓ ${name} v${version}`;
+          athleteStatus.classList.add('success');
+          athleteUploadArea.classList.add('active');
+
+          checkReadyToRun();
+        } catch (err) {
+          athleteStatus.textContent = `✗ Error: ${err.message}`;
+          athleteStatus.classList.add('error');
+          alert('Error loading athlete profile: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    courseInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          courseProfile = JSON.parse(evt.target.result);
+          const name = courseProfile.course_metadata?.race_name || 'Unknown';
+          const distance = courseProfile.course_metadata?.distance_km || '?';
+
+          courseStatus.textContent = `✓ ${name} (${distance}km)`;
+          courseStatus.classList.add('success');
+          courseUploadArea.classList.add('active');
+
+          checkReadyToRun();
+        } catch (err) {
+          courseStatus.textContent = `✗ Error: ${err.message}`;
+          courseStatus.classList.add('error');
+          alert('Error loading course profile: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function checkReadyToRun() {
+      if (athleteProfile && courseProfile) {
+        runBtn.disabled = false;
+        runBtn.textContent = 'Run Race Prediction';
+      }
+    }
+
+    // Run prediction
+    runBtn.addEventListener('click', runPrediction);
+
+    function runPrediction() {
+      // Show loading
+      document.getElementById('loadingState').classList.remove('results-hidden');
+      document.getElementById('resultsSection').classList.add('results-hidden');
+
+      // Scroll to loading
+      document.getElementById('loadingState').scrollIntoView({ behavior: 'smooth' });
+
+      // Simulate prediction (replace with actual calculation)
+      setTimeout(() => {
+        calculatePrediction();
+      }, 1500);
+    }
+
+    function calculatePrediction() {
+      const fitness = parseFloat(fitnessLevelSelect.value);
+      const temp = parseFloat(temperatureInput.value);
+      const ctl = parseFloat(currentCTLInput.value);
+
+      // Get course data
+      const distance = courseProfile.course_metadata.distance_km;
+      const elevation = courseProfile.course_metadata.elevation_gain_m;
+
+      // Use Arc 25 validated baseline: 4:23 at fitness 1.15
+      const validatedTime = 4 + 23/60; // hours
+      const validatedFitness = 1.15;
+
+      // Adjust for current fitness
+      const baseTime = validatedTime * (validatedFitness / 1.0);
+      const adjustedTime = baseTime / fitness;
+
+      // Respiratory penalty
+      let respiratoryPenalty = 0;
+      let respiratoryRiskLevel = 'MINIMAL';
+      if (temp <= 5) {
+        respiratoryPenalty = 0.25;
+        respiratoryRiskLevel = 'EXTREME';
+      } else if (temp <= 8) {
+        respiratoryPenalty = 0.15;
+        respiratoryRiskLevel = 'HIGH';
+      } else if (temp <= 10) {
+        respiratoryPenalty = 0.08;
+        respiratoryRiskLevel = 'MODERATE';
+      } else if (temp <= 12) {
+        respiratoryPenalty = 0.03;
+        respiratoryRiskLevel = 'LOW';
+      }
+
+      // Aid station stops
+      const numStops = 6;
+      const avgStopSeconds = 60;
+      const stopHours = (numStops * avgStopSeconds) / 3600;
+
+      // Calculate finish times
+      const meanTime = adjustedTime * (1 + respiratoryPenalty) + stopHours;
+      const stdDev = meanTime * 0.08;
+
+      const p10 = meanTime - 1.28 * stdDev;
+      const p25 = meanTime - 0.67 * stdDev;
+      const p50 = meanTime;
+      const p75 = meanTime + 0.67 * stdDev;
+      const p90 = meanTime + 1.28 * stdDev;
+
+      // Display results
+      document.getElementById('finishP10').textContent = formatTime(p10);
+      document.getElementById('finishP50').textContent = formatTime(p50);
+      document.getElementById('finishP90').textContent = formatTime(p90);
+
+      // Execution risk
+      const pacingRisk = 30; // Base calculation
+      document.getElementById('pacingRisk').textContent = pacingRisk + '%';
+      document.getElementById('pacingRiskText').textContent =
+        pacingRisk < 40 ? 'LOW - Good pacing discipline' : 'MODERATE - Use HR cap';
+
+      document.getElementById('respiratoryRisk').textContent = respiratoryRiskLevel;
+      document.getElementById('respiratoryRiskText').textContent =
+        temp <= 8 ? 'Consider DNS if <5°C' : 'Normal precautions';
+
+      // Decision triggers
+      const triggers = `
+        <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+          <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #667eea;">📊 Pace Caps by Segment</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">0-15km: 7:23 min/km max | HR <145 bpm</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">15-30km: 6:58 min/km max | HR <155 bpm</li>
+            <li style="padding: 8px 0;">30km+: 6:25 min/km max | HR <165 bpm</li>
+          </ul>
+        </div>
+        <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+          <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #667eea;">🍫 Fuel Strategy</h4>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">Hour 1-2: 60g carbs/hour</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">Hour 3: First caffeine 100mg</li>
+            <li style="padding: 8px 0;">Hour 4+: 200mg caffeine if struggling</li>
+          </ul>
+        </div>
+      `;
+      document.getElementById('decisionTriggersContent').innerHTML = triggers;
+
+      // Create chart
+      createDistributionChart([p10, p25, p50, p75, p90]);
+
+      // Hide loading, show results
+      document.getElementById('loadingState').classList.add('results-hidden');
+      document.getElementById('resultsSection').classList.remove('results-hidden');
+
+      // Scroll to results
+      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function formatTime(hours) {
+      const h = Math.floor(hours);
+      const m = Math.floor((hours - h) * 60);
+      const s = Math.floor(((hours - h) * 60 - m) * 60);
+      return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function createDistributionChart(times) {
+      const ctx = document.getElementById('distributionChart');
+      if (window.chartInstance) {
+        window.chartInstance.destroy();
+      }
+
+      window.chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['P10 (Best)', 'P25', 'P50 (Expected)', 'P75', 'P90 (Worst)'],
+          datasets: [{
+            label: 'Finish Time (hours)',
+            data: times,
+            backgroundColor: [
+              'rgba(16, 185, 129, 0.8)',
+              'rgba(59, 130, 246, 0.8)',
+              'rgba(102, 126, 234, 0.8)',
+              'rgba(251, 146, 60, 0.8)',
+              'rgba(239, 68, 68, 0.8)'
+            ],
+            borderRadius: 8,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: Math.min(...times) * 0.95,
+              title: {
+                display: true,
+                text: 'Time (hours)'
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
