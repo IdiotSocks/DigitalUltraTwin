@@ -562,8 +562,15 @@
 
     <!-- Developer View: Model Calculations -->
     <div class="glass-card-white" id="developerCard" style="display: none; margin-bottom: 20px;">
-      <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">🔧 Developer View - Model Calculations</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <h2 style="font-size: 14px; font-weight: 800; color: #1f2937; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">🔧 Developer View - Model Calculations</h2>
+        <button onclick="toggleDeveloperView()" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+          <span id="devToggleText">Hide</span>
+        </button>
+      </div>
       <p style="font-size: 11px; color: #6b7280; margin-bottom: 16px; font-style: italic;">Advanced view showing formulas, parameters, and how to calibrate the model</p>
+
+      <div id="developerContent">
 
       <!-- Calibration Status -->
       <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 2px solid #3b82f6;">
@@ -655,6 +662,7 @@
           • <strong>Results:</strong> P10, P25, P50 (median), P75, DNF probability
         </div>
       </div>
+      </div><!-- End developerContent -->
     </div>
 
     <!-- Outcome Forecast Pane -->
@@ -1278,6 +1286,20 @@
 
     let mainChart = null;
 
+    // Toggle Developer View visibility
+    function toggleDeveloperView() {
+      const content = document.getElementById('developerContent');
+      const toggleText = document.getElementById('devToggleText');
+
+      if(content.style.display === 'none') {
+        content.style.display = 'block';
+        toggleText.innerText = 'Hide';
+      } else {
+        content.style.display = 'none';
+        toggleText.innerText = 'Show';
+      }
+    }
+
     function getTempAtTime(elapsedHours, startTemp, peakTemp) {
       const hourOfDay = 6 + elapsedHours;
       const distFromPeak = Math.abs(14 - hourOfDay);
@@ -1330,7 +1352,8 @@
             else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
             else baseSpeed = ATHLETE.speeds.steep_u;
 
-            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * 1.18;
+            // Apply calibration factor to match validated 4:23 result
+            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * CALIBRATION.calibrationFactor;
 
             const temp = getTempAtTime(totalTime, startTemp, finishTemp);
             if(temp > 18) currentSpeed *= Math.pow(0.98, temp - 18);
