@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Athlete Calibration Tool - Digital Twin Ultra</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #3b82f6;
+      background: #f9fafb;
+    }
+
+    .upload-area.active {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f9fafb;
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    .accuracy-good {
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    .accuracy-ok {
+      color: #f59e0b;
+      font-weight: 700;
+    }
+
+    .accuracy-bad {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .metric-box {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid #3b82f6;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #1e40af;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: #1e3a8a;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-primary {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🔧 Athlete Calibration Tool</h1>
+      <p>Build and validate your athlete profile with race data to improve prediction accuracy</p>
+    </div>
+
+    <!-- Upload Profile -->
+    <div class="card">
+      <div class="card-title">📁 Load Athlete Profile</div>
+      <input type="file" id="profileInput" accept=".json" style="display: none;">
+      <button class="btn btn-primary" onclick="document.getElementById('profileInput').click()">
+        Upload Athlete Profile JSON
+      </button>
+      <span id="profileStatus" style="margin-left: 16px; color: #6b7280;"></span>
+    </div>
+
+    <!-- Calibration Metrics -->
+    <div class="card" id="metricsCard" style="display: none;">
+      <div class="card-title">📊 Calibration Metrics</div>
+      <div class="grid-4">
+        <div class="metric-box">
+          <div class="metric-label">Overall Factor</div>
+          <div class="metric-value" id="overallFactor">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Mean Error</div>
+          <div class="metric-value" id="meanError">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Total Races</div>
+          <div class="metric-value" id="totalRaces">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Confidence</div>
+          <div class="metric-value" id="confidence">--</div>
+        </div>
+      </div>
+
+      <!-- Course Type Factors -->
+      <div style="margin-top: 24px;">
+        <h3 style="font-size: 14px; font-weight: 700; color: #374151; margin-bottom: 12px;">Calibration by Course Type</h3>
+        <div class="grid-4" id="courseTypeFactors">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Race Table -->
+    <div class="card" id="raceTableCard" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div class="card-title" style="margin-bottom: 0;">🏃 Race History</div>
+        <div>
+          <button class="btn btn-success" onclick="showAddRaceModal()">+ Add Race</button>
+          <button class="btn btn-primary" onclick="calculateCalibration()">🔄 Recalculate</button>
+          <button class="btn btn-secondary" onclick="exportProfile()">💾 Export Profile</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table id="raceTable">
+          <thead>
+            <tr>
+              <th>Primary</th>
+              <th>Race Name</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Distance</th>
+              <th>Elevation</th>
+              <th>Actual Time</th>
+              <th>Predicted Time</th>
+              <th>Error %</th>
+              <th>Fitness</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="raceTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card" id="chartCard" style="display: none;">
+      <div class="card-title">📈 Prediction Accuracy</div>
+      <canvas id="accuracyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Add Race Modal -->
+  <div id="addRaceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; padding: 20px; overflow-y: auto;">
+    <div style="max-width: 800px; margin: 40px auto; background: white; border-radius: 16px; padding: 32px;">
+      <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 24px;">Add Race</h2>
+
+      <div style="margin-bottom: 24px;">
+        <button class="btn btn-primary" onclick="document.getElementById('gpxInput').click()">
+          Upload GPX File
+        </button>
+        <span style="margin-left: 16px; color: #6b7280;">or enter manually below</span>
+        <input type="file" id="gpxInput" accept=".gpx" style="display: none;">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Race Name *</label>
+          <input type="text" id="raceName" class="form-input" placeholder="e.g., UTMB 2025">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input type="date" id="raceDate" class="form-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Course Type *</label>
+        <select id="courseType" class="form-select">
+          <option value="runnable_trail_40_80k">Runnable Trail (40-80k)</option>
+          <option value="technical_mountain_50_70k">Technical Mountain (50-70k)</option>
+          <option value="alpine_ultra_150_200k">Alpine Ultra (150-200k)</option>
+          <option value="road_marathon">Road Marathon</option>
+        </select>
+      </div>
+
+      <div class="grid-3">
+        <div class="form-group">
+          <label class="form-label">Distance (km) *</label>
+          <input type="number" id="raceDistance" class="form-input" placeholder="42.2" step="0.1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Elevation Gain (m) *</label>
+          <input type="number" id="raceElevation" class="form-input" placeholder="2000" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Finish Time (h:mm:ss) *</label>
+          <input type="text" id="raceTime" class="form-input" placeholder="4:23:00">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Fitness Level *</label>
+          <input type="number" id="raceFitness" class="form-input" placeholder="1.15" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CTL (optional)</label>
+          <input type="number" id="raceCTL" class="form-input" placeholder="146" step="1">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Temperature (°C, optional)</label>
+          <input type="number" id="raceTemp" class="form-input" placeholder="15" step="0.1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Percentile (optional)</label>
+          <input type="number" id="racePercentile" class="form-input" placeholder="30" step="1" min="1" max="100">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <textarea id="raceNotes" class="form-input" rows="3" placeholder="Any notes about conditions, obstacles, etc."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button class="btn btn-success" onclick="saveRace()">Save Race</button>
+        <button class="btn btn-secondary" onclick="closeAddRaceModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let athleteProfile = null;
+    let currentRaces = [];
+    let editingRaceIndex = -1;
+
+    // Base speeds from athlete profile
+    const ATHLETE = {
+      speeds: {
+        steep_d: 5.92,
+        mod_d: 6.96,
+        flat: 6.62,
+        mod_u: 4.95,
+        steep_u: 3.71
+      },
+      tech_skill: 0.96
+    };
+
+    // Load athlete profile
+    document.getElementById('profileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          athleteProfile = JSON.parse(evt.target.result);
+          document.getElementById('profileStatus').innerText = `✅ Loaded: ${athleteProfile.athlete_info?.name || 'Unknown'}`;
+          loadRaces();
+          showCards();
+          calculateCalibration();
+        } catch(err) {
+          alert('Error loading profile: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function loadRaces() {
+      currentRaces = [];
+      if (athleteProfile.athlete_info && athleteProfile.athlete_info.race_history) {
+        currentRaces = athleteProfile.athlete_info.race_history.map(race => ({
+          name: race.race,
+          date: race.date,
+          type: race.type,
+          courseType: getCourseTypeFromRace(race),
+          distance_km: race.distance_km,
+          elevation_m: race.elevation_m,
+          actual_time_hours: race.finish_time ? parseTimeToHours(race.finish_time) : race.actual_time_hours,
+          fitness: race.fitness_level,
+          ctl: race.ctl,
+          temperature: race.conditions?.match(/(\d+)°C/)?.[1],
+          percentile: race.percentile,
+          notes: race.notes || race.key_insights?.join('; '),
+          isPrimary: race.status?.includes('BASELINE') || race.rank === 1
+        }));
+      }
+    }
+
+    function getCourseTypeFromRace(race) {
+      const type = race.type?.toLowerCase() || '';
+      const dist = race.distance_km || 0;
+
+      if (type.includes('road') || type.includes('marathon')) return 'road_marathon';
+      if (type.includes('alpine') || dist > 150) return 'alpine_ultra_150_200k';
+      if (type.includes('technical') || type.includes('mountain')) return 'technical_mountain_50_70k';
+      return 'runnable_trail_40_80k';
+    }
+
+    function parseTimeToHours(timeStr) {
+      // Handle formats: "4:23:00", "38:04:32", etc.
+      const parts = timeStr.split(':');
+      if (parts.length === 3) {
+        return parseInt(parts[0]) + parseInt(parts[1])/60 + parseInt(parts[2])/3600;
+      }
+      return parseFloat(timeStr);
+    }
+
+    function showCards() {
+      document.getElementById('metricsCard').style.display = 'block';
+      document.getElementById('raceTableCard').style.display = 'block';
+      document.getElementById('chartCard').style.display = 'block';
+    }
+
+    function showAddRaceModal() {
+      document.getElementById('addRaceModal').style.display = 'block';
+      editingRaceIndex = -1;
+      clearRaceForm();
+    }
+
+    function closeAddRaceModal() {
+      document.getElementById('addRaceModal').style.display = 'none';
+      clearRaceForm();
+    }
+
+    function clearRaceForm() {
+      document.getElementById('raceName').value = '';
+      document.getElementById('raceDate').value = '';
+      document.getElementById('courseType').value = 'runnable_trail_40_80k';
+      document.getElementById('raceDistance').value = '';
+      document.getElementById('raceElevation').value = '';
+      document.getElementById('raceTime').value = '';
+      document.getElementById('raceFitness').value = '';
+      document.getElementById('raceCTL').value = '';
+      document.getElementById('raceTemp').value = '';
+      document.getElementById('racePercentile').value = '';
+      document.getElementById('raceNotes').value = '';
+    }
+
+    function saveRace() {
+      const race = {
+        name: document.getElementById('raceName').value,
+        date: document.getElementById('raceDate').value,
+        courseType: document.getElementById('courseType').value,
+        distance_km: parseFloat(document.getElementById('raceDistance').value),
+        elevation_m: parseFloat(document.getElementById('raceElevation').value),
+        actual_time_hours: parseTimeToHours(document.getElementById('raceTime').value),
+        fitness: parseFloat(document.getElementById('raceFitness').value),
+        ctl: document.getElementById('raceCTL').value ? parseInt(document.getElementById('raceCTL').value) : null,
+        temperature: document.getElementById('raceTemp').value ? parseFloat(document.getElementById('raceTemp').value) : null,
+        percentile: document.getElementById('racePercentile').value ? parseInt(document.getElementById('racePercentile').value) : null,
+        notes: document.getElementById('raceNotes').value,
+        isPrimary: false
+      };
+
+      if (!race.name || !race.date || !race.distance_km || !race.elevation_m || !race.actual_time_hours || !race.fitness) {
+        alert('Please fill in all required fields (*)');
+        return;
+      }
+
+      if (editingRaceIndex >= 0) {
+        currentRaces[editingRaceIndex] = race;
+      } else {
+        currentRaces.push(race);
+      }
+
+      closeAddRaceModal();
+      calculateCalibration();
+    }
+
+    function editRace(index) {
+      const race = currentRaces[index];
+      editingRaceIndex = index;
+
+      document.getElementById('raceName').value = race.name;
+      document.getElementById('raceDate').value = race.date;
+      document.getElementById('courseType').value = race.courseType;
+      document.getElementById('raceDistance').value = race.distance_km;
+      document.getElementById('raceElevation').value = race.elevation_m;
+      document.getElementById('raceTime').value = formatHoursToTime(race.actual_time_hours);
+      document.getElementById('raceFitness').value = race.fitness;
+      document.getElementById('raceCTL').value = race.ctl || '';
+      document.getElementById('raceTemp').value = race.temperature || '';
+      document.getElementById('racePercentile').value = race.percentile || '';
+      document.getElementById('raceNotes').value = race.notes || '';
+
+      document.getElementById('addRaceModal').style.display = 'block';
+    }
+
+    function deleteRace(index) {
+      if (confirm('Are you sure you want to delete this race?')) {
+        currentRaces.splice(index, 1);
+        calculateCalibration();
+      }
+    }
+
+    function togglePrimary(index) {
+      // Only one primary race allowed
+      currentRaces.forEach((r, i) => {
+        r.isPrimary = (i === index);
+      });
+      calculateCalibration();
+    }
+
+    function formatHoursToTime(hours) {
+      const h = Math.floor(hours);
+      const m = Math.floor((hours - h) * 60);
+      const s = Math.floor(((hours - h) * 60 - m) * 60);
+      return `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+
+    function calculateCalibration() {
+      if (currentRaces.length === 0) {
+        alert('No races to calibrate. Add races first.');
+        return;
+      }
+
+      // Calculate predicted time for each race using different calibration attempts
+      const calibrationRange = [];
+      for (let factor = 1.0; factor <= 2.0; factor += 0.01) {
+        let totalError = 0;
+        let weightSum = 0;
+
+        currentRaces.forEach(race => {
+          const predicted = predictRaceTime(race, factor);
+          const error = Math.abs(predicted - race.actual_time_hours);
+          const weight = calculateWeight(race);
+
+          totalError += error * weight;
+          weightSum += weight;
+        });
+
+        const meanError = totalError / weightSum;
+        calibrationRange.push({ factor: factor, meanError: meanError });
+      }
+
+      // Find optimal factor
+      calibrationRange.sort((a, b) => a.meanError - b.meanError);
+      const optimalFactor = calibrationRange[0].factor;
+
+      // Calculate by course type
+      const courseTypeFactors = {};
+      const courseTypes = ['runnable_trail_40_80k', 'technical_mountain_50_70k', 'alpine_ultra_150_200k', 'road_marathon'];
+
+      courseTypes.forEach(courseType => {
+        const racesOfType = currentRaces.filter(r => r.courseType === courseType);
+        if (racesOfType.length === 0) {
+          courseTypeFactors[courseType] = optimalFactor;
+          return;
+        }
+
+        const typeCalibration = [];
+        for (let factor = 0.8; factor <= 2.0; factor += 0.01) {
+          let totalError = 0;
+          let weightSum = 0;
+
+          racesOfType.forEach(race => {
+            const predicted = predictRaceTime(race, factor);
+            const error = Math.abs(predicted - race.actual_time_hours);
+            const weight = calculateWeight(race);
+
+            totalError += error * weight;
+            weightSum += weight;
+          });
+
+          const meanError = weightSum > 0 ? totalError / weightSum : 999;
+          typeCalibration.push({ factor: factor, meanError: meanError });
+        }
+
+        typeCalibration.sort((a, b) => a.meanError - b.meanError);
+        courseTypeFactors[courseType] = typeCalibration[0].factor;
+      });
+
+      // Calculate overall mean error with optimal factor
+      let totalError = 0;
+      let weightSum = 0;
+      currentRaces.forEach(race => {
+        const predicted = predictRaceTime(race, courseTypeFactors[race.courseType]);
+        const error = Math.abs(predicted - race.actual_time_hours);
+        const weight = calculateWeight(race);
+
+        totalError += error * weight;
+        weightSum += weight;
+      });
+      const meanError = totalError / weightSum;
+
+      // Update UI
+      document.getElementById('overallFactor').innerText = optimalFactor.toFixed(3);
+      document.getElementById('meanError').innerText = (meanError * 60).toFixed(1) + 'm';
+      document.getElementById('totalRaces').innerText = currentRaces.length;
+
+      const confidence = Math.max(0, Math.min(1, 1 - meanError * 2));
+      document.getElementById('confidence').innerText = (confidence * 100).toFixed(0) + '%';
+
+      // Display course type factors
+      displayCourseTypeFactors(courseTypeFactors);
+
+      // Update race table
+      updateRaceTable(courseTypeFactors);
+
+      // Update chart
+      updateChart(courseTypeFactors);
+
+      // Store in profile
+      if (!athleteProfile.calibration) athleteProfile.calibration = {};
+      athleteProfile.calibration.overall_factor = optimalFactor;
+      athleteProfile.calibration.by_course_type = courseTypeFactors;
+      athleteProfile.calibration.mean_error_minutes = meanError * 60;
+      athleteProfile.calibration.confidence = confidence;
+      athleteProfile.calibration.last_calculated = new Date().toISOString();
+    }
+
+    function predictRaceTime(race, calibrationFactor) {
+      // Simplified prediction model using gradient-averaged speed
+      // This is a rough approximation - the full model would need GPX data
+
+      const avgGradient = (race.elevation_m / race.distance_km) / 10; // Convert to %
+
+      let baseSpeed;
+      if (avgGradient < -10) baseSpeed = ATHLETE.speeds.steep_d;
+      else if (avgGradient < -3) baseSpeed = ATHLETE.speeds.mod_d;
+      else if (avgGradient < 3) baseSpeed = ATHLETE.speeds.flat;
+      else if (avgGradient < 10) baseSpeed = ATHLETE.speeds.mod_u;
+      else baseSpeed = ATHLETE.speeds.steep_u;
+
+      const speed = baseSpeed * race.fitness * ATHLETE.tech_skill * calibrationFactor;
+      const predictedTime = race.distance_km / speed;
+
+      return predictedTime;
+    }
+
+    function calculateWeight(race) {
+      let weight = 1.0;
+
+      // Primary race = 2x weight
+      if (race.isPrimary) weight *= 2.0;
+
+      // Recency weight (more recent = higher weight)
+      const raceDate = new Date(race.date);
+      const now = new Date();
+      const daysSince = (now - raceDate) / (1000 * 60 * 60 * 24);
+      const recencyWeight = Math.exp(-daysSince / 365); // Decay over 1 year
+      weight *= (0.5 + 0.5 * recencyWeight); // Range: 0.5 to 1.0
+
+      // Confidence weight (based on percentile if available)
+      if (race.percentile) {
+        const confidenceScore = 1.0 - Math.abs(race.percentile - 50) / 100;
+        weight *= (0.8 + 0.2 * confidenceScore);
+      }
+
+      return weight;
+    }
+
+    function displayCourseTypeFactors(factors) {
+      const container = document.getElementById('courseTypeFactors');
+      container.innerHTML = '';
+
+      const typeNames = {
+        'runnable_trail_40_80k': 'Runnable Trail',
+        'technical_mountain_50_70k': 'Technical Mountain',
+        'alpine_ultra_150_200k': 'Alpine Ultra',
+        'road_marathon': 'Road Marathon'
+      };
+
+      Object.keys(factors).forEach(type => {
+        const div = document.createElement('div');
+        div.style.cssText = 'background: #f9fafb; border-radius: 12px; padding: 16px; border: 2px solid #e5e7eb;';
+        div.innerHTML = `
+          <div style="font-size: 11px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">${typeNames[type]}</div>
+          <div style="font-size: 24px; font-weight: 900; color: #1f2937;">${factors[type].toFixed(3)}</div>
+          <div style="font-size: 10px; color: #9ca3af; margin-top: 4px;">${currentRaces.filter(r => r.courseType === type).length} races</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateRaceTable(courseTypeFactors) {
+      const tbody = document.getElementById('raceTableBody');
+      tbody.innerHTML = '';
+
+      currentRaces.forEach((race, index) => {
+        const predicted = predictRaceTime(race, courseTypeFactors[race.courseType]);
+        const errorPct = ((predicted - race.actual_time_hours) / race.actual_time_hours) * 100;
+
+        let errorClass = 'accuracy-good';
+        if (Math.abs(errorPct) > 5) errorClass = 'accuracy-ok';
+        if (Math.abs(errorPct) > 10) errorClass = 'accuracy-bad';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="checkbox" ${race.isPrimary ? 'checked' : ''} onchange="togglePrimary(${index})"></td>
+          <td><strong>${race.name}</strong></td>
+          <td>${race.date}</td>
+          <td><span class="badge badge-primary">${race.courseType.replace(/_/g, ' ')}</span></td>
+          <td>${race.distance_km}km</td>
+          <td>${race.elevation_m}m</td>
+          <td>${formatHoursToTime(race.actual_time_hours)}</td>
+          <td>${formatHoursToTime(predicted)}</td>
+          <td class="${errorClass}">${errorPct >= 0 ? '+' : ''}${errorPct.toFixed(1)}%</td>
+          <td>${race.fitness.toFixed(2)}</td>
+          <td class="action-buttons">
+            <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="editRace(${index})">Edit</button>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteRace(${index})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateChart(courseTypeFactors) {
+      const ctx = document.getElementById('accuracyChart').getContext('2d');
+
+      const labels = currentRaces.map(r => r.name);
+      const actual = currentRaces.map(r => r.actual_time_hours);
+      const predicted = currentRaces.map(r => predictRaceTime(r, courseTypeFactors[r.courseType]));
+
+      if (window.accuracyChart) window.accuracyChart.destroy();
+
+      window.accuracyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Actual Time',
+              data: actual,
+              backgroundColor: 'rgba(59, 130, 246, 0.7)',
+              borderColor: '#3b82f6',
+              borderWidth: 2
+            },
+            {
+              label: 'Predicted Time',
+              data: predicted,
+              backgroundColor: 'rgba(16, 185, 129, 0.7)',
+              borderColor: '#10b981',
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Time (hours)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function exportProfile() {
+      if (!athleteProfile) {
+        alert('No profile loaded');
+        return;
+      }
+
+      // Update race history in profile
+      athleteProfile.athlete_info.race_history = currentRaces.map((race, index) => ({
+        rank: index + 1,
+        race: race.name,
+        date: race.date,
+        type: race.courseType,
+        distance_km: race.distance_km,
+        elevation_m: race.elevation_m,
+        finish_time: formatHoursToTime(race.actual_time_hours),
+        fitness_level: race.fitness,
+        ctl: race.ctl,
+        percentile: race.percentile,
+        conditions: race.temperature ? `${race.temperature}°C` : undefined,
+        notes: race.notes,
+        status: race.isPrimary ? 'BASELINE CALIBRATION RACE' : undefined
+      }));
+
+      // Update metadata
+      if (!athleteProfile.metadata) athleteProfile.metadata = {};
+      athleteProfile.metadata.last_updated = new Date().toISOString().split('T')[0];
+      athleteProfile.metadata.calibration_status = `${currentRaces.length} races`;
+
+      // Download
+      const blob = new Blob([JSON.stringify(athleteProfile, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${athleteProfile.athlete_info?.name || 'athlete'}_profile_calibrated.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      alert('Profile exported successfully!');
+    }
+
+    // GPX upload handler
+    document.getElementById('gpxInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(evt.target.result, 'text/xml');
+
+          // Extract name from metadata or filename
+          let name = xml.querySelector('metadata name')?.textContent || file.name.replace('.gpx', '');
+          document.getElementById('raceName').value = name;
+
+          // Extract time from metadata
+          const timeElement = xml.querySelector('metadata time');
+          if (timeElement) {
+            const date = new Date(timeElement.textContent);
+            document.getElementById('raceDate').value = date.toISOString().split('T')[0];
+          }
+
+          // Calculate distance and elevation from trackpoints
+          const points = Array.from(xml.querySelectorAll('trkpt'));
+          if (points.length > 0) {
+            let totalDist = 0;
+            let totalElevGain = 0;
+            let prevLat = null, prevLon = null, prevEle = null;
+
+            points.forEach(point => {
+              const lat = parseFloat(point.getAttribute('lat'));
+              const lon = parseFloat(point.getAttribute('lon'));
+              const ele = parseFloat(point.querySelector('ele')?.textContent || 0);
+
+              if (prevLat !== null) {
+                // Haversine distance
+                const R = 6371; // Earth radius in km
+                const dLat = (lat - prevLat) * Math.PI / 180;
+                const dLon = (lon - prevLon) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                         Math.cos(prevLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+                         Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                totalDist += R * c;
+
+                // Elevation gain
+                if (prevEle !== null && ele > prevEle) {
+                  totalElevGain += ele - prevEle;
+                }
+              }
+
+              prevLat = lat;
+              prevLon = lon;
+              prevEle = ele;
+            });
+
+            document.getElementById('raceDistance').value = totalDist.toFixed(1);
+            document.getElementById('raceElevation').value = Math.round(totalElevGain);
+          }
+
+          alert('GPX data extracted! Please fill in remaining fields.');
+        } catch(err) {
+          alert('Error parsing GPX: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>

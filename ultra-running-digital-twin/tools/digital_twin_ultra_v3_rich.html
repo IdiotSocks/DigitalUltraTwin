@@ -351,6 +351,20 @@
         <div class="file-status" id="profileStatus">No file selected</div>
 
         <div class="compact-input-group">
+          <label class="input-label" style="font-size: 10px;">Course Type</label>
+          <select id="courseTypeSelect" class="glass-input glass-select input-compact" onchange="updateCourseType()">
+            <option value="runnable_trail_40_80k">Runnable Trail</option>
+            <option value="technical_mountain_50_70k">Technical Mountain</option>
+            <option value="alpine_ultra_150_200k">Alpine Ultra</option>
+            <option value="road_marathon">Road Marathon</option>
+          </select>
+        </div>
+
+        <button type="button" class="upload-btn" onclick="window.open('athlete_calibration_tool.html', '_blank')" style="margin-top: 8px; background: #10b981;">
+          ⚙️ Calibrate Profile
+        </button>
+
+        <div class="compact-input-group">
           <label class="input-label" style="font-size: 10px;">Current CTL</label>
           <input type="number" id="ctlCurrent" value="106" class="glass-input input-compact" placeholder="106">
         </div>
@@ -1207,6 +1221,17 @@
         try {
           athleteProfile = JSON.parse(evt.target.result);
 
+          // Load calibration factors from profile if available
+          if (athleteProfile.calibration) {
+            if (athleteProfile.calibration.overall_factor) {
+              CALIBRATION.calibrationFactor = athleteProfile.calibration.overall_factor;
+            }
+            if (athleteProfile.calibration.by_course_type) {
+              CALIBRATION.byCourseType = athleteProfile.calibration.by_course_type;
+            }
+            console.log('✅ Loaded calibration factors:', CALIBRATION);
+          }
+
           // Display just the filename
           document.getElementById('profileStatus').innerText = file.name;
 
@@ -1260,18 +1285,45 @@
     // ========== ATHLETE CALIBRATION ==========
     // VALIDATED RESULT: Arc 25 2025 - 4:23 with CTL 146
     // This calibration multiplier adjusts the model to match actual performance
-    const CALIBRATION = {
+    // Default calibration - will be overridden by athlete profile if available
+    let CALIBRATION = {
       validatedTime: 4 + 23/60, // 4:23 in hours
       validatedCTL: 146,
       validatedFitness: 1.21,    // CTL 146 maps to ~1.21x fitness
       courseDistance: 40,         // km
       courseElevation: 2300,      // m gain
-
-      // Calibration multiplier calculated from actual result
-      // baseSpeed * fitness * tech * CALIBRATION_FACTOR = actual pace
-      // Adjust this to match your results
-      calibrationFactor: 1.35      // Tuned to match 4:23 result
+      calibrationFactor: 1.35,   // Default overall factor
+      byCourseType: {
+        runnable_trail_40_80k: 1.38,
+        technical_mountain_50_70k: 1.32,
+        alpine_ultra_150_200k: 1.30,
+        road_marathon: 1.42
+      }
     };
+
+    // Current course type for calibration selection
+    let currentCourseType = 'runnable_trail_40_80k';
+
+    // Function to get calibration factor for current course
+    function getCalibrationFactor() {
+      // Try to use course-specific calibration first
+      if (CALIBRATION.byCourseType && CALIBRATION.byCourseType[currentCourseType]) {
+        return CALIBRATION.byCourseType[currentCourseType];
+      }
+      // Fall back to overall factor
+      return CALIBRATION.calibrationFactor;
+    }
+
+    // Update course type when user changes selector
+    function updateCourseType() {
+      currentCourseType = document.getElementById('courseTypeSelect').value;
+      console.log('Course type updated to:', currentCourseType, 'Calibration factor:', getCalibrationFactor());
+
+      // Update developer view if visible
+      if (document.getElementById('devCalibrationFactor')) {
+        document.getElementById('devCalibrationFactor').innerText = getCalibrationFactor().toFixed(3);
+      }
+    }
 
     const ATHLETE = {
       speeds: {
@@ -1352,8 +1404,8 @@
             else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
             else baseSpeed = ATHLETE.speeds.steep_u;
 
-            // Apply calibration factor to match validated 4:23 result
-            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * CALIBRATION.calibrationFactor;
+            // Apply calibration factor to match validated results
+            let currentSpeed = baseSpeed * fitness * ATHLETE.tech_skill * getCalibrationFactor();
 
             const temp = getTempAtTime(totalTime, startTemp, finishTemp);
             if(temp > 18) currentSpeed *= Math.pow(0.98, temp - 18);
@@ -1577,8 +1629,8 @@
         else if(seg.grad < 15) baseSpeed = ATHLETE.speeds.mod_u;
         else baseSpeed = ATHLETE.speeds.steep_u;
 
-        // Apply calibration factor to match validated 4:23 result
-        let currentSpeed = baseSpeed * fitnessVar * ATHLETE.tech_skill * CALIBRATION.calibrationFactor;
+        // Apply calibration factor to match validated results
+        let currentSpeed = baseSpeed * fitnessVar * ATHLETE.tech_skill * getCalibrationFactor();
 
         // Temperature effects
         const temp = getTempAtTime(totalTime, tempVar, baseParams.finishTemp);
