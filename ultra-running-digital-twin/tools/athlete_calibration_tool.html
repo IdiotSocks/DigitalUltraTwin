@@ -889,9 +889,9 @@
       calibrationRange.sort((a, b) => a.meanError - b.meanError);
       const optimalFactor = calibrationRange[0].factor;
 
-      // Calculate by course type
+      // Calculate by course type - get all unique types from current races
       const courseTypeFactors = {};
-      const courseTypes = ['runnable_trail_40_80k', 'technical_mountain_50_70k', 'alpine_ultra_150_200k', 'road_marathon'];
+      const courseTypes = [...new Set(currentRaces.map(r => r.courseType))];
 
       courseTypes.forEach(courseType => {
         const racesOfType = currentRaces.filter(r => r.courseType === courseType);
@@ -926,7 +926,8 @@
       let totalError = 0;
       let weightSum = 0;
       currentRaces.forEach(race => {
-        const predicted = predictRaceTime(race, courseTypeFactors[race.courseType]);
+        const factor = courseTypeFactors[race.courseType] || optimalFactor;
+        const predicted = predictRaceTime(race, factor);
         const error = Math.abs(predicted - race.actual_time_hours);
         const weight = calculateWeight(race);
 
@@ -1042,8 +1043,12 @@
       const tbody = document.getElementById('raceTableBody');
       tbody.innerHTML = '';
 
+      // Get overall factor as fallback
+      const overallFactor = athleteProfile?.calibration?.overall_factor || 1.35;
+
       currentRaces.forEach((race, index) => {
-        const predicted = predictRaceTime(race, courseTypeFactors[race.courseType]);
+        const factor = courseTypeFactors[race.courseType] || overallFactor;
+        const predicted = predictRaceTime(race, factor);
         const errorPct = ((predicted - race.actual_time_hours) / race.actual_time_hours) * 100;
 
         let errorClass = 'accuracy-good';
@@ -1075,9 +1080,15 @@
     function updateChart(courseTypeFactors) {
       const ctx = document.getElementById('accuracyChart').getContext('2d');
 
+      // Get overall factor as fallback
+      const overallFactor = athleteProfile?.calibration?.overall_factor || 1.35;
+
       const labels = currentRaces.map(r => r.name);
       const actual = currentRaces.map(r => r.actual_time_hours);
-      const predicted = currentRaces.map(r => predictRaceTime(r, courseTypeFactors[r.courseType]));
+      const predicted = currentRaces.map(r => {
+        const factor = courseTypeFactors[r.courseType] || overallFactor;
+        return predictRaceTime(r, factor);
+      });
 
       if (window.accuracyChart) window.accuracyChart.destroy();
 
