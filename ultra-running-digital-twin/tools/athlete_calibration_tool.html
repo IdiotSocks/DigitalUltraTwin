@@ -402,8 +402,16 @@
     <!-- Chart -->
     <div class="card" id="chartCard" style="display: none;">
       <div class="card-title">📈 Prediction Accuracy</div>
-      <div style="height: 400px; position: relative;">
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">
+        Comparing actual race times (blue) vs model predictions (green). Click <strong>"🔄 Recalculate"</strong> to update.
+      </p>
+      <div style="height: 400px; position: relative; background: #f9fafb; border-radius: 8px; padding: 10px;">
         <canvas id="accuracyChart"></canvas>
+        <div id="chartPlaceholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #9ca3af;">
+          <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+          <div style="font-size: 14px; font-weight: 600;">Loading chart...</div>
+          <div style="font-size: 12px; margin-top: 8px;">Click "🔄 Recalculate" if chart doesn't appear</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1078,7 +1086,19 @@
     }
 
     function updateChart(courseTypeFactors) {
-      const ctx = document.getElementById('accuracyChart').getContext('2d');
+      console.log('updateChart called with', currentRaces.length, 'races');
+
+      const canvas = document.getElementById('accuracyChart');
+      if (!canvas) {
+        console.error('Canvas element not found');
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Could not get 2D context');
+        return;
+      }
 
       // Get overall factor as fallback
       const overallFactor = athleteProfile?.calibration?.overall_factor || 1.35;
@@ -1090,48 +1110,106 @@
         return predictRaceTime(r, factor);
       });
 
-      if (window.accuracyChart) window.accuracyChart.destroy();
+      console.log('Chart data:', { labels, actual, predicted });
 
-      window.accuracyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Actual Time',
-              data: actual,
-              backgroundColor: 'rgba(59, 130, 246, 0.7)',
-              borderColor: '#3b82f6',
-              borderWidth: 2
-            },
-            {
-              label: 'Predicted Time',
-              data: predicted,
-              backgroundColor: 'rgba(16, 185, 129, 0.7)',
-              borderColor: '#10b981',
-              borderWidth: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true
-            }
+      // Destroy existing chart
+      if (window.accuracyChart) {
+        window.accuracyChart.destroy();
+      }
+
+      try {
+        window.accuracyChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Actual Time (hours)',
+                data: actual,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: '#3b82f6',
+                borderWidth: 2
+              },
+              {
+                label: 'Predicted Time (hours)',
+                data: predicted,
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                borderWidth: 2
+              }
+            ]
           },
-          scales: {
-            y: {
-              beginAtZero: true,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top'
+              },
               title: {
                 display: true,
-                text: 'Time (hours)'
+                text: 'Actual vs Predicted Race Times',
+                font: {
+                  size: 16,
+                  weight: 'bold'
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Time (hours)',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  }
+                },
+                ticks: {
+                  callback: function(value) {
+                    return value.toFixed(1) + 'h';
+                  }
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Race',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  }
+                },
+                ticks: {
+                  maxRotation: 45,
+                  minRotation: 45
+                }
               }
             }
           }
+        });
+
+        // Hide placeholder
+        const placeholder = document.getElementById('chartPlaceholder');
+        if (placeholder) placeholder.style.display = 'none';
+
+        console.log('✅ Chart created successfully');
+      } catch (err) {
+        console.error('Error creating chart:', err);
+
+        // Show error in placeholder
+        const placeholder = document.getElementById('chartPlaceholder');
+        if (placeholder) {
+          placeholder.innerHTML = `
+            <div style="font-size: 48px; margin-bottom: 12px; color: #ef4444;">⚠️</div>
+            <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Chart Error</div>
+            <div style="font-size: 12px; margin-top: 8px;">${err.message}</div>
+            <div style="font-size: 11px; margin-top: 8px; color: #6b7280;">Check browser console for details</div>
+          `;
         }
-      });
+      }
     }
 
     function exportProfile() {
