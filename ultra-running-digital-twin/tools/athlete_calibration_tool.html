@@ -947,11 +947,22 @@
             let totalDist = 0;
             let totalElevGain = 0;
             let prevLat = null, prevLon = null, prevEle = null;
+            let firstTime = null, lastTime = null;
 
-            points.forEach(point => {
+            points.forEach((point, index) => {
               const lat = parseFloat(point.getAttribute('lat'));
               const lon = parseFloat(point.getAttribute('lon'));
               const ele = parseFloat(point.querySelector('ele')?.textContent || 0);
+
+              // Extract time from trackpoint
+              const timeElement = point.querySelector('time');
+              if (timeElement) {
+                const pointTime = new Date(timeElement.textContent);
+                if (index === 0) {
+                  firstTime = pointTime;
+                }
+                lastTime = pointTime;
+              }
 
               if (prevLat !== null) {
                 // Haversine distance
@@ -977,9 +988,24 @@
 
             document.getElementById('raceDistance').value = totalDist.toFixed(1);
             document.getElementById('raceElevation').value = Math.round(totalElevGain);
+
+            // Calculate and populate finish time if timestamps available
+            if (firstTime && lastTime) {
+              const durationMs = lastTime - firstTime;
+              const durationHours = durationMs / (1000 * 60 * 60);
+              const hours = Math.floor(durationHours);
+              const minutes = Math.floor((durationHours - hours) * 60);
+              const seconds = Math.floor(((durationHours - hours) * 60 - minutes) * 60);
+              const timeStr = `${hours}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+              document.getElementById('raceTime').value = timeStr;
+              console.log(`✅ Extracted finish time: ${timeStr} (${durationHours.toFixed(2)} hours)`);
+            }
           }
 
-          alert('GPX data extracted! Please fill in remaining fields.');
+          // Show appropriate message based on what was extracted
+          const extractedFields = ['distance', 'elevation'];
+          if (firstTime && lastTime) extractedFields.push('finish time');
+          alert(`GPX data extracted: ${extractedFields.join(', ')}! Please fill in remaining fields.`);
         } catch(err) {
           alert('Error parsing GPX: ' + err.message);
         }
