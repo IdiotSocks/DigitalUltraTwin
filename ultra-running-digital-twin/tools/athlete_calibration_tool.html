@@ -294,6 +294,45 @@
       <span id="profileStatus" style="margin-left: 16px; color: #6b7280;"></span>
     </div>
 
+    <!-- Athlete Details -->
+    <div class="card" id="athleteDetailsCard" style="display: none;">
+      <div class="card-title">👤 Athlete Details (Subjective)</div>
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">Add qualitative information about your running style, strengths, and preferences. This helps contextualize your calibration data.</p>
+
+      <div class="grid-2" style="margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Name</label>
+          <input type="text" id="athleteName" class="form-input" placeholder="e.g., Simbarashe">
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Location</label>
+          <input type="text" id="athleteLocation" class="form-input" placeholder="e.g., Brighton, UK">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Primary Discipline</label>
+        <input type="text" id="athleteDiscipline" class="form-input" placeholder="e.g., Ultra-trail running with marathon speed focus">
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Strengths</label>
+        <textarea id="athleteStrengths" class="form-input" rows="3" placeholder="e.g., Technical terrain (+15 percentile), Downhill descending, Pacing discipline, Marathon speed endurance"></textarea>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Limiting Factors / Weaknesses</label>
+        <textarea id="athleteLimitations" class="form-input" rows="3" placeholder="e.g., Exercise-induced asthma (temperature-triggered), Uphill power vs field, Cold weather performance (<8°C)"></textarea>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Racing Style / Notes</label>
+        <textarea id="athleteNotes" class="form-input" rows="2" placeholder="e.g., Conservative starter, strong finisher, prefers runnable terrain"></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="saveAthleteDetails()">💾 Save Details</button>
+    </div>
+
     <!-- Calibration Metrics -->
     <div class="card" id="metricsCard" style="display: none;">
       <div class="card-title">📊 Calibration Metrics</div>
@@ -363,7 +402,9 @@
     <!-- Chart -->
     <div class="card" id="chartCard" style="display: none;">
       <div class="card-title">📈 Prediction Accuracy</div>
-      <canvas id="accuracyChart"></canvas>
+      <div style="height: 400px; position: relative;">
+        <canvas id="accuracyChart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -394,10 +435,33 @@
       <div class="form-group">
         <label class="form-label">Course Type *</label>
         <select id="courseType" class="form-select">
-          <option value="runnable_trail_40_80k">Runnable Trail (40-80k)</option>
-          <option value="technical_mountain_50_70k">Technical Mountain (50-70k)</option>
-          <option value="alpine_ultra_150_200k">Alpine Ultra (150-200k)</option>
-          <option value="road_marathon">Road Marathon</option>
+          <optgroup label="Road">
+            <option value="road_5k">Road 5K</option>
+            <option value="road_10k">Road 10K</option>
+            <option value="road_half_marathon">Road Half Marathon</option>
+            <option value="road_marathon">Road Marathon</option>
+            <option value="road_ultra">Road Ultra (50k+)</option>
+          </optgroup>
+          <optgroup label="Trail - Flat/Runnable">
+            <option value="flat_trail_short">Flat Trail (0-30k)</option>
+            <option value="flat_trail_medium">Flat Trail (30-50k)</option>
+            <option value="runnable_trail_40_80k">Runnable Trail (40-80k)</option>
+          </optgroup>
+          <optgroup label="Trail - Hilly">
+            <option value="hilly_trail_short">Hilly Trail (0-30k)</option>
+            <option value="hilly_trail_medium">Hilly Trail (30-50k)</option>
+            <option value="hilly_trail_long">Hilly Trail (50-80k)</option>
+          </optgroup>
+          <optgroup label="Mountain/Technical">
+            <option value="technical_mountain_50_70k">Technical Mountain (50-70k)</option>
+            <option value="technical_mountain_long">Technical Mountain (70-100k)</option>
+            <option value="alpine_ultra_150_200k">Alpine Ultra (150-200k)</option>
+          </optgroup>
+          <optgroup label="Fell/Vertical">
+            <option value="fell_race">Fell Race</option>
+            <option value="vertical_km">Vertical KM</option>
+            <option value="skyrunning">Skyrunning</option>
+          </optgroup>
         </select>
       </div>
 
@@ -514,6 +578,7 @@
           athleteProfile = JSON.parse(evt.target.result);
           document.getElementById('profileStatus').innerText = `✅ Loaded: ${athleteProfile.athlete_info?.name || 'Unknown'}`;
           loadRaces();
+          loadAthleteDetails();
           showCards();
           calculateCalibration();
         } catch(err) {
@@ -558,11 +623,66 @@
     function getCourseTypeFromRace(race) {
       const type = race.type?.toLowerCase() || '';
       const dist = race.distance_km || 0;
+      const elevDensity = race.elevation_m / dist; // m per km
 
-      if (type.includes('road') || type.includes('marathon')) return 'road_marathon';
-      if (type.includes('alpine') || dist > 150) return 'alpine_ultra_150_200k';
-      if (type.includes('technical') || type.includes('mountain')) return 'technical_mountain_50_70k';
-      return 'runnable_trail_40_80k';
+      // Road races
+      if (type.includes('road')) {
+        if (dist <= 5) return 'road_5k';
+        if (dist <= 10) return 'road_10k';
+        if (dist <= 21.1) return 'road_half_marathon';
+        if (dist <= 42.2) return 'road_marathon';
+        return 'road_ultra';
+      }
+
+      // Fell/Vertical races
+      if (type.includes('fell') || type.includes('vertical') || type.includes('sky')) {
+        if (type.includes('vertical')) return 'vertical_km';
+        if (type.includes('sky')) return 'skyrunning';
+        return 'fell_race';
+      }
+
+      // Alpine ultra
+      if (type.includes('alpine') || dist > 150 || (dist > 100 && elevDensity > 50)) {
+        return 'alpine_ultra_150_200k';
+      }
+
+      // Technical mountain
+      if (type.includes('technical') || type.includes('mountain')) {
+        if (dist > 70) return 'technical_mountain_long';
+        return 'technical_mountain_50_70k';
+      }
+
+      // Trail races - categorize by distance and elevation density
+      if (type.includes('trail')) {
+        // Flat trail (< 20m/km)
+        if (elevDensity < 20) {
+          if (dist < 30) return 'flat_trail_short';
+          if (dist < 50) return 'flat_trail_medium';
+          return 'runnable_trail_40_80k';
+        }
+        // Hilly trail (20-40m/km)
+        else if (elevDensity < 40) {
+          if (dist < 30) return 'hilly_trail_short';
+          if (dist < 50) return 'hilly_trail_medium';
+          if (dist < 80) return 'hilly_trail_long';
+          return 'technical_mountain_50_70k';
+        }
+        // Mountain trail (> 40m/km)
+        else {
+          if (dist < 70) return 'technical_mountain_50_70k';
+          return 'technical_mountain_long';
+        }
+      }
+
+      // Default fallback based on distance and elevation
+      if (elevDensity < 20) {
+        if (dist < 50) return 'flat_trail_medium';
+        return 'runnable_trail_40_80k';
+      } else if (elevDensity < 40) {
+        return 'hilly_trail_medium';
+      } else {
+        return 'technical_mountain_50_70k';
+      }
     }
 
     function parseTimeToHours(timeStr) {
@@ -575,9 +695,55 @@
     }
 
     function showCards() {
+      document.getElementById('athleteDetailsCard').style.display = 'block';
       document.getElementById('metricsCard').style.display = 'block';
       document.getElementById('raceTableCard').style.display = 'block';
       document.getElementById('chartCard').style.display = 'block';
+    }
+
+    function saveAthleteDetails() {
+      if (!athleteProfile) {
+        alert('Please load an athlete profile first');
+        return;
+      }
+
+      if (!athleteProfile.athlete_info) athleteProfile.athlete_info = {};
+
+      athleteProfile.athlete_info.name = document.getElementById('athleteName').value || '';
+      athleteProfile.athlete_info.location = document.getElementById('athleteLocation').value || '';
+
+      if (!athleteProfile.athlete_info.racing_experience) {
+        athleteProfile.athlete_info.racing_experience = {};
+      }
+
+      athleteProfile.athlete_info.racing_experience.primary_discipline = document.getElementById('athleteDiscipline').value || '';
+      athleteProfile.athlete_info.racing_experience.strengths = document.getElementById('athleteStrengths').value.split(',').map(s => s.trim()).filter(s => s);
+      athleteProfile.athlete_info.racing_experience.constraints = document.getElementById('athleteLimitations').value.split(',').map(s => s.trim()).filter(s => s);
+      athleteProfile.athlete_info.racing_experience.racing_style_notes = document.getElementById('athleteNotes').value || '';
+
+      alert('✅ Athlete details saved to profile!');
+      console.log('Athlete details saved:', athleteProfile.athlete_info);
+    }
+
+    function loadAthleteDetails() {
+      if (!athleteProfile || !athleteProfile.athlete_info) return;
+
+      const info = athleteProfile.athlete_info;
+      document.getElementById('athleteName').value = info.name || '';
+      document.getElementById('athleteLocation').value = info.location || '';
+
+      if (info.racing_experience) {
+        document.getElementById('athleteDiscipline').value = info.racing_experience.primary_discipline || '';
+        document.getElementById('athleteStrengths').value = Array.isArray(info.racing_experience.strengths)
+          ? info.racing_experience.strengths.join(', ')
+          : '';
+        document.getElementById('athleteLimitations').value = Array.isArray(info.racing_experience.constraints)
+          ? info.racing_experience.constraints.join(', ')
+          : '';
+        document.getElementById('athleteNotes').value = info.racing_experience.racing_style_notes || '';
+      }
+
+      console.log('✅ Loaded athlete details from profile');
     }
 
     function showAddRaceModal() {
@@ -841,10 +1007,23 @@
       container.innerHTML = '';
 
       const typeNames = {
+        'road_5k': 'Road 5K',
+        'road_10k': 'Road 10K',
+        'road_half_marathon': 'Road Half',
+        'road_marathon': 'Road Marathon',
+        'road_ultra': 'Road Ultra',
+        'flat_trail_short': 'Flat Trail (Short)',
+        'flat_trail_medium': 'Flat Trail (Med)',
         'runnable_trail_40_80k': 'Runnable Trail',
-        'technical_mountain_50_70k': 'Technical Mountain',
+        'hilly_trail_short': 'Hilly Trail (Short)',
+        'hilly_trail_medium': 'Hilly Trail (Med)',
+        'hilly_trail_long': 'Hilly Trail (Long)',
+        'technical_mountain_50_70k': 'Tech Mountain',
+        'technical_mountain_long': 'Tech Mtn (Long)',
         'alpine_ultra_150_200k': 'Alpine Ultra',
-        'road_marathon': 'Road Marathon'
+        'fell_race': 'Fell Race',
+        'vertical_km': 'Vertical KM',
+        'skyrunning': 'Skyrunning'
       };
 
       Object.keys(factors).forEach(type => {
