@@ -348,6 +348,7 @@
               <th>Actual Time</th>
               <th>Predicted Time</th>
               <th>Error %</th>
+              <th>CTL</th>
               <th>Fitness</th>
               <th>Actions</th>
             </tr>
@@ -417,12 +418,13 @@
 
       <div class="grid-2">
         <div class="form-group">
-          <label class="form-label">Fitness Level *</label>
-          <input type="number" id="raceFitness" class="form-input" placeholder="1.15" step="0.01">
+          <label class="form-label">CTL *</label>
+          <input type="number" id="raceCTL" class="form-input" placeholder="146" step="1" oninput="calculateFitnessFromCTL()">
         </div>
         <div class="form-group">
-          <label class="form-label">CTL (optional)</label>
-          <input type="number" id="raceCTL" class="form-input" placeholder="146" step="1">
+          <label class="form-label">Fitness Level (auto-calculated)</label>
+          <input type="number" id="raceFitness" class="form-input" placeholder="1.15" step="0.01" style="background: #f9fafb;">
+          <div style="font-size: 10px; color: #6b7280; margin-top: 4px;">Auto-calculated from CTL. Can override manually.</div>
         </div>
       </div>
 
@@ -467,6 +469,40 @@
       tech_skill: 0.96
     };
 
+    // CTL to Fitness conversion baseline
+    // Based on: UTMB 2025 CTL 120 = fitness 1.0
+    //           Arc 2025 CTL 146 = fitness 1.21
+    const CTL_BASELINE = {
+      baseline_ctl: 120,
+      baseline_fitness: 1.0,
+      ctl_to_fitness_factor: 0.00808  // (1.21 - 1.0) / (146 - 120) = 0.21 / 26
+    };
+
+    // Calculate fitness from CTL
+    function calculateFitnessFromCTL() {
+      const ctl = parseFloat(document.getElementById('raceCTL').value);
+      if (!ctl || isNaN(ctl)) {
+        return;
+      }
+
+      // Allow override from athlete profile if available
+      let baselineCTL = CTL_BASELINE.baseline_ctl;
+      let baselineFitness = CTL_BASELINE.baseline_fitness;
+      let factor = CTL_BASELINE.ctl_to_fitness_factor;
+
+      if (athleteProfile?.fitness_baseline) {
+        baselineCTL = athleteProfile.fitness_baseline.training_load_at_baseline?.ctl_chronic_training_load || baselineCTL;
+        baselineFitness = athleteProfile.fitness_baseline.fitness_level_baseline || baselineFitness;
+        // Recalculate factor if we have another data point
+        // Using Arc 2025: CTL 146 = fitness 1.21 as second point
+        factor = 0.00808;
+      }
+
+      const fitness = baselineFitness + (ctl - baselineCTL) * factor;
+      document.getElementById('raceFitness').value = fitness.toFixed(3);
+      console.log(`CTL ${ctl} → Fitness ${fitness.toFixed(3)}`);
+    }
+
     // Load athlete profile
     document.getElementById('profileInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -490,21 +526,32 @@
     function loadRaces() {
       currentRaces = [];
       if (athleteProfile.athlete_info && athleteProfile.athlete_info.race_history) {
-        currentRaces = athleteProfile.athlete_info.race_history.map(race => ({
-          name: race.race,
-          date: race.date,
-          type: race.type,
-          courseType: getCourseTypeFromRace(race),
-          distance_km: race.distance_km,
-          elevation_m: race.elevation_m,
-          actual_time_hours: race.finish_time ? parseTimeToHours(race.finish_time) : race.actual_time_hours,
-          fitness: race.fitness_level,
-          ctl: race.ctl,
-          temperature: race.conditions?.match(/(\d+)°C/)?.[1],
-          percentile: race.percentile,
-          notes: race.notes || race.key_insights?.join('; '),
-          isPrimary: race.status?.includes('BASELINE') || race.rank === 1
-        }));
+        currentRaces = athleteProfile.athlete_info.race_history.map(race => {
+          let fitness = race.fitness_level;
+          let ctl = race.ctl;
+
+          // Auto-calculate fitness from CTL if fitness not provided
+          if (!fitness && ctl) {
+            fitness = CTL_BASELINE.baseline_fitness + (ctl - CTL_BASELINE.baseline_ctl) * CTL_BASELINE.ctl_to_fitness_factor;
+            console.log(`Auto-calculated fitness ${fitness.toFixed(3)} from CTL ${ctl} for ${race.race}`);
+          }
+
+          return {
+            name: race.race,
+            date: race.date,
+            type: race.type,
+            courseType: getCourseTypeFromRace(race),
+            distance_km: race.distance_km,
+            elevation_m: race.elevation_m,
+            actual_time_hours: race.finish_time ? parseTimeToHours(race.finish_time) : race.actual_time_hours,
+            fitness: fitness,
+            ctl: ctl,
+            temperature: race.conditions?.match(/(\d+)°C/)?.[1],
+            percentile: race.percentile,
+            notes: race.notes || race.key_insights?.join('; '),
+            isPrimary: race.status?.includes('BASELINE') || race.rank === 1
+          };
+        });
       }
     }
 
@@ -559,6 +606,18 @@
     }
 
     function saveRace() {
+      const ctlValue = document.getElementById('raceCTL').value;
+      const fitnessValue = document.getElementById('raceFitness').value;
+
+      // If CTL is provided, use it; otherwise require fitness
+      let ctl = ctlValue ? parseInt(ctlValue) : null;
+      let fitness = fitnessValue ? parseFloat(fitnessValue) : null;
+
+      // Auto-calculate fitness from CTL if not manually overridden
+      if (ctl && !fitnessValue) {
+        fitness = CTL_BASELINE.baseline_fitness + (ctl - CTL_BASELINE.baseline_ctl) * CTL_BASELINE.ctl_to_fitness_factor;
+      }
+
       const race = {
         name: document.getElementById('raceName').value,
         date: document.getElementById('raceDate').value,
@@ -566,16 +625,21 @@
         distance_km: parseFloat(document.getElementById('raceDistance').value),
         elevation_m: parseFloat(document.getElementById('raceElevation').value),
         actual_time_hours: parseTimeToHours(document.getElementById('raceTime').value),
-        fitness: parseFloat(document.getElementById('raceFitness').value),
-        ctl: document.getElementById('raceCTL').value ? parseInt(document.getElementById('raceCTL').value) : null,
+        fitness: fitness,
+        ctl: ctl,
         temperature: document.getElementById('raceTemp').value ? parseFloat(document.getElementById('raceTemp').value) : null,
         percentile: document.getElementById('racePercentile').value ? parseInt(document.getElementById('racePercentile').value) : null,
         notes: document.getElementById('raceNotes').value,
         isPrimary: false
       };
 
-      if (!race.name || !race.date || !race.distance_km || !race.elevation_m || !race.actual_time_hours || !race.fitness) {
+      if (!race.name || !race.date || !race.distance_km || !race.elevation_m || !race.actual_time_hours) {
         alert('Please fill in all required fields (*)');
+        return;
+      }
+
+      if (!race.ctl && !race.fitness) {
+        alert('Please provide either CTL or Fitness Level');
         return;
       }
 
@@ -818,6 +882,7 @@
           <td>${formatHoursToTime(race.actual_time_hours)}</td>
           <td>${formatHoursToTime(predicted)}</td>
           <td class="${errorClass}">${errorPct >= 0 ? '+' : ''}${errorPct.toFixed(1)}%</td>
+          <td>${race.ctl || '-'}</td>
           <td>${race.fitness.toFixed(2)}</td>
           <td class="action-buttons">
             <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="editRace(${index})">Edit</button>
@@ -947,11 +1012,22 @@
             let totalDist = 0;
             let totalElevGain = 0;
             let prevLat = null, prevLon = null, prevEle = null;
+            let firstTime = null, lastTime = null;
 
-            points.forEach(point => {
+            points.forEach((point, index) => {
               const lat = parseFloat(point.getAttribute('lat'));
               const lon = parseFloat(point.getAttribute('lon'));
               const ele = parseFloat(point.querySelector('ele')?.textContent || 0);
+
+              // Extract time from trackpoint
+              const timeElement = point.querySelector('time');
+              if (timeElement) {
+                const pointTime = new Date(timeElement.textContent);
+                if (index === 0) {
+                  firstTime = pointTime;
+                }
+                lastTime = pointTime;
+              }
 
               if (prevLat !== null) {
                 // Haversine distance
@@ -977,9 +1053,24 @@
 
             document.getElementById('raceDistance').value = totalDist.toFixed(1);
             document.getElementById('raceElevation').value = Math.round(totalElevGain);
+
+            // Calculate and populate finish time if timestamps available
+            if (firstTime && lastTime) {
+              const durationMs = lastTime - firstTime;
+              const durationHours = durationMs / (1000 * 60 * 60);
+              const hours = Math.floor(durationHours);
+              const minutes = Math.floor((durationHours - hours) * 60);
+              const seconds = Math.floor(((durationHours - hours) * 60 - minutes) * 60);
+              const timeStr = `${hours}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+              document.getElementById('raceTime').value = timeStr;
+              console.log(`✅ Extracted finish time: ${timeStr} (${durationHours.toFixed(2)} hours)`);
+            }
           }
 
-          alert('GPX data extracted! Please fill in remaining fields.');
+          // Show appropriate message based on what was extracted
+          const extractedFields = ['distance', 'elevation'];
+          if (firstTime && lastTime) extractedFields.push('finish time');
+          alert(`GPX data extracted: ${extractedFields.join(', ')}! Please fill in remaining fields.`);
         } catch(err) {
           alert('Error parsing GPX: ' + err.message);
         }
