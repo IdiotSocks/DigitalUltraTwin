@@ -353,10 +353,33 @@
         <div class="compact-input-group">
           <label class="input-label" style="font-size: 10px;">Course Type</label>
           <select id="courseTypeSelect" class="glass-input glass-select input-compact" onchange="updateCourseType()">
-            <option value="runnable_trail_40_80k">Runnable Trail</option>
-            <option value="technical_mountain_50_70k">Technical Mountain</option>
-            <option value="alpine_ultra_150_200k">Alpine Ultra</option>
-            <option value="road_marathon">Road Marathon</option>
+            <optgroup label="Road">
+              <option value="road_5k">Road 5K</option>
+              <option value="road_10k">Road 10K</option>
+              <option value="road_half_marathon">Road Half</option>
+              <option value="road_marathon">Road Marathon</option>
+              <option value="road_ultra">Road Ultra</option>
+            </optgroup>
+            <optgroup label="Trail - Flat/Runnable">
+              <option value="flat_trail_short">Flat Trail (Short)</option>
+              <option value="flat_trail_medium">Flat Trail (Med)</option>
+              <option value="runnable_trail_40_80k" selected>Runnable Trail</option>
+            </optgroup>
+            <optgroup label="Trail - Hilly">
+              <option value="hilly_trail_short">Hilly Trail (Short)</option>
+              <option value="hilly_trail_medium">Hilly Trail (Med)</option>
+              <option value="hilly_trail_long">Hilly Trail (Long)</option>
+            </optgroup>
+            <optgroup label="Mountain/Technical">
+              <option value="technical_mountain_50_70k">Tech Mountain</option>
+              <option value="technical_mountain_long">Tech Mtn (Long)</option>
+              <option value="alpine_ultra_150_200k">Alpine Ultra</option>
+            </optgroup>
+            <optgroup label="Fell/Vertical">
+              <option value="fell_race">Fell Race</option>
+              <option value="vertical_km">Vertical KM</option>
+              <option value="skyrunning">Skyrunning</option>
+            </optgroup>
           </select>
         </div>
 
