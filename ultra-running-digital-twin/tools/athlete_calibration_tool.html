@@ -777,41 +777,62 @@
       // Load from performance_by_gradient if available
       if (athleteProfile.performance_by_gradient) {
         const perf = athleteProfile.performance_by_gradient;
+        console.log('performance_by_gradient found:', perf);
 
         // Map gradient categories to speed values (km/h)
         if (perf.steep_downhill?.speed_kmh) {
           ATHLETE.speeds.steep_d = perf.steep_downhill.speed_kmh;
           console.log('Loaded steep_downhill:', ATHLETE.speeds.steep_d, 'km/h');
+        } else {
+          console.warn('steep_downhill.speed_kmh not found. steep_downhill:', perf.steep_downhill);
         }
+
         if (perf.moderate_downhill?.speed_kmh) {
           ATHLETE.speeds.mod_d = perf.moderate_downhill.speed_kmh;
           console.log('Loaded moderate_downhill:', ATHLETE.speeds.mod_d, 'km/h');
+        } else {
+          console.warn('moderate_downhill.speed_kmh not found. moderate_downhill:', perf.moderate_downhill);
         }
+
         if (perf.flat?.speed_kmh) {
           ATHLETE.speeds.flat = perf.flat.speed_kmh;
           console.log('Loaded flat:', ATHLETE.speeds.flat, 'km/h');
+        } else {
+          console.warn('flat.speed_kmh not found. flat:', perf.flat);
         }
+
         if (perf.moderate_uphill?.speed_kmh) {
           ATHLETE.speeds.mod_u = perf.moderate_uphill.speed_kmh;
           console.log('Loaded moderate_uphill:', ATHLETE.speeds.mod_u, 'km/h');
+        } else {
+          console.warn('moderate_uphill.speed_kmh not found. moderate_uphill:', perf.moderate_uphill);
         }
+
         if (perf.steep_uphill?.speed_kmh) {
           ATHLETE.speeds.steep_u = perf.steep_uphill.speed_kmh;
           console.log('Loaded steep_uphill:', ATHLETE.speeds.steep_u, 'km/h');
+        } else {
+          console.warn('steep_uphill.speed_kmh not found. steep_uphill:', perf.steep_uphill);
         }
+      } else {
+        console.warn('⚠️ performance_by_gradient not found in profile');
       }
 
       // Load technical skill if available
       if (athleteProfile.technical_terrain_capability?.overall_rating) {
         // Convert rating like "Strong (85th percentile)" to a multiplier
         const rating = athleteProfile.technical_terrain_capability.overall_rating;
-        if (rating.includes('Strong') || rating.includes('85th')) {
+        console.log('Technical rating found:', rating);
+
+        if (rating.includes('Strong') || rating.includes('85th') || rating.includes('EXCELLENT')) {
           ATHLETE.tech_skill = 1.15; // 15% advantage
-          console.log('Loaded tech_skill from "Strong" rating:', ATHLETE.tech_skill);
+          console.log('Loaded tech_skill from "Strong/EXCELLENT" rating:', ATHLETE.tech_skill);
         }
       } else if (athleteProfile.technical_terrain_capability?.skill_multiplier) {
         ATHLETE.tech_skill = athleteProfile.technical_terrain_capability.skill_multiplier;
         console.log('Loaded tech_skill:', ATHLETE.tech_skill);
+      } else {
+        console.warn('⚠️ technical_terrain_capability not found in profile');
       }
 
       console.log('✅ Final ATHLETE speeds:', ATHLETE.speeds);
