@@ -1644,10 +1644,14 @@
 
         console.log('Chart data:', { labels, actual, predicted });
 
-        // Destroy existing chart
-        if (window.accuracyChart) {
+        // Destroy existing chart if it exists and has destroy method
+        if (window.accuracyChart && typeof window.accuracyChart.destroy === 'function') {
           console.log('Destroying existing chart');
-          window.accuracyChart.destroy();
+          try {
+            window.accuracyChart.destroy();
+          } catch (e) {
+            console.warn('Failed to destroy chart:', e);
+          }
         }
 
         try {
