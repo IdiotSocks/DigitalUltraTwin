@@ -299,6 +299,7 @@
       <div class="card-title">👤 Athlete Details (Subjective)</div>
       <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">Add qualitative information about your running style, strengths, and preferences. This helps contextualize your calibration data.</p>
 
+      <!-- Basic Info -->
       <div class="grid-2" style="margin-bottom: 16px;">
         <div>
           <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Name</label>
@@ -310,24 +311,194 @@
         </div>
       </div>
 
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Primary Discipline</label>
-        <input type="text" id="athleteDiscipline" class="form-input" placeholder="e.g., Ultra-trail running with marathon speed focus">
+      <div class="grid-2" style="margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Age Group</label>
+          <select id="athleteAgeGroup" class="form-select">
+            <option value="">Select...</option>
+            <option value="18-29">18-29</option>
+            <option value="30-39">30-39</option>
+            <option value="40-49">40-49</option>
+            <option value="50-59">50-59</option>
+            <option value="60+">60+</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Years of Running Experience</label>
+          <select id="athleteExperience" class="form-select">
+            <option value="">Select...</option>
+            <option value="0-2">0-2 years</option>
+            <option value="3-5">3-5 years</option>
+            <option value="6-10">6-10 years</option>
+            <option value="11-15">11-15 years</option>
+            <option value="16+">16+ years</option>
+          </select>
+        </div>
       </div>
 
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Strengths</label>
-        <textarea id="athleteStrengths" class="form-input" rows="3" placeholder="e.g., Technical terrain (+15 percentile), Downhill descending, Pacing discipline, Marathon speed endurance"></textarea>
+      <!-- Running Background -->
+      <div class="grid-2" style="margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Primary Discipline</label>
+          <select id="athleteDiscipline" class="form-select">
+            <option value="">Select...</option>
+            <option value="road_5k_10k">Road 5K-10K</option>
+            <option value="road_half_marathon">Road Half Marathon</option>
+            <option value="road_marathon">Road Marathon</option>
+            <option value="trail_short">Trail Running (0-30km)</option>
+            <option value="trail_medium">Trail Running (30-50km)</option>
+            <option value="ultra_flat">Ultra Running - Flat/Runnable (50km+)</option>
+            <option value="ultra_hilly">Ultra Running - Hilly (50km+)</option>
+            <option value="ultra_mountain">Mountain/Technical Ultra (50km+)</option>
+            <option value="fell_running">Fell Running</option>
+            <option value="skyrunning">Skyrunning/Alpine Ultra</option>
+            <option value="multi_day">Multi-day Ultra</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Training Volume (weekly avg)</label>
+          <select id="athleteVolume" class="form-select">
+            <option value="">Select...</option>
+            <option value="low">Low (0-40km/week)</option>
+            <option value="moderate">Moderate (40-80km/week)</option>
+            <option value="high">High (80-120km/week)</option>
+            <option value="very_high">Very High (120-160km/week)</option>
+            <option value="elite">Elite (160km+/week)</option>
+          </select>
+        </div>
       </div>
 
+      <!-- Terrain Strengths -->
       <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Limiting Factors / Weaknesses</label>
-        <textarea id="athleteLimitations" class="form-input" rows="3" placeholder="e.g., Exercise-induced asthma (temperature-triggered), Uphill power vs field, Cold weather performance (<8°C)"></textarea>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Terrain Strengths (select all that apply)</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12px;">
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_flat" style="width: 16px; height: 16px;">
+            <span>Flat/Road Running</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_technical" style="width: 16px; height: 16px;">
+            <span>Technical Terrain</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_climbing" style="width: 16px; height: 16px;">
+            <span>Uphill Climbing</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_descending" style="width: 16px; height: 16px;">
+            <span>Downhill Descending</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_steep" style="width: 16px; height: 16px;">
+            <span>Steep/Alpine Terrain</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_mud" style="width: 16px; height: 16px;">
+            <span>Mud/Wet Conditions</span>
+          </label>
+        </div>
       </div>
 
+      <!-- Physiological & Mental Strengths -->
       <div style="margin-bottom: 16px;">
-        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Racing Style / Notes</label>
-        <textarea id="athleteNotes" class="form-input" rows="2" placeholder="e.g., Conservative starter, strong finisher, prefers runnable terrain"></textarea>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Physiological & Mental Strengths</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12px;">
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_speed" style="width: 16px; height: 16px;">
+            <span>Speed/Pace (5K-Marathon)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_endurance" style="width: 16px; height: 16px;">
+            <span>Long Endurance (50km+)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_pacing" style="width: 16px; height: 16px;">
+            <span>Pacing Discipline</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_mental" style="width: 16px; height: 16px;">
+            <span>Mental Toughness</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_recovery" style="width: 16px; height: 16px;">
+            <span>Quick Recovery</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="strength_heat" style="width: 16px; height: 16px;">
+            <span>Heat Tolerance</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Pacing & Racing Style -->
+      <div class="grid-2" style="margin-bottom: 16px;">
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Pacing Style</label>
+          <select id="athletePacing" class="form-select">
+            <option value="">Select...</option>
+            <option value="conservative">Conservative Starter</option>
+            <option value="even">Even Pace Throughout</option>
+            <option value="aggressive">Aggressive/Fast Start</option>
+            <option value="negative_split">Negative Split Specialist</option>
+            <option value="variable">Variable (Terrain-Dependent)</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Fueling Strategy</label>
+          <select id="athleteFueling" class="form-select">
+            <option value="">Select...</option>
+            <option value="frequent">Frequent Small Amounts</option>
+            <option value="scheduled">Scheduled Intervals</option>
+            <option value="minimal">Minimal Fueling</option>
+            <option value="high_carb">High Carb Focus</option>
+            <option value="mixed">Mixed Approach</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Limiting Factors -->
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px;">Limiting Factors / Weaknesses</label>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 12px;">
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_heat" style="width: 16px; height: 16px;">
+            <span>Heat Sensitivity</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_cold" style="width: 16px; height: 16px;">
+            <span>Cold Sensitivity</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_altitude" style="width: 16px; height: 16px;">
+            <span>Altitude Sensitivity</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_gi" style="width: 16px; height: 16px;">
+            <span>GI/Fueling Issues</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_respiratory" style="width: 16px; height: 16px;">
+            <span>Respiratory (Asthma, etc.)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_injury" style="width: 16px; height: 16px;">
+            <span>Injury-Prone</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_uphill" style="width: 16px; height: 16px;">
+            <span>Uphill Power</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="limit_technical" style="width: 16px; height: 16px;">
+            <span>Technical Terrain</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Additional Notes -->
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">Additional Notes</label>
+        <textarea id="athleteNotes" class="form-input" rows="2" placeholder="Any other relevant details about your running background, preferences, or goals..."></textarea>
       </div>
 
       <button class="btn btn-primary" onclick="saveAthleteDetails()">💾 Save Details</button>
@@ -717,16 +888,57 @@
 
       if (!athleteProfile.athlete_info) athleteProfile.athlete_info = {};
 
+      // Basic info
       athleteProfile.athlete_info.name = document.getElementById('athleteName').value || '';
       athleteProfile.athlete_info.location = document.getElementById('athleteLocation').value || '';
+      athleteProfile.athlete_info.age_group = document.getElementById('athleteAgeGroup').value || '';
+      athleteProfile.athlete_info.years_experience = document.getElementById('athleteExperience').value || '';
 
       if (!athleteProfile.athlete_info.racing_experience) {
         athleteProfile.athlete_info.racing_experience = {};
       }
 
+      // Running background
       athleteProfile.athlete_info.racing_experience.primary_discipline = document.getElementById('athleteDiscipline').value || '';
-      athleteProfile.athlete_info.racing_experience.strengths = document.getElementById('athleteStrengths').value.split(',').map(s => s.trim()).filter(s => s);
-      athleteProfile.athlete_info.racing_experience.constraints = document.getElementById('athleteLimitations').value.split(',').map(s => s.trim()).filter(s => s);
+      athleteProfile.athlete_info.racing_experience.training_volume = document.getElementById('athleteVolume').value || '';
+      athleteProfile.athlete_info.racing_experience.pacing_style = document.getElementById('athletePacing').value || '';
+      athleteProfile.athlete_info.racing_experience.fueling_strategy = document.getElementById('athleteFueling').value || '';
+
+      // Terrain strengths
+      const terrainStrengths = [];
+      if (document.getElementById('strength_flat').checked) terrainStrengths.push('Flat/Road Running');
+      if (document.getElementById('strength_technical').checked) terrainStrengths.push('Technical Terrain');
+      if (document.getElementById('strength_climbing').checked) terrainStrengths.push('Uphill Climbing');
+      if (document.getElementById('strength_descending').checked) terrainStrengths.push('Downhill Descending');
+      if (document.getElementById('strength_steep').checked) terrainStrengths.push('Steep/Alpine Terrain');
+      if (document.getElementById('strength_mud').checked) terrainStrengths.push('Mud/Wet Conditions');
+
+      // Physiological strengths
+      const physioStrengths = [];
+      if (document.getElementById('strength_speed').checked) physioStrengths.push('Speed/Pace');
+      if (document.getElementById('strength_endurance').checked) physioStrengths.push('Long Endurance');
+      if (document.getElementById('strength_pacing').checked) physioStrengths.push('Pacing Discipline');
+      if (document.getElementById('strength_mental').checked) physioStrengths.push('Mental Toughness');
+      if (document.getElementById('strength_recovery').checked) physioStrengths.push('Quick Recovery');
+      if (document.getElementById('strength_heat').checked) physioStrengths.push('Heat Tolerance');
+
+      // Combine all strengths
+      athleteProfile.athlete_info.racing_experience.strengths = [...terrainStrengths, ...physioStrengths];
+
+      // Limiting factors
+      const limitations = [];
+      if (document.getElementById('limit_heat').checked) limitations.push('Heat Sensitivity');
+      if (document.getElementById('limit_cold').checked) limitations.push('Cold Sensitivity');
+      if (document.getElementById('limit_altitude').checked) limitations.push('Altitude Sensitivity');
+      if (document.getElementById('limit_gi').checked) limitations.push('GI/Fueling Issues');
+      if (document.getElementById('limit_respiratory').checked) limitations.push('Respiratory Issues');
+      if (document.getElementById('limit_injury').checked) limitations.push('Injury-Prone');
+      if (document.getElementById('limit_uphill').checked) limitations.push('Uphill Power');
+      if (document.getElementById('limit_technical').checked) limitations.push('Technical Terrain Weakness');
+
+      athleteProfile.athlete_info.racing_experience.constraints = limitations;
+
+      // Notes
       athleteProfile.athlete_info.racing_experience.racing_style_notes = document.getElementById('athleteNotes').value || '';
 
       alert('✅ Athlete details saved to profile!');
@@ -737,17 +949,52 @@
       if (!athleteProfile || !athleteProfile.athlete_info) return;
 
       const info = athleteProfile.athlete_info;
+
+      // Basic info
       document.getElementById('athleteName').value = info.name || '';
       document.getElementById('athleteLocation').value = info.location || '';
+      document.getElementById('athleteAgeGroup').value = info.age_group || '';
+      document.getElementById('athleteExperience').value = info.years_experience || '';
 
       if (info.racing_experience) {
+        // Running background
         document.getElementById('athleteDiscipline').value = info.racing_experience.primary_discipline || '';
-        document.getElementById('athleteStrengths').value = Array.isArray(info.racing_experience.strengths)
-          ? info.racing_experience.strengths.join(', ')
-          : '';
-        document.getElementById('athleteLimitations').value = Array.isArray(info.racing_experience.constraints)
-          ? info.racing_experience.constraints.join(', ')
-          : '';
+        document.getElementById('athleteVolume').value = info.racing_experience.training_volume || '';
+        document.getElementById('athletePacing').value = info.racing_experience.pacing_style || '';
+        document.getElementById('athleteFueling').value = info.racing_experience.fueling_strategy || '';
+
+        // Load strengths (checkboxes)
+        const strengths = Array.isArray(info.racing_experience.strengths) ? info.racing_experience.strengths : [];
+
+        // Terrain strengths
+        document.getElementById('strength_flat').checked = strengths.includes('Flat/Road Running');
+        document.getElementById('strength_technical').checked = strengths.includes('Technical Terrain');
+        document.getElementById('strength_climbing').checked = strengths.includes('Uphill Climbing');
+        document.getElementById('strength_descending').checked = strengths.includes('Downhill Descending');
+        document.getElementById('strength_steep').checked = strengths.includes('Steep/Alpine Terrain');
+        document.getElementById('strength_mud').checked = strengths.includes('Mud/Wet Conditions');
+
+        // Physiological strengths
+        document.getElementById('strength_speed').checked = strengths.includes('Speed/Pace');
+        document.getElementById('strength_endurance').checked = strengths.includes('Long Endurance');
+        document.getElementById('strength_pacing').checked = strengths.includes('Pacing Discipline');
+        document.getElementById('strength_mental').checked = strengths.includes('Mental Toughness');
+        document.getElementById('strength_recovery').checked = strengths.includes('Quick Recovery');
+        document.getElementById('strength_heat').checked = strengths.includes('Heat Tolerance');
+
+        // Load limitations (checkboxes)
+        const limitations = Array.isArray(info.racing_experience.constraints) ? info.racing_experience.constraints : [];
+
+        document.getElementById('limit_heat').checked = limitations.includes('Heat Sensitivity');
+        document.getElementById('limit_cold').checked = limitations.includes('Cold Sensitivity');
+        document.getElementById('limit_altitude').checked = limitations.includes('Altitude Sensitivity');
+        document.getElementById('limit_gi').checked = limitations.includes('GI/Fueling Issues');
+        document.getElementById('limit_respiratory').checked = limitations.includes('Respiratory Issues');
+        document.getElementById('limit_injury').checked = limitations.includes('Injury-Prone');
+        document.getElementById('limit_uphill').checked = limitations.includes('Uphill Power');
+        document.getElementById('limit_technical').checked = limitations.includes('Technical Terrain Weakness');
+
+        // Notes
         document.getElementById('athleteNotes').value = info.racing_experience.racing_style_notes || '';
       }
 
@@ -1088,128 +1335,173 @@
     function updateChart(courseTypeFactors) {
       console.log('updateChart called with', currentRaces.length, 'races');
 
-      const canvas = document.getElementById('accuracyChart');
-      if (!canvas) {
-        console.error('Canvas element not found');
-        return;
-      }
+      // Wait for DOM to be fully ready
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('accuracyChart');
+        if (!canvas) {
+          console.error('Canvas element not found');
+          return;
+        }
 
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        console.error('Could not get 2D context');
-        return;
-      }
+        // Check if canvas is visible
+        const chartCard = document.getElementById('chartCard');
+        if (!chartCard || chartCard.style.display === 'none') {
+          console.warn('Chart card is not visible, skipping chart render');
+          return;
+        }
 
-      // Get overall factor as fallback
-      const overallFactor = athleteProfile?.calibration?.overall_factor || 1.35;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          console.error('Could not get 2D context');
+          return;
+        }
 
-      const labels = currentRaces.map(r => r.name);
-      const actual = currentRaces.map(r => r.actual_time_hours);
-      const predicted = currentRaces.map(r => {
-        const factor = courseTypeFactors[r.courseType] || overallFactor;
-        return predictRaceTime(r, factor);
-      });
+        // Verify Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+          console.error('Chart.js library not loaded');
+          const placeholder = document.getElementById('chartPlaceholder');
+          if (placeholder) {
+            placeholder.innerHTML = `
+              <div style="font-size: 48px; margin-bottom: 12px; color: #ef4444;">⚠️</div>
+              <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Chart.js Not Loaded</div>
+              <div style="font-size: 12px; margin-top: 8px;">Please refresh the page</div>
+            `;
+          }
+          return;
+        }
 
-      console.log('Chart data:', { labels, actual, predicted });
+        // Check if we have data
+        if (!currentRaces || currentRaces.length === 0) {
+          console.warn('No races to chart');
+          const placeholder = document.getElementById('chartPlaceholder');
+          if (placeholder) {
+            placeholder.innerHTML = `
+              <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+              <div style="font-size: 14px; font-weight: 600;">No Race Data</div>
+              <div style="font-size: 12px; margin-top: 8px;">Add races to see the prediction accuracy chart</div>
+            `;
+            placeholder.style.display = 'block';
+          }
+          return;
+        }
 
-      // Destroy existing chart
-      if (window.accuracyChart) {
-        window.accuracyChart.destroy();
-      }
+        // Get overall factor as fallback
+        const overallFactor = athleteProfile?.calibration?.overall_factor || 1.35;
 
-      try {
-        window.accuracyChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: 'Actual Time (hours)',
-                data: actual,
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                borderColor: '#3b82f6',
-                borderWidth: 2
-              },
-              {
-                label: 'Predicted Time (hours)',
-                data: predicted,
-                backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                borderColor: '#10b981',
-                borderWidth: 2
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'top'
-              },
-              title: {
-                display: true,
-                text: 'Actual vs Predicted Race Times',
-                font: {
-                  size: 16,
-                  weight: 'bold'
+        const labels = currentRaces.map(r => r.name);
+        const actual = currentRaces.map(r => r.actual_time_hours);
+        const predicted = currentRaces.map(r => {
+          const factor = courseTypeFactors[r.courseType] || overallFactor;
+          return predictRaceTime(r, factor);
+        });
+
+        console.log('Chart data:', { labels, actual, predicted });
+
+        // Destroy existing chart
+        if (window.accuracyChart) {
+          console.log('Destroying existing chart');
+          window.accuracyChart.destroy();
+        }
+
+        try {
+          console.log('Creating new chart...');
+          window.accuracyChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Actual Time (hours)',
+                  data: actual,
+                  backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                  borderColor: '#3b82f6',
+                  borderWidth: 2
+                },
+                {
+                  label: 'Predicted Time (hours)',
+                  data: predicted,
+                  backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                  borderColor: '#10b981',
+                  borderWidth: 2
                 }
-              }
+              ]
             },
-            scales: {
-              y: {
-                beginAtZero: true,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'top'
+                },
                 title: {
                   display: true,
-                  text: 'Time (hours)',
+                  text: 'Actual vs Predicted Race Times',
                   font: {
-                    size: 14,
+                    size: 16,
                     weight: 'bold'
-                  }
-                },
-                ticks: {
-                  callback: function(value) {
-                    return value.toFixed(1) + 'h';
                   }
                 }
               },
-              x: {
-                title: {
-                  display: true,
-                  text: 'Race',
-                  font: {
-                    size: 14,
-                    weight: 'bold'
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Time (hours)',
+                    font: {
+                      size: 14,
+                      weight: 'bold'
+                    }
+                  },
+                  ticks: {
+                    callback: function(value) {
+                      return value.toFixed(1) + 'h';
+                    }
                   }
                 },
-                ticks: {
-                  maxRotation: 45,
-                  minRotation: 45
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Race',
+                    font: {
+                      size: 14,
+                      weight: 'bold'
+                    }
+                  },
+                  ticks: {
+                    maxRotation: 45,
+                    minRotation: 45
+                  }
                 }
               }
             }
+          });
+
+          // Hide placeholder
+          const placeholder = document.getElementById('chartPlaceholder');
+          if (placeholder) {
+            placeholder.style.display = 'none';
           }
-        });
 
-        // Hide placeholder
-        const placeholder = document.getElementById('chartPlaceholder');
-        if (placeholder) placeholder.style.display = 'none';
+          console.log('✅ Chart created successfully');
+        } catch (err) {
+          console.error('Error creating chart:', err);
+          console.error('Error stack:', err.stack);
 
-        console.log('✅ Chart created successfully');
-      } catch (err) {
-        console.error('Error creating chart:', err);
-
-        // Show error in placeholder
-        const placeholder = document.getElementById('chartPlaceholder');
-        if (placeholder) {
-          placeholder.innerHTML = `
-            <div style="font-size: 48px; margin-bottom: 12px; color: #ef4444;">⚠️</div>
-            <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Chart Error</div>
-            <div style="font-size: 12px; margin-top: 8px;">${err.message}</div>
-            <div style="font-size: 11px; margin-top: 8px; color: #6b7280;">Check browser console for details</div>
-          `;
+          // Show error in placeholder
+          const placeholder = document.getElementById('chartPlaceholder');
+          if (placeholder) {
+            placeholder.innerHTML = `
+              <div style="font-size: 48px; margin-bottom: 12px; color: #ef4444;">⚠️</div>
+              <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Chart Error</div>
+              <div style="font-size: 12px; margin-top: 8px;">${err.message}</div>
+              <div style="font-size: 11px; margin-top: 8px; color: #6b7280;">Check browser console for details</div>
+            `;
+            placeholder.style.display = 'block';
+          }
         }
-      }
+      });
     }
 
     function exportProfile() {
