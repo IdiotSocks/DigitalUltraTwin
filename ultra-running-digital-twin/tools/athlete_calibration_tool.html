@@ -274,6 +274,51 @@
       display: flex;
       gap: 8px;
     }
+
+    /* Deep Analysis Styles */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .info-box {
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .info-box h4 {
+      color: #1e40af;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .info-item {
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #4b5563;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .info-item span:first-child {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 12px;
+      font-size: 11px;
+      margin: 2px;
+    }
   </style>
 </head>
 <body>
@@ -292,6 +337,17 @@
         Upload Athlete Profile JSON
       </button>
       <span id="profileStatus" style="margin-left: 16px; color: #6b7280;"></span>
+    </div>
+
+    <!-- Deep Profile Analysis -->
+    <div class="card" id="deepAnalysisCard" style="display: none;">
+      <div class="card-title">🧬 Deep Profile Analysis</div>
+      <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">
+        Advanced data extracted from your JSON profile that affects performance calibration. This includes respiratory profile, technical terrain capabilities, nutrition strategy, and environmental tolerances.
+      </p>
+      <div id="deepAnalysisContent" class="info-grid">
+        <!-- Populated by JavaScript -->
+      </div>
     </div>
 
     <!-- Athlete Details -->
@@ -694,7 +750,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
   <script>
     let athleteProfile = null;
     let currentRaces = [];
@@ -758,6 +814,7 @@
           document.getElementById('profileStatus').innerText = `✅ Loaded: ${athleteProfile.athlete_info?.name || 'Unknown'}`;
           loadRaces();
           loadAthleteDetails();
+          renderDeepAnalysis();  // Show advanced profile data
           showCards();
           calculateCalibration();
         } catch(err) {
@@ -878,6 +935,7 @@
       document.getElementById('metricsCard').style.display = 'block';
       document.getElementById('raceTableCard').style.display = 'block';
       document.getElementById('chartCard').style.display = 'block';
+      // deepAnalysisCard visibility is controlled by renderDeepAnalysis()
     }
 
     function saveAthleteDetails() {
@@ -945,10 +1003,17 @@
       console.log('Athlete details saved:', athleteProfile.athlete_info);
     }
 
+    // Helper function for fuzzy matching strings in arrays
+    function hasTerm(arr, term) {
+      if (!Array.isArray(arr)) return false;
+      return arr.some(s => s.toLowerCase().includes(term.toLowerCase()));
+    }
+
     function loadAthleteDetails() {
       if (!athleteProfile || !athleteProfile.athlete_info) return;
 
       const info = athleteProfile.athlete_info;
+      const exp = info.racing_experience || {};
 
       // Basic info
       document.getElementById('athleteName').value = info.name || '';
@@ -956,49 +1021,193 @@
       document.getElementById('athleteAgeGroup').value = info.age_group || '';
       document.getElementById('athleteExperience').value = info.years_experience || '';
 
-      if (info.racing_experience) {
+      if (exp) {
         // Running background
-        document.getElementById('athleteDiscipline').value = info.racing_experience.primary_discipline || '';
-        document.getElementById('athleteVolume').value = info.racing_experience.training_volume || '';
-        document.getElementById('athletePacing').value = info.racing_experience.pacing_style || '';
-        document.getElementById('athleteFueling').value = info.racing_experience.fueling_strategy || '';
+        document.getElementById('athleteDiscipline').value = exp.primary_discipline || '';
+        document.getElementById('athleteVolume').value = exp.training_volume || '';
+        document.getElementById('athletePacing').value = exp.pacing_style || '';
+        document.getElementById('athleteFueling').value = exp.fueling_strategy || '';
 
-        // Load strengths (checkboxes)
-        const strengths = Array.isArray(info.racing_experience.strengths) ? info.racing_experience.strengths : [];
+        // Load strengths using fuzzy matching
+        const strengths = exp.strengths || [];
 
-        // Terrain strengths
-        document.getElementById('strength_flat').checked = strengths.includes('Flat/Road Running');
-        document.getElementById('strength_technical').checked = strengths.includes('Technical Terrain');
-        document.getElementById('strength_climbing').checked = strengths.includes('Uphill Climbing');
-        document.getElementById('strength_descending').checked = strengths.includes('Downhill Descending');
-        document.getElementById('strength_steep').checked = strengths.includes('Steep/Alpine Terrain');
-        document.getElementById('strength_mud').checked = strengths.includes('Mud/Wet Conditions');
+        // Terrain strengths - fuzzy match for strings like "Technical terrain (15 percentile point advantage)"
+        document.getElementById('strength_flat').checked = hasTerm(strengths, 'flat') || hasTerm(strengths, 'road');
+        document.getElementById('strength_technical').checked = hasTerm(strengths, 'technical');
+        document.getElementById('strength_climbing').checked = hasTerm(strengths, 'climbing') || hasTerm(strengths, 'uphill');
+        document.getElementById('strength_descending').checked = hasTerm(strengths, 'descending') || hasTerm(strengths, 'downhill');
+        document.getElementById('strength_steep').checked = hasTerm(strengths, 'steep') || hasTerm(strengths, 'alpine');
+        document.getElementById('strength_mud').checked = hasTerm(strengths, 'mud') || hasTerm(strengths, 'wet');
 
         // Physiological strengths
-        document.getElementById('strength_speed').checked = strengths.includes('Speed/Pace');
-        document.getElementById('strength_endurance').checked = strengths.includes('Long Endurance');
-        document.getElementById('strength_pacing').checked = strengths.includes('Pacing Discipline');
-        document.getElementById('strength_mental').checked = strengths.includes('Mental Toughness');
-        document.getElementById('strength_recovery').checked = strengths.includes('Quick Recovery');
-        document.getElementById('strength_heat').checked = strengths.includes('Heat Tolerance');
+        document.getElementById('strength_speed').checked = hasTerm(strengths, 'speed') || hasTerm(strengths, 'pace') || hasTerm(strengths, 'marathon');
+        document.getElementById('strength_endurance').checked = hasTerm(strengths, 'endurance') || hasTerm(strengths, 'ultra');
+        document.getElementById('strength_pacing').checked = hasTerm(strengths, 'pacing') || hasTerm(strengths, 'discipline');
+        document.getElementById('strength_mental').checked = hasTerm(strengths, 'mental');
+        document.getElementById('strength_recovery').checked = hasTerm(strengths, 'recovery');
+        document.getElementById('strength_heat').checked = hasTerm(strengths, 'heat tolerance');
 
-        // Load limitations (checkboxes)
-        const limitations = Array.isArray(info.racing_experience.constraints) ? info.racing_experience.constraints : [];
+        // Load limitations using fuzzy matching
+        const limitations = exp.constraints || [];
+        const respProfile = athleteProfile.respiratory_profile || {};
+        const envProfile = athleteProfile.environmental_tolerances || {};
 
-        document.getElementById('limit_heat').checked = limitations.includes('Heat Sensitivity');
-        document.getElementById('limit_cold').checked = limitations.includes('Cold Sensitivity');
-        document.getElementById('limit_altitude').checked = limitations.includes('Altitude Sensitivity');
-        document.getElementById('limit_gi').checked = limitations.includes('GI/Fueling Issues');
-        document.getElementById('limit_respiratory').checked = limitations.includes('Respiratory Issues');
-        document.getElementById('limit_injury').checked = limitations.includes('Injury-Prone');
-        document.getElementById('limit_uphill').checked = limitations.includes('Uphill Power');
-        document.getElementById('limit_technical').checked = limitations.includes('Technical Terrain Weakness');
+        document.getElementById('limit_heat').checked = hasTerm(limitations, 'heat');
+        document.getElementById('limit_cold').checked = hasTerm(limitations, 'cold') ||
+          (envProfile.temperature && envProfile.temperature.cold_threshold_c > 5);
+        document.getElementById('limit_altitude').checked = hasTerm(limitations, 'altitude') ||
+          (envProfile.altitude && envProfile.altitude.challenging_m);
+        document.getElementById('limit_gi').checked = hasTerm(limitations, 'gi') || hasTerm(limitations, 'fueling');
+        document.getElementById('limit_respiratory').checked = hasTerm(limitations, 'respiratory') || hasTerm(limitations, 'asthma') ||
+          (respProfile.condition && respProfile.condition.toLowerCase().includes('asthma'));
+        document.getElementById('limit_injury').checked = hasTerm(limitations, 'injury');
+        document.getElementById('limit_uphill').checked = hasTerm(limitations, 'uphill') || hasTerm(limitations, 'power');
+        document.getElementById('limit_technical').checked = hasTerm(limitations, 'technical terrain');
 
         // Notes
-        document.getElementById('athleteNotes').value = info.racing_experience.racing_style_notes || '';
+        document.getElementById('athleteNotes').value = exp.racing_style_notes || '';
       }
 
-      console.log('✅ Loaded athlete details from profile');
+      console.log('✅ Loaded athlete details from profile (with fuzzy matching)');
+    }
+
+    // Render deep analysis from complex JSON data
+    function renderDeepAnalysis() {
+      const container = document.getElementById('deepAnalysisContent');
+      container.innerHTML = '';
+
+      let hasData = false;
+
+      // Respiratory Profile
+      if (athleteProfile.respiratory_profile) {
+        hasData = true;
+        const rp = athleteProfile.respiratory_profile;
+        let html = `<div class="info-box"><h4>🫁 Respiratory Profile</h4>`;
+        if (rp.condition) html += `<div class="info-item"><span>Condition:</span> <span>${rp.condition}</span></div>`;
+        if (rp.temperature_thresholds?.high_risk_c) {
+          html += `<div class="info-item"><span>High Risk Temp:</span> <span style="color:#ef4444;font-weight:700;">&lt; ${rp.temperature_thresholds.high_risk_c}°C</span></div>`;
+        }
+        if (rp.vulnerable_zones?.early_race_km) {
+          html += `<div class="info-item"><span>Vulnerable Zone:</span> <span>km ${rp.vulnerable_zones.early_race_km.start_km}-${rp.vulnerable_zones.early_race_km.end_km}</span></div>`;
+        }
+        if (rp.mitigation_strategies && Array.isArray(rp.mitigation_strategies)) {
+          html += `<div style="margin-top:8px;"><strong style="font-size:11px;">Mitigation:</strong><br>`;
+          rp.mitigation_strategies.forEach(s => {
+            html += `<span class="tag">${s}</span>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Technical Terrain
+      if (athleteProfile.technical_terrain_capability) {
+        hasData = true;
+        const tt = athleteProfile.technical_terrain_capability;
+        let html = `<div class="info-box"><h4>⛰️ Technical Capability</h4>`;
+        if (tt.overall_rating) {
+          html += `<div class="info-item"><span>Overall Rating:</span> <span style="font-weight:700;color:#10b981;">${tt.overall_rating}</span></div>`;
+        }
+        if (tt.validated_multipliers) {
+          html += `<div style="margin-top:8px;"><strong style="font-size:11px;">Validated Multipliers:</strong><br>`;
+          Object.entries(tt.validated_multipliers).forEach(([k, v]) => {
+            html += `<span class="tag">${k.replace(/_/g, ' ')}: ${v.multiplier || v}</span>`;
+          });
+          html += `</div>`;
+        }
+        if (tt.relative_field_position) {
+          html += `<div class="info-item" style="margin-top:8px;"><span>Field Position:</span> <span>${tt.relative_field_position}</span></div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Nutrition Strategy
+      if (athleteProfile.nutrition_strategy) {
+        hasData = true;
+        const nut = athleteProfile.nutrition_strategy;
+        let html = `<div class="info-box"><h4>🥣 Nutrition Strategy</h4>`;
+        if (nut.carbohydrate_intake?.optimal_target_gh) {
+          html += `<div class="info-item"><span>Carb Target:</span> <span style="font-weight:700;">${nut.carbohydrate_intake.optimal_target_gh}g/hr</span></div>`;
+        }
+        if (nut.hydration?.fluid_optimal_mlh) {
+          html += `<div class="info-item"><span>Fluid Target:</span> <span style="font-weight:700;">${nut.hydration.fluid_optimal_mlh}ml/hr</span></div>`;
+        }
+        if (nut.preferred_products && Array.isArray(nut.preferred_products)) {
+          html += `<div style="margin-top:8px;"><strong style="font-size:11px;">Preferred Products:</strong><br>`;
+          nut.preferred_products.forEach(p => {
+            html += `<span class="tag">${p}</span>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Environmental Tolerances
+      if (athleteProfile.environmental_tolerances?.temperature) {
+        hasData = true;
+        const temp = athleteProfile.environmental_tolerances.temperature;
+        let html = `<div class="info-box"><h4>🌡️ Environmental Tolerances</h4>`;
+        if (temp.optimal_range_c && Array.isArray(temp.optimal_range_c)) {
+          html += `<div class="info-item"><span>Optimal Range:</span> <span style="font-weight:700;color:#10b981;">${temp.optimal_range_c[0]}-${temp.optimal_range_c[1]}°C</span></div>`;
+        }
+        if (temp.cold_threshold_c) {
+          html += `<div class="info-item"><span>Cold Threshold:</span> <span style="color:#3b82f6;font-weight:700;">&lt; ${temp.cold_threshold_c}°C</span></div>`;
+        }
+        if (temp.heat_threshold_c) {
+          html += `<div class="info-item"><span>Heat Threshold:</span> <span style="color:#ef4444;font-weight:700;">&gt; ${temp.heat_threshold_c}°C</span></div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Altitude Sensitivity
+      if (athleteProfile.environmental_tolerances?.altitude) {
+        hasData = true;
+        const alt = athleteProfile.environmental_tolerances.altitude;
+        let html = `<div class="info-box"><h4>🏔️ Altitude Sensitivity</h4>`;
+        if (alt.acclimatization_status) {
+          html += `<div class="info-item"><span>Acclimatization:</span> <span>${alt.acclimatization_status}</span></div>`;
+        }
+        if (alt.challenging_m) {
+          html += `<div class="info-item"><span>Challenging Above:</span> <span style="font-weight:700;">${alt.challenging_m}m</span></div>`;
+        }
+        if (alt.performance_drop && alt.performance_drop.above_m) {
+          html += `<div class="info-item"><span>Performance Drop:</span> <span>${alt.performance_drop.percentage}% above ${alt.performance_drop.above_m}m</span></div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Pacing Strategy
+      if (athleteProfile.pacing_strategy) {
+        hasData = true;
+        const pacing = athleteProfile.pacing_strategy;
+        let html = `<div class="info-box"><h4>⏱️ Pacing Strategy</h4>`;
+        if (pacing.default_approach) {
+          html += `<div class="info-item"><span>Default Approach:</span> <span>${pacing.default_approach}</span></div>`;
+        }
+        if (pacing.race_specific && typeof pacing.race_specific === 'object') {
+          html += `<div style="margin-top:8px;"><strong style="font-size:11px;">Race-Specific:</strong><br>`;
+          Object.entries(pacing.race_specific).forEach(([k, v]) => {
+            html += `<span class="tag">${k}: ${v}</span>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Show or hide the deep analysis card
+      if (hasData) {
+        document.getElementById('deepAnalysisCard').style.display = 'block';
+        console.log('✅ Rendered deep profile analysis');
+      } else {
+        document.getElementById('deepAnalysisCard').style.display = 'none';
+        console.log('ℹ️ No deep profile data to display');
+      }
     }
 
     function showAddRaceModal() {
