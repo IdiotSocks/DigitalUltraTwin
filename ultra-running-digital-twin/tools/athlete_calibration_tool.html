@@ -807,26 +807,52 @@
       const file = e.target.files[0];
       if (!file) return;
 
+      console.log('📁 Loading profile file:', file.name);
       const reader = new FileReader();
       reader.onload = function(evt) {
         try {
+          console.log('📄 Parsing JSON...');
           athleteProfile = JSON.parse(evt.target.result);
+          console.log('✅ Profile parsed successfully:', athleteProfile);
+
           document.getElementById('profileStatus').innerText = `✅ Loaded: ${athleteProfile.athlete_info?.name || 'Unknown'}`;
+
+          console.log('🏃 Loading races...');
           loadRaces();
+          console.log('Loaded', currentRaces.length, 'races:', currentRaces);
+
+          console.log('👤 Loading athlete details...');
           loadAthleteDetails();
-          renderDeepAnalysis();  // Show advanced profile data
+
+          console.log('🧬 Rendering deep analysis...');
+          renderDeepAnalysis();
+
+          console.log('📋 Showing cards...');
           showCards();
+
+          console.log('🔢 Calculating calibration...');
           calculateCalibration();
+
+          console.log('✅ Profile loading complete!');
         } catch(err) {
-          alert('Error loading profile: ' + err.message);
+          console.error('❌ Error loading profile:', err);
+          console.error('Error stack:', err.stack);
+          alert('Error loading profile: ' + err.message + '\n\nCheck browser console (F12) for details.');
         }
       };
       reader.readAsText(file);
     });
 
     function loadRaces() {
+      console.log('loadRaces() called');
       currentRaces = [];
+
+      console.log('athleteProfile:', athleteProfile);
+      console.log('athleteProfile.athlete_info:', athleteProfile?.athlete_info);
+      console.log('race_history:', athleteProfile?.athlete_info?.race_history);
+
       if (athleteProfile.athlete_info && athleteProfile.athlete_info.race_history) {
+        console.log('Found', athleteProfile.athlete_info.race_history.length, 'races in profile');
         currentRaces = athleteProfile.athlete_info.race_history.map(race => {
           let fitness = race.fitness_level;
           let ctl = race.ctl;
@@ -853,6 +879,9 @@
             isPrimary: race.status?.includes('BASELINE') || race.rank === 1
           };
         });
+        console.log('✅ loadRaces complete. currentRaces:', currentRaces);
+      } else {
+        console.warn('⚠️ No race_history found in profile');
       }
     }
 
@@ -1325,11 +1354,15 @@
     }
 
     function calculateCalibration() {
+      console.log('calculateCalibration() called with', currentRaces.length, 'races');
+
       if (currentRaces.length === 0) {
+        console.error('❌ No races to calibrate');
         alert('No races to calibrate. Add races first.');
         return;
       }
 
+      console.log('Starting calibration optimization...');
       // Calculate predicted time for each race using different calibration attempts
       const calibrationRange = [];
       for (let factor = 1.0; factor <= 2.0; factor += 0.01) {
@@ -1424,6 +1457,11 @@
       athleteProfile.calibration.mean_error_minutes = meanError * 60;
       athleteProfile.calibration.confidence = confidence;
       athleteProfile.calibration.last_calculated = new Date().toISOString();
+
+      console.log('✅ Calibration complete!');
+      console.log('Overall factor:', optimalFactor);
+      console.log('Mean error:', meanError * 60, 'minutes');
+      console.log('Course type factors:', courseTypeFactors);
     }
 
     function predictRaceTime(race, calibrationFactor) {
