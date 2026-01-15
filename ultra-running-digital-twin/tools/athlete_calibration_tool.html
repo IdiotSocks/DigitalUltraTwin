@@ -1408,12 +1408,28 @@
 
     function calculateCalibration() {
       console.log('calculateCalibration() called with', currentRaces.length, 'races');
+      console.log('Current ATHLETE speeds:', ATHLETE.speeds);
+      console.log('Current ATHLETE tech_skill:', ATHLETE.tech_skill);
 
       if (currentRaces.length === 0) {
         console.error('❌ No races to calibrate');
         alert('No races to calibrate. Add races first.');
         return;
       }
+
+      // Log all races being calibrated
+      console.log('Races for calibration:');
+      currentRaces.forEach((race, i) => {
+        console.log(`  [${i}] ${race.name}:`, {
+          distance_km: race.distance_km,
+          elevation_m: race.elevation_m,
+          avg_gradient: ((race.elevation_m / race.distance_km) / 10).toFixed(2) + '%',
+          fitness: race.fitness?.toFixed(3),
+          ctl: race.ctl,
+          actual_time: race.actual_time_hours?.toFixed(2) + 'h',
+          courseType: race.courseType
+        });
+      });
 
       console.log('Starting calibration optimization...');
       // Calculate predicted time for each race using different calibration attempts
@@ -1513,8 +1529,26 @@
 
       console.log('✅ Calibration complete!');
       console.log('Overall factor:', optimalFactor);
-      console.log('Mean error:', meanError * 60, 'minutes');
+      console.log('Mean error:', (meanError * 60).toFixed(1), 'minutes');
       console.log('Course type factors:', courseTypeFactors);
+
+      // Log final predictions for each race
+      console.log('\nFinal predictions with calibration:');
+      currentRaces.forEach(race => {
+        const factor = courseTypeFactors[race.courseType] || optimalFactor;
+        const predicted = predictRaceTime(race, factor);
+        const error = predicted - race.actual_time_hours;
+        const errorPct = (error / race.actual_time_hours) * 100;
+
+        console.log(`${race.name}:`, {
+          actual: formatHoursToTime(race.actual_time_hours),
+          predicted: formatHoursToTime(predicted),
+          error: (error * 60).toFixed(1) + ' min',
+          errorPct: errorPct.toFixed(1) + '%',
+          factor: factor.toFixed(3),
+          courseType: race.courseType
+        });
+      });
     }
 
     function predictRaceTime(race, calibrationFactor) {
