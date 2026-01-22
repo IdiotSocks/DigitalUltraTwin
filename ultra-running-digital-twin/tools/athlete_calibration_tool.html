@@ -598,7 +598,8 @@
         <div>
           <button class="btn btn-success" onclick="showAddRaceModal()">+ Add Race</button>
           <button class="btn btn-primary" onclick="calculateCalibration()">🔄 Recalculate</button>
-          <button class="btn btn-secondary" onclick="exportProfile()">💾 Export Profile</button>
+          <button class="btn btn-secondary" onclick="exportProfile()">💾 Export v3</button>
+          <button class="btn btn-secondary" onclick="exportV4Profile()" style="background: #8b5cf6;">💾 Export v4 Modular</button>
         </div>
       </div>
       <div style="overflow-x: auto;">
@@ -1901,6 +1902,264 @@
       URL.revokeObjectURL(url);
 
       alert('Profile exported successfully!');
+    }
+
+    function exportV4Profile() {
+      if (!athleteProfile) {
+        alert('No profile loaded');
+        return;
+      }
+
+      const athleteName = athleteProfile.athlete_info?.name?.toLowerCase().replace(/\s+/g, '_') || 'athlete';
+      const today = new Date().toISOString().split('T')[0];
+
+      // ========== 1. Create athlete_state.json ==========
+      const athleteState = {
+        metadata: {
+          athlete_id: athleteName,
+          version: '4.0',
+          last_updated: today,
+          update_cadence: 'monthly',
+          notes: 'Slow-changing athlete truth - only update when physiology changes'
+        },
+        physiology: {
+          vo2_max: {
+            estimate_ml_kg_min: athleteProfile.physiological_profile?.vo2_max || 57,
+            method: 'estimated_from_race_performance'
+          },
+          heart_rate: {
+            max_hr: athleteProfile.physiological_profile?.max_hr || 185,
+            threshold_hr: athleteProfile.physiological_profile?.threshold_hr || 168,
+            resting_hr: athleteProfile.physiological_profile?.resting_hr || 48
+          },
+          running_economy: athleteProfile.physiological_profile?.running_economy || 'good'
+        },
+        respiratory_profile: athleteProfile.respiratory_profile || {
+          condition: 'none',
+          temperature_thresholds: {
+            high_risk_c: null,
+            moderate_risk_c: null,
+            optimal_min_c: 12,
+            optimal_max_c: 20
+          }
+        },
+        technical_skill: {
+          overall: athleteProfile.technical_terrain_capability?.overall_rating || 'good',
+          relative_percentile_gain: (() => {
+            const advantage = athleteProfile.technical_terrain_capability?.competitive_advantage;
+            if (advantage && advantage.includes('+')) {
+              const match = advantage.match(/\+(\d+)/);
+              return match ? parseInt(match[1]) : 0;
+            }
+            return 0;
+          })(),
+          terrain_types: athleteProfile.technical_terrain_capability?.terrain_types || []
+        },
+        injury_profile: athleteProfile.injury_history_and_resilience || {
+          current_injuries: [],
+          chronic_issues: [],
+          injury_risk_areas: []
+        }
+      };
+
+      // ========== 2. Create performance_model.json ==========
+      const performanceModel = {
+        model_version: '4.0',
+        fitness_anchor: {
+          baseline_race: athleteProfile.fitness_baseline?.baseline_race || 'Not set',
+          baseline_ctl: athleteProfile.fitness_baseline?.baseline_ctl || 100,
+          baseline_fitness: 1.0,
+          baseline_date: athleteProfile.fitness_baseline?.baseline_date || today
+        },
+        gradient_speeds: {
+          steep_downhill: {
+            range_pct: [-50, -15],
+            kmh: {
+              mean: ATHLETE.speeds.steep_d,
+              p10: parseFloat((ATHLETE.speeds.steep_d * 0.91).toFixed(2)),
+              p90: parseFloat((ATHLETE.speeds.steep_d * 1.08).toFixed(2))
+            }
+          },
+          moderate_downhill: {
+            range_pct: [-15, -5],
+            kmh: {
+              mean: ATHLETE.speeds.mod_d,
+              p10: parseFloat((ATHLETE.speeds.mod_d * 0.92).toFixed(2)),
+              p90: parseFloat((ATHLETE.speeds.mod_d * 1.08).toFixed(2))
+            }
+          },
+          flat: {
+            range_pct: [-5, 5],
+            kmh: {
+              mean: ATHLETE.speeds.flat,
+              p10: parseFloat((ATHLETE.speeds.flat * 0.91).toFixed(2)),
+              p90: parseFloat((ATHLETE.speeds.flat * 1.09).toFixed(2))
+            }
+          },
+          moderate_uphill: {
+            range_pct: [5, 15],
+            kmh: {
+              mean: ATHLETE.speeds.mod_u,
+              p10: parseFloat((ATHLETE.speeds.mod_u * 0.91).toFixed(2)),
+              p90: parseFloat((ATHLETE.speeds.mod_u * 1.09).toFixed(2))
+            }
+          },
+          steep_uphill: {
+            range_pct: [15, 50],
+            kmh: {
+              mean: ATHLETE.speeds.steep_u,
+              p10: parseFloat((ATHLETE.speeds.steep_u * 0.89).toFixed(2)),
+              p90: parseFloat((ATHLETE.speeds.steep_u * 1.11).toFixed(2))
+            }
+          }
+        },
+        terrain_multipliers: {
+          road: 1.0,
+          runnable_trail: 0.96,
+          technical_dry: 0.90,
+          technical_wet: 0.82,
+          mud: 0.85,
+          snow: 0.78,
+          sand: 0.75
+        },
+        environmental_penalties: {
+          heat: {
+            '>25c': 0.92,
+            '>30c': 0.85,
+            '>35c': 0.75
+          },
+          wind: {
+            'strong_headwind': 0.94,
+            'very_strong': 0.88
+          }
+        },
+        fatigue_model: {
+          inflection_distance_km: 55,
+          fade_rate_per_km: 0.003,
+          max_fade_factor: 0.80
+        },
+        calibration: athleteProfile.calibration || {
+          overall_factor: 1.0,
+          by_course_type: {},
+          races_used: currentRaces.length,
+          last_calibrated: today
+        },
+        race_history: currentRaces.map((race, index) => ({
+          rank: index + 1,
+          race: race.name,
+          date: race.date,
+          type: race.courseType,
+          distance_km: race.distance_km,
+          elevation_m: race.elevation_m,
+          finish_time: formatHoursToTime(race.actual_time_hours),
+          fitness_level: race.fitness,
+          ctl: race.ctl,
+          percentile: race.percentile,
+          conditions: race.temperature ? `${race.temperature}°C` : undefined,
+          notes: race.notes,
+          status: race.isPrimary ? 'BASELINE_CALIBRATION_RACE' : undefined
+        }))
+      };
+
+      // ========== 3. Create failure_model.json ==========
+      const failureModel = {
+        model_version: '4.0',
+        failure_modes: {
+          respiratory: {
+            condition: athleteState.respiratory_profile?.condition || 'none',
+            incident_probability: (() => {
+              const highRisk = athleteState.respiratory_profile?.temperature_thresholds?.high_risk_c;
+              const modRisk = athleteState.respiratory_profile?.temperature_thresholds?.moderate_risk_c;
+              if (highRisk && modRisk) {
+                return {
+                  [`<${highRisk}c`]: 0.35,
+                  [`${highRisk}-${modRisk}c`]: 0.18,
+                  [`${modRisk}-12c`]: 0.08,
+                  '>=12c': 0.05
+                };
+              }
+              return {
+                '<8c': 0.35,
+                '8-10c': 0.18,
+                '10-12c': 0.08,
+                '>=12c': 0.05
+              };
+            })(),
+            vulnerable_window_km: [5, 25],
+            recovery_probability: 0.67,
+            impact_if_triggered: {
+              pace_multiplier: 0.85,
+              duration_minutes: [10, 40]
+            },
+            mitigation: {
+              hr_discipline_below: 150,
+              inhaler_prerace: true,
+              warmup_critical: true
+            }
+          },
+          nutrition: {
+            bonk_probability_by_intake: {
+              '<40gh': 0.60,
+              '40-60gh': 0.25,
+              '60-80gh': 0.10,
+              '>=80gh': 0.05
+            },
+            gi_distress_probability: {
+              '<60gh': 0.05,
+              '60-90gh': 0.10,
+              '>90gh': 0.25
+            },
+            impact: {
+              bonk_pace_multiplier: 0.65,
+              gi_pace_multiplier: 0.80
+            }
+          },
+          musculoskeletal: {
+            injury_risk_areas: athleteState.injury_profile?.injury_risk_areas || [],
+            chronic_issues: athleteState.injury_profile?.chronic_issues || [],
+            fatigue_injury_probability: {
+              'first_50km': 0.02,
+              '50-80km': 0.05,
+              '>80km': 0.12
+            }
+          }
+        }
+      };
+
+      // ========== 4. Download all files ==========
+      const downloadJSON = (data, filename) => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      // Small delay between downloads to ensure all files download properly
+      downloadJSON(athleteState, `${athleteName}_athlete_state.json`);
+      setTimeout(() => {
+        downloadJSON(performanceModel, `${athleteName}_performance_model.json`);
+      }, 100);
+      setTimeout(() => {
+        downloadJSON(failureModel, `${athleteName}_failure_model.json`);
+      }, 200);
+
+      alert(`✅ v4 Profile exported successfully!
+
+📦 3 files downloaded:
+1. ${athleteName}_athlete_state.json
+2. ${athleteName}_performance_model.json
+3. ${athleteName}_failure_model.json
+
+🔄 These files use the new v4 modular architecture with:
+• Explicit gradient_speeds.{category}.kmh.mean structure
+• Probabilistic distributions (p10/mean/p90)
+• Failure mode probabilities
+• Clear separation of concerns
+
+💡 Load these in the main dashboard using the "v4 Modular" option.`);
     }
 
     // GPX upload handler
