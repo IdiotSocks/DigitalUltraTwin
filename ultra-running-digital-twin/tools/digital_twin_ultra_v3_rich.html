@@ -342,13 +342,53 @@
 
       <!-- Fitness Card -->
       <div class="glass-card" style="padding: 18px;">
-        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Fitness</div>
+        <div class="section-title" style="font-size: 11px; margin-bottom: 12px;">📊 Athlete Profile</div>
 
-        <input type="file" id="profileInput" accept=".json" style="display: none;">
-        <button type="button" class="upload-btn" onclick="document.getElementById('profileInput').click()">
-          📁 Upload Athlete Profile
-        </button>
-        <div class="file-status" id="profileStatus">No file selected</div>
+        <!-- v3/v4 Toggle -->
+        <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: center;">
+          <button id="toggleV3" type="button" onclick="switchProfileVersion('v3')" class="upload-btn" style="padding: 6px 12px; font-size: 10px; background: rgba(59, 130, 246, 0.8);">
+            v3 Single File
+          </button>
+          <button id="toggleV4" type="button" onclick="switchProfileVersion('v4')" class="upload-btn" style="padding: 6px 12px; font-size: 10px; background: rgba(255, 255, 255, 0.3);">
+            v4 Modular
+          </button>
+        </div>
+
+        <!-- v3 Single File Upload -->
+        <div id="v3Upload" style="display: block;">
+          <input type="file" id="profileInput" accept=".json" style="display: none;">
+          <button type="button" class="upload-btn" onclick="document.getElementById('profileInput').click()">
+            📁 Upload Profile (v3)
+          </button>
+          <div class="file-status" id="profileStatus">No file selected</div>
+        </div>
+
+        <!-- v4 Multi-File Upload -->
+        <div id="v4Upload" style="display: none;">
+          <div style="font-size: 10px; color: rgba(255,255,255,0.8); margin-bottom: 8px;">Core Files:</div>
+
+          <input type="file" id="athleteStateInput" accept=".json" style="display: none;">
+          <button type="button" class="upload-btn" onclick="document.getElementById('athleteStateInput').click()" style="padding: 8px 12px; font-size: 10px; margin-bottom: 6px;">
+            📋 Athlete State
+          </button>
+          <div class="file-status" id="athleteStateStatus" style="font-size: 9px; margin-bottom: 6px;">Required</div>
+
+          <input type="file" id="performanceModelInput" accept=".json" style="display: none;">
+          <button type="button" class="upload-btn" onclick="document.getElementById('performanceModelInput').click()" style="padding: 8px 12px; font-size: 10px; margin-bottom: 6px;">
+            ⚡ Performance Model
+          </button>
+          <div class="file-status" id="performanceModelStatus" style="font-size: 9px; margin-bottom: 6px;">Required</div>
+
+          <input type="file" id="failureModelInput" accept=".json" style="display: none;">
+          <button type="button" class="upload-btn" onclick="document.getElementById('failureModelInput').click()" style="padding: 8px 12px; font-size: 10px; margin-bottom: 6px;">
+            ⚠️ Failure Model
+          </button>
+          <div class="file-status" id="failureModelStatus" style="font-size: 9px; margin-bottom: 6px;">Optional</div>
+
+          <button type="button" class="upload-btn" onclick="loadV4Profile()" style="padding: 10px; font-size: 11px; background: rgba(16, 185, 129, 0.8); margin-top: 8px;">
+            ✅ Load v4 Profile
+          </button>
+        </div>
 
         <div class="compact-input-group">
           <label class="input-label" style="font-size: 10px;">Course Type</label>
@@ -1273,6 +1313,147 @@
       };
       reader.readAsText(file);
     });
+
+    // ========== V4 MODULAR PROFILE LOADING ==========
+    let athleteState = null;
+    let performanceModel = null;
+    let failureModel = null;
+
+    function switchProfileVersion(version) {
+      if (version === 'v3') {
+        document.getElementById('v3Upload').style.display = 'block';
+        document.getElementById('v4Upload').style.display = 'none';
+        document.getElementById('toggleV3').style.background = 'rgba(59, 130, 246, 0.8)';
+        document.getElementById('toggleV4').style.background = 'rgba(255, 255, 255, 0.3)';
+      } else {
+        document.getElementById('v3Upload').style.display = 'none';
+        document.getElementById('v4Upload').style.display = 'block';
+        document.getElementById('toggleV3').style.background = 'rgba(255, 255, 255, 0.3)';
+        document.getElementById('toggleV4').style.background = 'rgba(59, 130, 246, 0.8)';
+      }
+    }
+
+    // Load athlete_state.json
+    document.getElementById('athleteStateInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          athleteState = JSON.parse(evt.target.result);
+          document.getElementById('athleteStateStatus').innerText = `✅ ${file.name}`;
+          document.getElementById('athleteStateStatus').style.color = 'rgba(16, 185, 129, 1)';
+          console.log('✅ Loaded athlete_state:', athleteState);
+        } catch(err) {
+          document.getElementById('athleteStateStatus').innerText = `❌ Error`;
+          alert('Error loading athlete_state: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Load performance_model.json
+    document.getElementById('performanceModelInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          performanceModel = JSON.parse(evt.target.result);
+          document.getElementById('performanceModelStatus').innerText = `✅ ${file.name}`;
+          document.getElementById('performanceModelStatus').style.color = 'rgba(16, 185, 129, 1)';
+          console.log('✅ Loaded performance_model:', performanceModel);
+        } catch(err) {
+          document.getElementById('performanceModelStatus').innerText = `❌ Error`;
+          alert('Error loading performance_model: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Load failure_model.json
+    document.getElementById('failureModelInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          failureModel = JSON.parse(evt.target.result);
+          document.getElementById('failureModelStatus').innerText = `✅ ${file.name}`;
+          document.getElementById('failureModelStatus').style.color = 'rgba(16, 185, 129, 1)';
+          console.log('✅ Loaded failure_model:', failureModel);
+        } catch(err) {
+          document.getElementById('failureModelStatus').innerText = `❌ Error`;
+          alert('Error loading failure_model: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Combine v4 files and load
+    function loadV4Profile() {
+      if (!athleteState || !performanceModel) {
+        alert('Please load required files: athlete_state and performance_model');
+        return;
+      }
+
+      console.log('🚀 Loading v4 profile...');
+
+      // Load speeds from performance_model.gradient_speeds
+      if (performanceModel.gradient_speeds) {
+        const gs = performanceModel.gradient_speeds;
+
+        if (gs.steep_downhill?.kmh?.mean) {
+          ATHLETE.speeds.steep_d = gs.steep_downhill.kmh.mean;
+          console.log('✅ Loaded steep_downhill:', ATHLETE.speeds.steep_d, 'km/h');
+        }
+        if (gs.moderate_downhill?.kmh?.mean) {
+          ATHLETE.speeds.mod_d = gs.moderate_downhill.kmh.mean;
+          console.log('✅ Loaded moderate_downhill:', ATHLETE.speeds.mod_d, 'km/h');
+        }
+        if (gs.flat?.kmh?.mean) {
+          ATHLETE.speeds.flat = gs.flat.kmh.mean;
+          console.log('✅ Loaded flat:', ATHLETE.speeds.flat, 'km/h');
+        }
+        if (gs.moderate_uphill?.kmh?.mean) {
+          ATHLETE.speeds.mod_u = gs.moderate_uphill.kmh.mean;
+          console.log('✅ Loaded moderate_uphill:', ATHLETE.speeds.mod_u, 'km/h');
+        }
+        if (gs.steep_uphill?.kmh?.mean) {
+          ATHLETE.speeds.steep_u = gs.steep_uphill.kmh.mean;
+          console.log('✅ Loaded steep_uphill:', ATHLETE.speeds.steep_u, 'km/h');
+        }
+      }
+
+      // Load technical skill from athlete_state
+      if (athleteState.technical_skill) {
+        const techSkill = athleteState.technical_skill;
+        if (techSkill.relative_percentile_gain) {
+          // Convert percentile gain to multiplier: +15 percentile = 1.15x
+          ATHLETE.tech_skill = 1 + (techSkill.relative_percentile_gain / 100);
+          console.log('✅ Loaded tech_skill from percentile gain:', ATHLETE.tech_skill);
+        }
+      }
+
+      // Load calibration from performance_model
+      if (performanceModel.calibration) {
+        if (performanceModel.calibration.overall_factor) {
+          CALIBRATION.calibrationFactor = performanceModel.calibration.overall_factor;
+        }
+        if (performanceModel.calibration.by_course_type) {
+          CALIBRATION.byCourseType = performanceModel.calibration.by_course_type;
+        }
+        console.log('✅ Loaded calibration factors:', CALIBRATION);
+      }
+
+      console.log('✅ Final ATHLETE speeds:', ATHLETE.speeds);
+      console.log('✅ Final tech_skill:', ATHLETE.tech_skill);
+
+      alert('✅ v4 Profile loaded successfully!\n\nSpeeds: ' + JSON.stringify(ATHLETE.speeds, null, 2));
+    }
 
     // ========== COURSE PROFILE ==========
     let courseProfile = null;
