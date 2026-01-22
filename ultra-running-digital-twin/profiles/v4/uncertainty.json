@@ -1,0 +1,30 @@
+{
+  "model_version": "4.0",
+  "uncertainty_model": {
+    "physiology": {
+      "vo2_max": {
+        "mean": 57,
+        "sd": 2.5,
+        "confidence": "medium"
+      },
+      "threshold_hr": {
+        "mean": 168,
+        "sd": 4
+      }
+    },
+    "performance": {
+      "gradient_speed_variance": 0.06,
+      "fatigue_variance": 0.04,
+      "terrain_multiplier_variance": 0.03
+    },
+    "environment": {
+      "temperature_forecast_error_c": 2,
+      "wind_forecast_error_kmh": 5,
+      "precipitation_uncertainty": "high"
+    },
+    "race_day": {
+      "pacing_execution_variance": 0.05,
+      "nutrition_execution_variance": 0.10
+    }
+  }
+}

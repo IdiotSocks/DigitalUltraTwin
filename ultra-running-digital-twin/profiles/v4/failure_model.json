@@ -1,0 +1,43 @@
+{
+  "model_version": "4.0",
+  "failure_modes": {
+    "respiratory": {
+      "incident_probability": {
+        "<8c": 0.35,
+        "8-10c": 0.18,
+        ">=12c": 0.05
+      },
+      "recovery_probability": 0.67,
+      "impact_if_triggered": {
+        "pace_multiplier": 0.85,
+        "duration_minutes": [10, 40]
+      },
+      "mitigation_strategies": [
+        "conservative_hr_first_25km",
+        "inhaler_preloaded",
+        "thermal_management"
+      ]
+    },
+    "nutrition": {
+      "bonk_probability_by_intake": {
+        "<40gh": 0.6,
+        "40-70gh": 0.25,
+        ">=80gh": 0.05
+      },
+      "gi_distress_probability": 0.08,
+      "impact_if_triggered": {
+        "pace_multiplier": 0.70,
+        "duration_minutes": [15, 60]
+      }
+    },
+    "musculoskeletal": {
+      "technical_downhill_risk": 0.04,
+      "fatigue_threshold_km": 70,
+      "ankle_risk_multiplier": 1.2,
+      "impact_if_triggered": {
+        "pace_multiplier": 0.80,
+        "dnf_probability": 0.15
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "model_version": "4.0",
+  "counter_hypotheses": [
+    {
+      "claim": "Technical terrain is a competitive advantage (+15 percentile points)",
+      "evidence_for": [
+        "Arc 25 technical sections: relative gain",
+        "UTMB validation: maintained position on technical descents",
+        "UTS 50: strong technical downhill performance"
+      ],
+      "could_be_wrong_if": [
+        "prolonged wet technical descents",
+        "accumulated fatigue reduces downhill control",
+        "ankle injury recurrence on technical terrain"
+      ],
+      "disproving_data_needed": [
+        "multiple wet technical DNFs",
+        "relative position loss >20 percentile points on technical sections",
+        "2+ ankle injuries on technical descents in 12 months"
+      ]
+    },
+    {
+      "claim": "Cold-induced respiratory incidents are manageable with pacing",
+      "evidence_for": [
+        "Arc 25: managed incident at 4-8°C, recovered",
+        "Respiratory-adjusted pacing strategy validated"
+      ],
+      "could_be_wrong_if": [
+        "incident occurs despite HR control <150",
+        "recovery time exceeds 45 minutes",
+        "multiple incidents in single race",
+        "incident occurs after km 25 (outside vulnerable zone)"
+      ],
+      "disproving_data_needed": [
+        "repeat cold races (<10°C) with inhaler and HR discipline",
+        "persistent performance drop >15% despite mitigation",
+        "DNF due to respiratory failure despite all protocols"
+      ]
+    },
+    {
+      "claim": "CTL 155-160 sufficient for 74km hilly ultra sub-11h",
+      "evidence_for": [
+        "Arc 25 (41.6km, CTL 159): 4:23 finish strong",
+        "Fitness scaling model validated"
+      ],
+      "could_be_wrong_if": [
+        "fatigue inflection occurs earlier than predicted",
+        "nutrition strategy fails at distance",
+        "environmental conditions worse than expected"
+      ],
+      "disproving_data_needed": [
+        "Chianti 74K result >11h30 with CTL 155+",
+        "significant fade after km 50"
+      ]
+    }
+  ]
+}

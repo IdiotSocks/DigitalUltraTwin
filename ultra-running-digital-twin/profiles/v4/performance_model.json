@@ -1,0 +1,88 @@
+{
+  "model_version": "4.0",
+  "fitness_anchor": {
+    "baseline_race": "UTMB 2025",
+    "baseline_date": "2025-08-29",
+    "fitness_level": 1.0,
+    "ctl_at_baseline": 120
+  },
+  "gradient_speeds": {
+    "steep_downhill": {
+      "range_pct": [-50, -15],
+      "kmh": {
+        "mean": 5.92,
+        "p10": 5.4,
+        "p90": 6.4
+      }
+    },
+    "moderate_downhill": {
+      "range_pct": [-15, -5],
+      "kmh": {
+        "mean": 6.96,
+        "p10": 6.4,
+        "p90": 7.5
+      }
+    },
+    "flat": {
+      "range_pct": [-5, 5],
+      "kmh": {
+        "mean": 6.62,
+        "p10": 6.0,
+        "p90": 7.2
+      }
+    },
+    "moderate_uphill": {
+      "range_pct": [5, 15],
+      "kmh": {
+        "mean": 4.95,
+        "p10": 4.5,
+        "p90": 5.4
+      }
+    },
+    "steep_uphill": {
+      "range_pct": [15, 50],
+      "kmh": {
+        "mean": 3.71,
+        "p10": 3.3,
+        "p90": 4.1
+      }
+    }
+  },
+  "terrain_multipliers": {
+    "road": 1.0,
+    "runnable_trail": 0.96,
+    "technical_dry": 0.90,
+    "technical_wet": 0.80,
+    "extreme_technical": 0.70
+  },
+  "environmental_penalties": {
+    "temperature": {
+      "8c": 0.80,
+      "10c": 0.88,
+      "12c": 0.93,
+      "15c": 1.00,
+      "18c": 0.98,
+      "22c": 0.95,
+      "26c": 0.90
+    },
+    "altitude_per_1000m": 0.95,
+    "wind_exposed": 0.97
+  },
+  "fatigue": {
+    "per_km": 0.998,
+    "inflection_km_sub80": 58,
+    "slope_multiplier_sub80": 0.7
+  },
+  "calibration": {
+    "overall_factor": 1.0,
+    "by_course_type": {
+      "road_5k": 1.99,
+      "technical_mountain_50_70k": 1.13,
+      "technical_mountain_long": 0.83,
+      "road_ultra": 1.99,
+      "alpine_ultra_150_200k": 0.80,
+      "hilly_trail_medium": 1.13
+    },
+    "last_calibrated": "2026-01-22"
+  }
+}

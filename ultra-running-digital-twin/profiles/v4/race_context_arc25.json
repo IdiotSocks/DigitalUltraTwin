@@ -1,0 +1,28 @@
+{
+  "race": "Arc of Attrition 25",
+  "race_id": "arc_25_2025",
+  "date": "2025-01-25",
+  "distance_km": 41.6,
+  "elevation_m": 1108,
+  "course_profile": "coastal_runnable_trail",
+  "expected_conditions": {
+    "temperature_c": [4, 8],
+    "wind": "strong_coastal",
+    "surface": "wet_muddy_sections",
+    "daylight": "partial"
+  },
+  "fitness_target": 1.315,
+  "actual_ctl": 159,
+  "selected_pacing_strategy": "respiratory_adjusted",
+  "goals": {
+    "primary": "finish_strong",
+    "secondary": "sub_4h30",
+    "stretch": "sub_4h20"
+  },
+  "risk_flags": [
+    "cold_start",
+    "respiratory_risk_high",
+    "early_climbs_vulnerable"
+  ],
+  "decision_notes": "Conservative first 25km due to cold. Expected respiratory incident managed with pacing. Strong second half."
+}

@@ -1,0 +1,27 @@
+{
+  "race": "Chianti Ultra Trail 74K",
+  "race_id": "chianti_74k_2026",
+  "date": "2026-03-15",
+  "distance_km": 74,
+  "elevation_m": 2800,
+  "course_profile": "hilly_runnable_trail",
+  "expected_conditions": {
+    "temperature_c": [8, 14],
+    "wind": "moderate",
+    "surface": "dry_runnable",
+    "daylight": "full"
+  },
+  "fitness_target": 1.30,
+  "target_ctl": 155,
+  "selected_pacing_strategy": "respiratory_adjusted",
+  "goals": {
+    "primary": "finish_strong",
+    "secondary": "sub_11h",
+    "stretch": "sub_10h30"
+  },
+  "risk_flags": [
+    "cold_start",
+    "early_climbs"
+  ],
+  "decision_notes": "Conservative first 25km. Race after Castello di Brolio. Runnable terrain suits strengths."
+}
