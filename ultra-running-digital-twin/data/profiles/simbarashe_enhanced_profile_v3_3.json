@@ -66,6 +66,69 @@
           "conditions": "4-8\u00b0C, dry, light wind",
           "respiratory_incident": "Yes at 15km (no inhaler available)",
           "notes": "Fast time despite cold and respiratory incident - proved Arc is runnable strength race, not survival. Third validation race"
+        },
+        {
+          "race": "Cornwall Trail Marathon 2026",
+          "date": "2026-01-25",
+          "distance_km": 42.18,
+          "elevation_m": 1052,
+          "elevation_range": "1-102m (coastal undulation)",
+          "finish_time": "5:12:05",
+          "pace_per_km": "7:23",
+          "avg_speed_kmh": 8.1,
+          "fitness_level": 1.05,
+          "race_type": "training_run",
+          "conditions": "22C start, 17C finish, wind (unaccounted)",
+          "respiratory_incident": "No",
+          "physiological_data": {
+            "heart_rate": {
+              "avg_bpm": 152,
+              "max_bpm": 181,
+              "zone_distribution": {
+                "z2_z3_pct": 66,
+                "z4_pct": 24
+              }
+            },
+            "power": {
+              "avg_watts": 289,
+              "normalized_power_watts": 337,
+              "variability_index": 1.17,
+              "total_work_kj": 5005
+            },
+            "core_temperature": {
+              "start_celsius": 37.16,
+              "peak_celsius": 38.54,
+              "rise_celsius": 1.38,
+              "sensor": "Core",
+              "data_points": 18726,
+              "reliability": "excellent"
+            },
+            "skin_temperature": {
+              "start_celsius": 32.8,
+              "end_celsius": 27.2
+            },
+            "stamina_depletion": {
+              "start": 99,
+              "finish": 26,
+              "total_depletion": 73
+            },
+            "body_battery": {
+              "start": 32,
+              "finish": 8
+            },
+            "running_dynamics": {
+              "ground_contact_time_ms": 284,
+              "step_length_cm": 101,
+              "notes": "Longer GCT and shorter step length vs road due to technical terrain"
+            }
+          },
+          "execution_notes": {
+            "nutrition_timing": "off",
+            "wind_factor": "not accounted for",
+            "terrain": "more challenging than expected",
+            "purpose": "Seville Marathon training + Cornwall Coast Path FKT baseline + Core sensor test"
+          },
+          "notes": "Training run 4 weeks before Seville Marathon. 16% slower than Arc 2025 due to lower fitness (road focus), nutrition issues, and wind. Excellent physiological data captured with Core sensor. Validates coastal trail performance at sub-peak fitness."
         }
       ]
     }
@@ -136,6 +199,54 @@
             "phase": "Taper",
             "expected_fitness": "1.18-1.20",
             "focus": "Maintain sharpness, reduce volume"
+          }
+        },
+        "current_fitness_status_jan_2026": {
+          "_updated": "2026-01-26",
+          "_source": "Cornwall Trail Marathon Jan 25, 2026 actual performance",
+          "current_fitness_level": 1.05,
+          "current_training_focus": "Seville Marathon (road) - February 2026",
+          "validation_data": {
+            "cornwall_42km_trail": "5:12:05 (8.1 km/h)",
+            "vs_arc_2025_42km_trail": "4:23:00 (9.6 km/h) at fitness 1.15",
+            "speed_differential": "-15.6% due to fitness gap and training focus"
+          },
+          "trajectory_to_chianti": {
+            "weeks_remaining": 7,
+            "current_fitness": 1.05,
+            "target_fitness": 1.20,
+            "fitness_gain_required": 0.15,
+            "weekly_gain_needed": 0.021,
+            "achievability": "ACHIEVABLE with focused trail training post-Seville",
+            "key_requirements": [
+              "Strong Seville Marathon performance (peak road fitness)",
+              "Quick 5-7 day recovery post-marathon",
+              "2-3 weeks focused trail volume with elevation",
+              "Final taper week before Chianti"
+            ]
+          },
+          "validated_physiological_capabilities": {
+            "power": "289W avg sustained over 5+ hours",
+            "core_temp_management": "Excellent - peak 38.54C well managed",
+            "stamina_with_poor_nutrition": "73-point depletion over 42km",
+            "stamina_with_optimal_nutrition": "projected better for Chianti",
+            "running_dynamics": "Appropriate trail adaptation (284ms GCT, 101cm step)"
+          },
+          "confidence_assessment": {
+            "overall": "moderate-high",
+            "factors_positive": [
+              "Cornwall validates trail capability at sub-peak fitness",
+              "Excellent physiological data captured",
+              "7 weeks is sufficient for 0.15 fitness gain",
+              "Road training provides strong aerobic base"
+            ],
+            "factors_concern": [
+              "Current focus is road (Seville), not trail",
+              "Limited elevation training in current block",
+              "Nutrition execution needs improvement",
+              "Wind resistance needs practice"
+            ],
+            "recommendation": "Proceed with Seville, then pivot immediately to trail-specific prep. Chianti 10:30-11:00 target remains realistic."
           }
         }
       }
@@ -219,13 +330,101 @@
       "average_cadence": 86,
       "stride_efficiency": "good",
       "uphill_power": 1.0,
-      "downhill_control": "excellent"
+      "downhill_control": "excellent",
+      "running_dynamics_trail": {
+        "_source": "Cornwall Trail Marathon 2026",
+        "ground_contact_time_ms": 284,
+        "step_length_cm": 101,
+        "terrain_adaptation": "Longer GCT (+~20ms vs road) and shorter step length (-~10cm vs road) due to technical terrain - appropriate biomechanical adjustment"
+      }
     },
     "recovery_characteristics": {
       "between_efforts": "good",
       "overnight_races": "proven at UTMB",
       "between_races": "standard 2-3 weeks for marathon, 4-6 weeks for ultra",
       "injury_resilience": "continued Snowdonia despite twisted ankle"
+    },
+    "power_profile": {
+      "_description": "Running power validated from Cornwall Trail Marathon 2026",
+      "_source": "Cornwall 2026 - 42.18km coastal trail, 5:12:05",
+      "marathon_distance_coastal_trail": {
+        "avg_power_watts": 289,
+        "normalized_power_watts": 337,
+        "variability_index": 1.17,
+        "total_work_kj": 5005,
+        "distance_km": 42.18,
+        "duration_hours": 5.2,
+        "terrain": "coastal_undulating_trail",
+        "conditions": "22C start, 17C finish, windy"
+      },
+      "power_insights": {
+        "np_ap_gap": "17% - reflects terrain variability and constant power adjustments",
+        "avg_power_per_km": "6.85 W/km",
+        "power_efficiency": "Good - sustained 289W avg over 5+ hours",
+        "comparison_to_road": "Higher variability on trail (VI 1.17 vs typical road 1.03-1.05)"
+      },
+      "calibration_notes": "First validated power data for marathon distance trail running. 17% NP/AP gap typical for technical terrain with constant elevation changes."
+    },
+    "core_temperature_management": {
+      "_description": "Thermoregulation validated from Cornwall Trail Marathon 2026",
+      "_source": "Core sensor - 18,726 data points, zero dropouts",
+      "validated_thresholds": {
+        "baseline_core_temp_c": 37.16,
+        "peak_core_temp_c": 38.54,
+        "max_rise_c": 1.38,
+        "sustainable_peak": "38.5C for 5+ hours",
+        "sensor_reliability": "excellent"
+      },
+      "skin_temperature_response": {
+        "start_c": 32.8,
+        "end_c": 27.2,
+        "ambient_temp_change": "22C to 17C",
+        "cooling_response": "good - skin temp tracked ambient reduction"
+      },
+      "race_conditions_tested": {
+        "ambient_start_c": 22,
+        "ambient_finish_c": 17,
+        "duration_hours": 5.2,
+        "distance_km": 42.18,
+        "terrain": "coastal exposed",
+        "result": "Core temp rise 1.38C - well managed, no heat stress"
+      },
+      "calibration_notes": "Excellent thermoregulation - core temp stayed below 38.6C critical threshold. Cooling in final hours helped prevent heat accumulation."
+    },
+    "stamina_depletion_model": {
+      "_description": "Energy depletion patterns validated from Cornwall Trail Marathon 2026",
+      "_source": "Garmin stamina and body battery metrics",
+      "marathon_distance_depletion": {
+        "stamina_start": 99,
+        "stamina_finish": 26,
+        "total_depletion": 73,
+        "depletion_rate_per_km": 1.73,
+        "depletion_rate_per_hour": 14.04
+      },
+      "body_battery_depletion": {
+        "start": 32,
+        "finish": 8,
+        "total_depletion": 24,
+        "depletion_rate_per_hour": 4.6
+      },
+      "effort_context": {
+        "race_type": "training_run",
+        "hr_avg": 152,
+        "hr_z2_z3_pct": 66,
+        "hr_z4_pct": 24,
+        "nutrition_status": "suboptimal (timing off)",
+        "result": "running on empty by finish"
+      },
+      "extrapolation_to_ultras": {
+        "chianti_74k_estimate": {
+          "distance_km": 74,
+          "estimated_duration_hours": 10.5,
+          "stamina_depletion_projected": 128,
+          "note": "Will exceed 100 - requires nutrition strategy to prevent bonk",
+          "mitigation": "Early and consistent carb intake, aim for 60-80g/hr"
+        }
+      },
+      "calibration_notes": "First validated stamina depletion data. Depletion rate 1.73/km on coastal trail with suboptimal nutrition. Better nutrition strategy critical for Chianti 74K."
     }
   },
   "respiratory_profile": {
